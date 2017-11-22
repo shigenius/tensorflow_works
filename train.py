@@ -8,7 +8,7 @@ import tensorflow.python.platform
 import argparse
 import random
 
-class simpleCNN:
+class SimpleCNN:
 
     def __init__(self):
         self.image_size = 227
@@ -198,13 +198,13 @@ def accuracy(logits, labels):
 def main():
     # NNアーキテクチャ．他のアーキテクチャを使いたかったらimportしてここに登録する．","を忘れずに
     archs = {
-        'simpleCNN': simpleCNN
+        'SimpleCNN': SimpleCNN
     }
 
     parser = argparse.ArgumentParser(description='Learning your dataset, and evaluate the trained model')
     parser.add_argument('train', help='File name of train data')
     parser.add_argument('test', help='File name of train data')
-    parser.add_argument('--arch', '-a', choices=archs.keys(), default='simpleCNN', help='Convnet architecture')
+    parser.add_argument('--arch', '-a', choices=archs.keys(), default='SimpleCNN', help='Convnet architecture')
 
     parser.add_argument('--max_steps', '-s', type=int, default=100)
     parser.add_argument('--batch_size', '-b', type=int, default=10)

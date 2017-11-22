@@ -29,5 +29,5 @@
 
 基本的な使い方
 ~~~
-% train.py <TrainDataTextPath> <TestDataTextPath> -a simpleCNN -save <FullPATH> -b <batch size> -s <num step>
+% train.py <TrainDataTextPath> <TestDataTextPath> -a SimpleCNN -save <FullPATH> -b <batch size> -s <num step>
 ~~~
