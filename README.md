@@ -25,7 +25,7 @@
 * train_tf.pyで，一度にデータセット全体を読み込んでout-of-memoryになったりしてたのを直した．(tensorflowはメモリを2GBまでしか占有できないらしい)
   * batch処理の際に必要な分だけ画像を読み込む
 * NNアーキテクチャを柔軟に変更できる．
-* train accuracyがtrainデータセット全体のaccuracyじゃなくて，一部分での評価になってるところ注意．
+* train accuracyがtrainデータセット全体のaccuracyじゃなくて，一部分での評価になってるところに注意．
 
 基本的な使い方
 ~~~
