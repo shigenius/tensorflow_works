@@ -64,7 +64,7 @@ class SimpleCNN:
             # dropoutの設定
             h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
             print("h_fc1:", h_fc1.shape)
-        # fc22の作成
+        # fc2の作成
         with tf.name_scope('fc2') as scope:
             W_fc2 = weight_variable([256, self.num_classes])
             b_fc2 = bias_variable([self.num_classes])
@@ -76,58 +76,54 @@ class SimpleCNN:
         return y_conv
 
 class Dataset:
-
-    def __init__(self, train, test, num_classes, _image_size):
-        """
-        読み込むtxtファイルは，
-        <image1_path> class
-        <image2_path> class
-        みたいに記述しておく．
-        """
+    """
+    読み込むtxtファイルは，
+    <image1_path> class
+    <image2_path> class
+    みたいに記述しておく．
+    """
+    def __init__(self, train, test, _num_classes, _image_size):
         # メンバ変数
         self.train_image_paths = []
         self.train_labels = [] # [[0,0,0,1,0,0,0,0,0],...] みたいな感じ (1-of-k)
         self.test_image_paths = []
         self.test_labels = []
         self.image_size = _image_size
+        self.num_classes = _num_classes
 
-        # パスとラベルを取得する
-        with open(train, 'r') as f:
-            f_ = [line.rstrip().split() for line in f]
-            self.train_image_paths = [l[0] for l in f_]
+        def getPathandLabel(path, num_classes): # パスとラベルを取得する
+            with open(path, 'r') as f:
+                f_ = [line.rstrip().split() for line in f]
+                image_paths = [l[0] for l in f_]
 
-            for l in f_:
-                tmp = [0]*num_classes
-                tmp[int(l[1])] = 1
-                self.train_labels.append(tmp) 
+                labels = [] # 1-of-kで用意する
+                for l in f_:
+                    tmp = [0]*num_classes
+                    tmp[int(l[1])] = 1
+                    labels.append(tmp) 
 
-        self.train_labels = np.asarray(self.train_labels) #numpyにしておく
-        
-        with open(test, 'r') as f:
-            f_ = [line.rstrip().split() for line in f]
-            self.test_image_paths = [l[0] for l in f_]
+                return image_paths, labels
 
-            for l in f_:
-                tmp = [0]*num_classes
-                tmp[int(l[1])] = 1
-                self.test_labels.append(tmp) 
-
-        self.test_labels = np.asarray(self.test_labels) 
+        self.train_image_paths, self.train_labels = getPathandLabel(train, self.num_classes)
+        self.test_image_paths, self.test_labels = getPathandLabel(test, self.num_classes)
+        #numpyにしておく
+        self.train_labels = np.asarray(self.train_labels) 
+        self.test_labels  = np.asarray(self.test_labels) 
 
 
     def shuffle(self):
         # shuffle (dataとlabelの対応が崩れないように)
 
-        lst = [i for i in range(len(self.train_image_paths))]
-        shuffled_lst = list(lst)
-        random.shuffle(shuffled_lst)
+        indexl = [i for i in range(len(self.train_image_paths))]
+        shuffled_indexl = list(indexl)
+        random.shuffle(shuffled_indexl)
 
         shuffled_data = self.train_image_paths
         shuffled_labels = self.train_labels
 
         for i, (train, label) in enumerate(zip(self.train_image_paths, self.train_labels)):
-            shuffled_data[shuffled_lst[i]] = train
-            shuffled_labels[shuffled_lst[i]] = label
+            shuffled_data[shuffled_indexl[i]] = train
+            shuffled_labels[shuffled_indexl[i]] = label
 
         self.train_image_paths = shuffled_data
         self.train_labels = shuffled_labels
@@ -138,9 +134,8 @@ class Dataset:
 
 
     def getTrainBatch(self, batchsize, index):
-        """
-        指定したindexからバッチサイズ分，データセットを読み込んでflattenなndarrayとして返す．resizeもする．(あとでaugumentation諸々も実装したい)
-        """
+        # 指定したindexからバッチサイズ分，データセットを読み込んでflattenなndarrayとして返す．resizeもする．
+        # (あとでaugumentation諸々も実装したい)
 
         train_batch = []
         start = batchsize*index
@@ -249,9 +244,7 @@ def main():
 
         # 訓練の実行
         for step in range(args.max_steps):
-
             dataset.shuffle() # バッチで取る前にデータセットをshuffleする   
-
             #batch処理
             for i in range(int(len(dataset.train_image_paths)/args.batch_size)): # iがbatchのindexになる #バッチのあまりが出る
                 batch, labels = dataset.getTrainBatch(args.batch_size, i)
@@ -278,7 +271,6 @@ def main():
                         keep_prob: 1.0})
                     summary_writer.add_summary(summary_str, step)
 
-
         # testdataのaccuracy
         test_data, test_labels = dataset.getTestData()
         print("test accuracy %g" % sess.run(acc, feed_dict={
@@ -289,7 +281,6 @@ def main():
     # 最終的なモデルを保存
     save_path = saver.save(sess, args.save_path)
     print("save the trained model at :", save_path)
-
 
 if __name__ == '__main__':
     main()
