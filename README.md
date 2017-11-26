@@ -31,3 +31,19 @@
 ~~~
 % train.py <TrainDataTextPath> <TestDataTextPath> -a SimpleCNN -save <FullPATH> -b <batch size> -s <num step>
 ~~~
+
+## Dataset.py
+
+* train,pyから移植．
+* 引数の数やらでtrainデータセットとtestデータセットの両方，もしくはtestデータセットのみを受け取る
+* イニシャライザの時点では，各画像のパスとラベルデータのみを保持．
+* getTrainBatch()で指定したbatch分ndarrayに変換して返す．getTestData()はすべてのtestデータをndarrayにして返す．
+* shuffle()はtrainデータの順番をシャッフルする．対応するラベルとのindexの関係は破壊されない．batch毎に呼ぶといいかも
+
+## evaluate.py 
+
+* 保存したmodelの評価を行う
+* saver.restore()のサンプル
+~~~
+% python evaluate.py <TestDataTXTPath> <ModelPath(i.e. ./model.ckpt)>
+~~~

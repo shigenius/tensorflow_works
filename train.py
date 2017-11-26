@@ -8,6 +8,8 @@ import tensorflow.python.platform
 import argparse
 import random
 
+from Dataset import Dataset
+
 class SimpleCNN:
 
     def __init__(self):
@@ -75,100 +77,6 @@ class SimpleCNN:
 
         return y_conv
 
-class Dataset:
-    """
-    読み込むtxtファイルは，
-    <image1_path> class
-    <image2_path> class
-    みたいに記述しておく．
-    """
-    def __init__(self, train, test, _num_classes, _image_size):
-        # メンバ変数
-        self.train_image_paths = []
-        self.train_labels = [] # [[0,0,0,1,0,0,0,0,0],...] みたいな感じ (1-of-k)
-        self.test_image_paths = []
-        self.test_labels = []
-        self.image_size = _image_size
-        self.num_classes = _num_classes
-
-        def getPathandLabel(path, num_classes): # パスとラベルを取得する
-            with open(path, 'r') as f:
-                f_ = [line.rstrip().split() for line in f]
-                image_paths = [l[0] for l in f_]
-
-                labels = [] # 1-of-kで用意する
-                for l in f_:
-                    tmp = [0]*num_classes
-                    tmp[int(l[1])] = 1
-                    labels.append(tmp) 
-
-                return image_paths, labels
-
-        self.train_image_paths, self.train_labels = getPathandLabel(train, self.num_classes)
-        self.test_image_paths, self.test_labels = getPathandLabel(test, self.num_classes)
-        #numpyにしておく
-        self.train_labels = np.asarray(self.train_labels) 
-        self.test_labels  = np.asarray(self.test_labels) 
-
-
-    def shuffle(self):
-        # shuffle (dataとlabelの対応が崩れないように)
-
-        indexl = [i for i in range(len(self.train_image_paths))]
-        shuffled_indexl = list(indexl)
-        random.shuffle(shuffled_indexl)
-
-        shuffled_data = self.train_image_paths
-        shuffled_labels = self.train_labels
-
-        for i, (train, label) in enumerate(zip(self.train_image_paths, self.train_labels)):
-            shuffled_data[shuffled_indexl[i]] = train
-            shuffled_labels[shuffled_indexl[i]] = label
-
-        self.train_image_paths = shuffled_data
-        self.train_labels = shuffled_labels
-
-        # indexの対応関係が破壊されてないかの確認
-        #for i, (train, label) in enumerate(zip(self.train_image_paths, self.train_labels)):
-        #    print(i, train, label)
-
-
-    def getTrainBatch(self, batchsize, index):
-        # 指定したindexからバッチサイズ分，データセットを読み込んでflattenなndarrayとして返す．resizeもする．
-        # (あとでaugumentation諸々も実装したい)
-
-        train_batch = []
-        start = batchsize*index
-
-        for path in self.train_image_paths[start:start+batchsize]:
-            image = cv2.imread(path)
-            image = cv2.resize(image, (self.image_size, self.image_size)) 
-
-            # 一列にした後、0-1のfloat値にする
-            train_batch.append(image.flatten().astype(np.float32)/255.0)
-
-        train_batch = np.asarray(train_batch)
-        labels_batch = self.train_labels[start:start+batchsize]
-
-        return train_batch, labels_batch
-        
-
-    def getTestData(self):
-        # testdataを全部とってくる
-
-        test_images = []
-
-        for path in self.test_image_paths:
-            image = cv2.imread(path)
-            image = cv2.resize(image, (self.image_size, self.image_size)) 
-
-            test_images.append(image.flatten().astype(np.float32)/255.0)
-
-        test_images = np.asarray(test_images)
-
-        return test_images, self.test_labels
-
-
 def loss(logits, labels):
     # 交差エントロピーの計算
     # log(0) = NaN になる可能性があるので1e-10~1の範囲で正規化
@@ -209,12 +117,14 @@ def main():
 
     parser.add_argument('--learning_rate', '-lr', type=float, default=1e-4)
     parser.add_argument('--dropout_prob', '-d', type=float, default=0.5)
+
+    parser.add_argument('--load_model', '-l', default='/home/akalab/tensorflow_works/model.ckpt', help='FullPath of loading model')
     args = parser.parse_args()
 
     arch = archs[args.arch]()
-    
+
     #データセットの準備
-    dataset = Dataset(args.train, args.test, arch.num_classes, arch.image_size)
+    dataset = Dataset(train=args.train, test=args.test, num_classes=arch.num_classes, image_size=arch.image_size)
 
     with tf.Graph().as_default():
         # imageとlabelを入れる仮のTensor
