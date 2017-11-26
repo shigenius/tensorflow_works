@@ -1,2 +1,0 @@
-model_checkpoint_path: "/Users/shigetomi/workspace/tensorflow_works/simplecnn_model.ckpt"
-all_model_checkpoint_paths: "/Users/shigetomi/workspace/tensorflow_works/simplecnn_model.ckpt"
