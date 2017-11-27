@@ -50,8 +50,9 @@
 
 ## PeripheralCNN.py
 
-* 画面全体を学習するモデルPeripheralCNN
-* PeripheralCNNのfeature mapと，特定物体の局所的な画像情報によるfeature mapをconcatしたものを学習するモデルFovealCNN
+* PeripheralCNN : 画面全体を学習するモデル
+* FovealCNN : PeripheralCNNのfeature mapと，特定物体の局所的な画像情報によるfeature mapをconcatしたものを学習するモデル
 
 * まずPeripheralCNNを普通に学習させて，得たmodelのweights(fixed)を，FovealCNNで転移学習する感じ．
+* 特定物体認識 <-> 一般物体認識
 * 未完成
