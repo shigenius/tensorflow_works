@@ -47,3 +47,11 @@
 ~~~
 % python evaluate.py <TestDataTXTPath> <ModelPath(i.e. ./model.ckpt)>
 ~~~
+
+## PeripheralCNN.py
+
+* 画面全体を学習するモデルPeripheralCNN
+* PeripheralCNNのfeature mapと，特定物体の局所的な画像情報によるfeature mapをconcatしたものを学習するモデルFovealCNN
+
+* まずPeripheralCNNを普通に学習させて，得たmodelのweights(fixed)を，FovealCNNで転移学習する感じ．
+* 未完成
