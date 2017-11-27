@@ -45,6 +45,10 @@ def main():
         saver.restore(sess, args.model)
         print("Model restored from : ", args.model)
 
+        # vars_all = tf.global_variables() # すべてのvariable. namescopeを指定して取る場合はtf.get_collection()
+        # print(vars_all[0].value)
+        # print(sess.run(vars_all[0])) # 重みの取得
+
         test_data, test_labels = dataset.getTestData()
         print("test accuracy %g" % sess.run(acc, feed_dict={
             images_placeholder: test_data,
