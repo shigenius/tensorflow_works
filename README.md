@@ -11,7 +11,7 @@
       * [Dataset.py](#datasetpy)
       * [evaluate.py](#evaluatepy)
       * [PeripheralCNN.py](#peripheralcnnpy)
-      * [TwoInputDataset.py](#TwoInputDatasetpy)
+      * [TwoInputDataset.py](#twoinputdatasetpy)
 
 ## 環境
 * tensorflow 1.4.0
@@ -68,7 +68,6 @@
 
 * まずPeripheralCNNを普通に学習させて，得たmodelのweights(fixed)を，FovealCNNで転移学習する感じ．
 * 特定物体認識 <-> 一般物体認識
-* 未完成
 
 ## TwoInputDataset.py
 
