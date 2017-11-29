@@ -69,8 +69,6 @@ class Dataset:
 
     def shuffle(self):
         # shuffle (dataとlabelの対応が崩れないように)
-        if self.train_image_paths is None:
-            return None
 
         indexl = [i for i in range(len(self.train_image_paths))]
         shuffled_indexl = list(indexl)
@@ -94,8 +92,6 @@ class Dataset:
     def getTrainBatch(self, batchsize, index):
         # 指定したindexからバッチサイズ分，データセットを読み込んでflattenなndarrayとして返す．resizeもする．
         # (あとでaugumentation諸々も実装したい)
-        if self.train_image_paths is None:
-            return [None]*2
 
         train_batch = []
         start = batchsize*index
@@ -115,8 +111,6 @@ class Dataset:
 
     def getTestData(self):
         # testdataを全部とってくる
-        if self.test_image_paths is None:
-            return [None]*2
 
         test_images = []
 

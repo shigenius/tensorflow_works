@@ -10,6 +10,7 @@ import argparse
 import random
 
 from Dataset import Dataset
+from TwoInputDataset import TwoInputDataset
 
 class PeripheralCNN:
     def __init__(self):
@@ -71,7 +72,7 @@ class FovealCNN:
         self.image_size = 227
         self.num_classes = 10
 
-    def inference(self, images_placeholder, keep_prob):
+    def inference(self, images_placeholder1, images_placeholder2, keep_prob):
         with tf.variable_scope('Peripheral', reuse=True) as scope:
             def weight_variable(shape, name):
                 initial = tf.truncated_normal(shape, stddev=0.1)
@@ -85,7 +86,7 @@ class FovealCNN:
                 return tf.nn.max_pool(x, ksize=[1, 3, 3, 1],
                     strides=[1, 2, 2, 1], padding='VALID')
             
-            x_image = tf.reshape(images_placeholder, [-1, self.image_size, self.image_size, 3]) # あとで2入力にする
+            x_image = tf.reshape(images_placeholder1, [-1, self.image_size, self.image_size, 3]) # あとで2入力にする
         
             with tf.variable_scope('conv1', reuse=True) as scope:
                 W_P_conv1 = weight_variable([11, 11, 3, 64], "w")
@@ -117,12 +118,12 @@ class FovealCNN:
                 return tf.nn.max_pool(x, ksize=[1, 3, 3, 1],
                     strides=[1, 2, 2, 1], padding='VALID')
             
-            x_image = tf.reshape(images_placeholder, [-1, self.image_size, self.image_size, 3])
+            x_sub_image = tf.reshape(images_placeholder2, [-1, self.image_size, self.image_size, 3])
         
             with tf.variable_scope('conv1') as scope:
                 W_F_conv1 = weight_variable([11, 11, 3, 64], "w")
                 b_F_conv1 = bias_variable([64], "b")
-                h_F_conv1 = tf.nn.relu(tf.nn.conv2d(x_image, W_F_conv1, strides=[1,4,4,1], padding="VALID") + b_F_conv1)
+                h_F_conv1 = tf.nn.relu(tf.nn.conv2d(x_sub_image, W_F_conv1, strides=[1,4,4,1], padding="VALID") + b_F_conv1)
 
             with tf.name_scope('pool1') as scope:
                 h_F_pool1 = max_pool_2x2(h_F_conv1)
@@ -178,6 +179,7 @@ def accuracy(logits, labels):
 def main():
     parser = argparse.ArgumentParser(description='Learning your dataset, and evaluate the trained model')
     parser.add_argument('train', help='File name of train data')
+    parser.add_argument('--train_sub', '-sub', help='File name of train data (sub)')
     parser.add_argument('test', help='File name of train data')
 
     parser.add_argument('--max_steps', '-s', type=int, default=100)
@@ -272,21 +274,22 @@ def main():
 
     elif args.flag == 'F':
 
-        arch = FovealCNN()
-        subarch = PeripheralCNN()
-
-        dataset = Dataset(train=args.train, test=args.test, num_classes=arch.num_classes, image_size=arch.image_size)
+        arch    = PeripheralCNN()
+        subarch = FovealCNN()
+        
+        dataset = TwoInputDataset(train=args.train, train_sub=args.train_sub, test=args.test, num_classes=arch.num_classes, image_size=arch.image_size)
 
         with tf.Graph().as_default():
 
             with tf.Session() as sess:
                 # placeholderたち
-                images_placeholder = tf.placeholder(dtype="float", shape=(None, arch.image_size*arch.image_size*3)) # shapeの第一引数をNoneにすることによっておそらく可変長batchに対応できる
+                images_placeholder1 = tf.placeholder(dtype="float", shape=(None, arch.image_size*arch.image_size*3)) # shapeの第一引数をNoneにすることによっておそらく可変長batchに対応できる
+                images_placeholder2 = tf.placeholder(dtype="float", shape=(None, arch.image_size*arch.image_size*3))
                 labels_placeholder = tf.placeholder(dtype="float", shape=(None, arch.num_classes))
                 keep_prob = tf.placeholder(dtype="float")
         
                 # 仮のinference (ckptに保存されている変数の数と，tf.train.Saver()を呼ぶ前に宣言する変数数を揃える必要があるため．) もうちょいいい書き方があるかもしれない
-                P_logits = subarch.inference(images_placeholder, keep_prob)
+                P_logits = arch.inference(images_placeholder1, keep_prob)
     
                 # restore
                 saver = tf.train.Saver()
@@ -294,22 +297,25 @@ def main():
                 print("Model restored from : ", args.model)
                 vars_restored = tf.global_variables() # restoreしてきたvariableのリスト
                 
-                logits = arch.inference(images_placeholder, keep_prob) # namescope "Peripheral/"以下はrestoreしたVariableになっている，はず
+                logits = subarch.inference(images_placeholder1, images_placeholder2, keep_prob) # namescope "Peripheral/"以下はrestoreしたVariableになっている，はず
 
                 # 初期化するvariableをもとめる
                 vars_all = tf.global_variables()
                 vars_F = list(set(vars_all) - (set(vars_restored))) # FovealCNNにのみ定義してあるvariable
-                print("\nvars_all", vars_all, len(vars_all))
-                print("\nvars_F", vars_F, len(vars_F))
+                # print("\nvars_all", vars_all, len(vars_all))
+                # print("\nvars_F", vars_F, len(vars_F))
 
                 loss_value = loss(logits, labels_placeholder)
                 train_op = tf.train.AdamOptimizer(args.learning_rate).minimize(loss_value, var_list=vars_F) # vars_Fのみloss用いて重みを更新する．
                 acc = accuracy(logits, labels_placeholder)
 
+                vars_all = tf.global_variables()
+                vars_init = list(set(vars_all) - (set(vars_restored)))
+
                 # variableの初期化．restoreしてきたものは初期化しない．
-                sess.run(tf.variables_initializer(vars_F))
-    
-                print(vars_all[0], sess.run(vars_all[0])) # 重みの取得
+                sess.run(tf.variables_initializer(vars_init))
+
+                #print(vars_all[0], sess.run(vars_all[0])) # 重みの取得
     
                 saver = tf.train.Saver() # 再びsaverを呼び出す
     
@@ -317,18 +323,19 @@ def main():
                 summary_op = tf.summary.merge_all()
                 summary_writer = tf.summary.FileWriter(args.train_dir, sess.graph_def)
     
-                ### trainの処理 (trainable=Falseのところがちゃんと更新されないかチェックする．)
+                ### trainの処理 
         
                 # 訓練の実行
                 for step in range(args.max_steps):
                     dataset.shuffle() # バッチで取る前にデータセットをshuffleする   
                     #batch処理
                     for i in range(int(len(dataset.train_image_paths)/args.batch_size)): # iがbatchのindexになる #バッチのあまりが出る
-                        batch, labels = dataset.getTrainBatch(args.batch_size, i)
+                        batch, sub_batch, labels = dataset.getTrainBatch(args.batch_size, i)
         
                         # feed_dictでplaceholderに入れるデータを指定する
                         sess.run(train_op, feed_dict={
-                          images_placeholder: batch,
+                          images_placeholder1: batch,
+                          images_placeholder2: batch,
                           labels_placeholder: labels,
                           keep_prob: args.dropout_prob})
         
@@ -336,14 +343,16 @@ def main():
                         if i >= int(len(dataset.train_image_paths)/args.batch_size)-1:
                             # 最終バッチの学習のあと，そのバッチを使って評価．毎step毎にデータセット全体をシャッフルしてるから多少は有効な値が取れそう(母集団に対して)
                             train_accuracy = sess.run(acc, feed_dict={
-                            images_placeholder: batch,
+                            images_placeholder1: batch,
+                            images_placeholder2: batch,
                             labels_placeholder: labels,
                             keep_prob: 1.0})
                             print("step %d  training final-batch accuracy %g"%(step, train_accuracy))
         
                             # 1step終わるたびにTensorBoardに表示する値を追加する
                             summary_str = sess.run(summary_op, feed_dict={
-                                images_placeholder: batch,
+                                images_placeholder1: batch,
+                                images_placeholder2: batch,
                                 labels_placeholder: labels,
                                 keep_prob: 1.0})
                             summary_writer.add_summary(summary_str, step)
@@ -351,11 +360,12 @@ def main():
                 # testdataのaccuracy
                 test_data, test_labels = dataset.getTestData()
                 print("test accuracy %g" % sess.run(acc, feed_dict={
-                    images_placeholder: test_data,
+                    images_placeholder1: test_data,
+                    images_placeholder2: test_data,
                     labels_placeholder: test_labels,
                     keep_prob: 1.0}))
             
-                print(vars_all[0], sess.run(vars_all[0])) # 重みの取得 (ちゃんとPeripheralのVariablesの重みがfixされてる？)
+                #print(vars_all[0], sess.run(vars_all[0])) # 重みの取得 (ちゃんとPeripheralのVariablesの重みがfixされてる？)
     
                 # 最終的なモデルを保存
                 save_path = saver.save(sess, args.save_path)
