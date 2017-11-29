@@ -11,6 +11,7 @@
       * [Dataset.py](#datasetpy)
       * [evaluate.py](#evaluatepy)
       * [PeripheralCNN.py](#peripheralcnnpy)
+      * [TwoInputDataset.py](#TwoInputDatasetpy)
 
 ## 環境
 * tensorflow 1.4.0
@@ -68,3 +69,14 @@
 * まずPeripheralCNNを普通に学習させて，得たmodelのweights(fixed)を，FovealCNNで転移学習する感じ．
 * 特定物体認識 <-> 一般物体認識
 * 未完成
+
+## TwoInputDataset.py
+
+* `Dataset.py`の派生クラス
+* 2入力に対応
+* 今は本データセットとサブデータセットのindex関係が正常ではない
+    * サブデータセットのtrackingの際にフレームが抜ける可能性があるため
+    * フレーム数の情報がファイル名に保持されるように，データセットのファイル名を記述しているtxtファイルを新たに作成するスクリプトが必要
+    * とりあえずサブデータセットがフレーム抜けしていないデータを用いる．
+        * あとで`shuffle()`, `getTrainBatch()`を修正する必要がある
+* サブデータセットの作成 : [opencv_tracking.py](https://github.com/shigenius/python_sources)を用いる．
