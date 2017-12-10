@@ -10,7 +10,7 @@
       * [train.py](#trainpy)
       * [Dataset.py](#datasetpy)
       * [evaluate.py](#evaluatepy)
-      * [PeripheralCNN.py](#peripheralcnnpy)
+      * [SpecificObjectRecognition.py](#specificobjectrecognitionpy)
       * [TwoInputDataset.py](#twoinputdatasetpy)
 
 ## 環境
@@ -61,12 +61,12 @@
 % python evaluate.py <TestDataTXTPath> <ModelPath(i.e. ./model.ckpt)>
 ~~~
 
-## PeripheralCNN.py
+## SpecificObjectRecognition.py
 
-* PeripheralCNN : 画面全体を学習するモデル
-* FovealCNN : PeripheralCNNのfeature mapと，特定物体の局所的な画像情報によるfeature mapをconcatしたものを学習するモデル
+* PrimaryCNN : 画面全体を学習するモデル
+* SecondaryCNN : PrimaryCNNのfeature mapと，特定物体の局所的な画像情報によるfeature mapをconcatしたものを学習するモデル
 
-* まずPeripheralCNNを普通に学習させて，得たmodelのweights(fixed)を，FovealCNNで転移学習する感じ．
+* まずPrimaryCNNを普通に学習させて，得たmodelのweights(fixed)を，SecondaryCNNで転移学習する感じ．
 * 特定物体認識 <-> 一般物体認識
 
 ## TwoInputDataset.py

@@ -12,13 +12,13 @@ import random
 from Dataset import Dataset
 from TwoInputDataset import TwoInputDataset
 
-class PeripheralCNN:
+class PrimaryCNN:
     def __init__(self):
         self.image_size = 227
         self.num_classes = 10
 
     def inference(self, images_placeholder, keep_prob):
-        with tf.variable_scope('Peripheral') as scope:
+        with tf.variable_scope('Primary') as scope:
             def weight_variable(shape, name):
                 initial = tf.truncated_normal(shape, stddev=0.1)
                 return tf.get_variable(name, initializer=initial, trainable=True)
@@ -67,13 +67,13 @@ class PeripheralCNN:
         return y_conv
 
 
-class FovealCNN:
+class SecondaryCNN:
     def __init__(self):
         self.image_size = 227
         self.num_classes = 10
 
     def inference(self, images_placeholder1, images_placeholder2, keep_prob):
-        with tf.variable_scope('Peripheral', reuse=True) as scope:
+        with tf.variable_scope('Primary', reuse=True) as scope:
             def weight_variable(shape, name):
                 initial = tf.truncated_normal(shape, stddev=0.1)
                 return tf.get_variable(name, initializer=initial, trainable=True) ### trainable=False
@@ -105,7 +105,7 @@ class FovealCNN:
                 h_P_pool2 = max_pool_2x2(h_P_conv2)
 
 
-        with tf.variable_scope('Foveal') as scope:
+        with tf.variable_scope('Secondary') as scope:
             def weight_variable(shape, name):
                 initial = tf.truncated_normal(shape, stddev=0.1)
                 return tf.get_variable(name, initializer=initial, trainable=True)
@@ -167,6 +167,7 @@ def loss(logits, labels):
     return cross_entropy
 
 def training(loss, learning_rate):
+    # 重みの更新
     train_step = tf.train.AdamOptimizer(learning_rate).minimize(loss)
     return train_step
 
@@ -176,30 +177,10 @@ def accuracy(logits, labels):
     tf.summary.scalar("accuracy", accuracy)
     return accuracy
 
-def main():
-    parser = argparse.ArgumentParser(description='Learning your dataset, and evaluate the trained model')
-    parser.add_argument('train', help='File name of train data')
-    parser.add_argument('--train_sub', '-sub', help='File name of train data (sub)')
-    parser.add_argument('test', help='File name of train data')
 
-    parser.add_argument('--max_steps', '-s', type=int, default=100)
-    parser.add_argument('--batch_size', '-b', type=int, default=10)
+def primaryTrain(args) : 
 
-    parser.add_argument('--save_path', '-save', default='/home/akalab/tensorflow_works/model.ckpt', help='FullPath of output model')
-    parser.add_argument('--train_dir', '-dir', default='/tmp/data', help='Directory to put the training data. (TensorBoard)')
-
-    parser.add_argument('--learning_rate', '-lr', type=float, default=1e-4)
-    parser.add_argument('--dropout_prob', '-d', type=float, default=0.5)
-
-    parser.add_argument('--model', '-m', default='/home/akalab/tensorflow_works/model.ckpt', help='FullPath of loading model')
-
-    parser.add_argument('--flag', '-f', default='P', help='Train \"P\"eripheral or \"F\"oveal')
-
-    args = parser.parse_args()
-
-    if args.flag == 'P':
-
-        arch = PeripheralCNN()
+        arch = PrimaryCNN()
         dataset = Dataset(train=args.train, test=args.test, num_classes=arch.num_classes, image_size=arch.image_size)
     
         with tf.Graph().as_default():
@@ -271,11 +252,10 @@ def main():
         print("save the trained model at :", save_path)
 
 
+def secondaryTrain(args):
 
-    elif args.flag == 'F':
-
-        arch    = PeripheralCNN()
-        subarch = FovealCNN()
+        arch    = PrimaryCNN()
+        subarch = SecondaryCNN()
         
         dataset = TwoInputDataset(train=args.train, train_sub=args.train_sub, test=args.test, num_classes=arch.num_classes, image_size=arch.image_size)
 
@@ -297,11 +277,11 @@ def main():
                 print("Model restored from : ", args.model)
                 vars_restored = tf.global_variables() # restoreしてきたvariableのリスト
                 
-                logits = subarch.inference(images_placeholder1, images_placeholder2, keep_prob) # namescope "Peripheral/"以下はrestoreしたVariableになっている，はず
+                logits = subarch.inference(images_placeholder1, images_placeholder2, keep_prob) # namescope "Primary/"以下はrestoreしたVariableになっている，はず
 
                 # 初期化するvariableをもとめる
                 vars_all = tf.global_variables()
-                vars_F = list(set(vars_all) - (set(vars_restored))) # FovealCNNにのみ定義してあるvariable
+                vars_F = list(set(vars_all) - (set(vars_restored))) # SecondaryCNNにのみ定義してあるvariable
                 # print("\nvars_all", vars_all, len(vars_all))
                 # print("\nvars_F", vars_F, len(vars_F))
 
@@ -365,16 +345,40 @@ def main():
                     labels_placeholder: test_labels,
                     keep_prob: 1.0}))
             
-                #print(vars_all[0], sess.run(vars_all[0])) # 重みの取得 (ちゃんとPeripheralのVariablesの重みがfixされてる？)
+                #print(vars_all[0], sess.run(vars_all[0])) # 重みの取得 (ちゃんとPrimaryのVariablesの重みがfixされてる？)
     
                 # 最終的なモデルを保存
                 save_path = saver.save(sess, args.save_path)
                 print("save the trained model at :", save_path)
 
 
+def main():
+    parser = argparse.ArgumentParser(description='Learning your dataset, and evaluate the trained model')
+    parser.add_argument('train', help='File name of train data')
+    parser.add_argument('--train_sub', '-sub', help='File name of train data (sub)')
+    parser.add_argument('test', help='File name of train data')
 
+    parser.add_argument('--max_steps', '-s', type=int, default=100)
+    parser.add_argument('--batch_size', '-b', type=int, default=10)
+
+    parser.add_argument('--save_path', '-save', default='/home/akalab/tensorflow_works/model.ckpt', help='FullPath of output model')
+    parser.add_argument('--train_dir', '-dir', default='/tmp/data', help='Directory to put the training data. (TensorBoard)')
+
+    parser.add_argument('--learning_rate', '-lr', type=float, default=1e-4)
+    parser.add_argument('--dropout_prob', '-d', type=float, default=0.5)
+
+    parser.add_argument('--model', '-m', default='/home/akalab/tensorflow_works/model.ckpt', help='FullPath of loading model')
+
+    parser.add_argument('--flag', '-f', default='P', help='Train \"P\"rimary or \"S\"econdary')
+
+    args = parser.parse_args()
+
+    if args.flag == 'P':
+        primaryTrain(args)
+    elif args.flag == 'S':
+        secondaryTrain(args)
     else:
-        print("It is unknown Flag (plz assign flag P or F)")
+        print("It is unknown Flag (plz assign flag P or S)")
 
 if __name__ == '__main__':
     main()

@@ -3,6 +3,7 @@ import numpy as np
 import tensorflow as tf
 import tensorflow.python.platform
 import random
+import sys
 
 from Dataset import Dataset
 
@@ -71,6 +72,7 @@ class TwoInputDataset(Dataset):
 
         else:
             print("Dasaset initializer args error. (need 3 or 5 args)")
+            sys.exit()
 
     def shuffle(self):
         # shuffle (dataとlabelの対応が崩れないように)
