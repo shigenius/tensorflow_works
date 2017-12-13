@@ -12,6 +12,7 @@
       * [evaluate.py](#evaluatepy)
       * [SpecificObjectRecognition.py](#specificobjectrecognitionpy)
       * [TwoInputDataset.py](#twoinputdatasetpy)
+      * [makeDataset_forSpecificObjRecog.py](#makedataset_forspecificobjrecogpy)
 
 ## 環境
 * tensorflow 1.4.0
@@ -78,4 +79,29 @@
     * フレーム数の情報がファイル名に保持されるように，データセットのファイル名を記述しているtxtファイルを新たに作成するスクリプトが必要
     * とりあえずサブデータセットがフレーム抜けしていないデータを用いる．
         * あとで`shuffle()`, `getTrainBatch()`を修正する必要がある
-* サブデータセットの作成 : [opencv_tracking.py](https://github.com/shigenius/python_sources)を用いる．
+*FovealCNN サブデータセットの作成 : [opencv_tracking.py](https://github.com/shigenius/python_sources)を用いる．
+
+##  makeDataset_forSpecificObjRecog.py
+
+* `SpecificObjectRecognition.py` のデータセットを作成する．
+* testセットもランダムにサンプリングする．
+* 前提として，[opencv_tracking.py](https://github.com/shigenius/python_sources) を用いてサブデータセットを作成しておく必要がある．
+datasetのディレクトリ構造を以下のようにしておく．
+~~~
+dataset/
+ + class1/
+ + class2/
+    + class2_video1.mp4
+    + class2_video2.mov
+    + class2_video1/
+        + image_0001.jpg
+    + class2_video1_cropped/
+        + image_0001.jpg
+~~~
+* サブデータセットの各ディレクトリのsuffixとして`_cropped`をつける
+* 上記の例を用いると，class2_video1/内の画像数 >= class2_video1_cropped/内の画像数 となるようにしなければならない．
+  * trackingでフレームが抜ける可能性があるため
+ 
+~~~
+% python makeDataset_forSpecificObjRecog.py <dataset path> -r <test set rate(default=0.1)>
+~~~
