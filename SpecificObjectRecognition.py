@@ -181,7 +181,7 @@ def accuracy(logits, labels):
 def primaryTrain(args) : 
 
     arch = PrimaryCNN()
-    dataset = Dataset(train=args.train, test=args.test, num_classes=arch.num_classes, image_size=arch.image_size)
+    dataset = Dataset(train=args.train1, test=args.test1, num_classes=arch.num_classes, image_size=arch.image_size)
     
     with tf.Graph().as_default():
         # imageとlabelを入れる仮のTensor
@@ -257,7 +257,7 @@ def secondaryTrain(args):
     arch    = PrimaryCNN()
     subarch = SecondaryCNN()
     
-    dataset = TwoInputDataset(train=args.train, train_sub=args.train_sub, test=args.test, num_classes=arch.num_classes, image_size=arch.image_size)
+    dataset = TwoInputDataset(train1=args.train1, train2=args.train2, test1=args.test1, test2=args.test2,  num_classes=arch.num_classes, image_size=arch.image_size)
 
     with tf.Graph().as_default():
 
@@ -295,7 +295,7 @@ def secondaryTrain(args):
             # variableの初期化．restoreしてきたものは初期化しない．
             sess.run(tf.variables_initializer(vars_init))
 
-            #print(vars_all[0], sess.run(vars_all[0])) # 重みの取得
+            #print(vars_all, vars_all[0], sess.run(vars_all[0])) # 重みの取得
     
             saver = tf.train.Saver() # 再びsaverを呼び出す
     
@@ -309,42 +309,42 @@ def secondaryTrain(args):
             for step in range(args.max_steps):
                 dataset.shuffle() # バッチで取る前にデータセットをshuffleする   
                 #batch処理
-                for i in range(int(len(dataset.train_image_paths)/args.batch_size)): # iがbatchのindexになる #バッチのあまりが出る
-                    batch, sub_batch, labels = dataset.getTrainBatch(args.batch_size, i)
+                for i in range(int(len(dataset.train2_path)/args.batch_size)): # iがbatchのindexになる #バッチのあまりが出る
+                    batch1, batch2, labels = dataset.getTrainBatch(args.batch_size, i)
     
                     # feed_dictでplaceholderに入れるデータを指定する
                     sess.run(train_op, feed_dict={
-                      images_placeholder1: batch,
-                      images_placeholder2: batch,
+                      images_placeholder1: batch1,
+                      images_placeholder2: batch2,
                       labels_placeholder: labels,
                       keep_prob: args.dropout_prob})
     
                     # 最終バッチの処理
-                    if i >= int(len(dataset.train_image_paths)/args.batch_size)-1:
+                    if i >= int(len(dataset.train2_path)/args.batch_size)-1:
                         # 最終バッチの学習のあと，そのバッチを使って評価．毎step毎にデータセット全体をシャッフルしてるから多少は有効な値が取れそう(母集団に対して)
                         train_accuracy = sess.run(acc, feed_dict={
-                        images_placeholder1: batch,
-                        images_placeholder2: batch,
+                        images_placeholder1: batch1,
+                        images_placeholder2: batch2,
                         labels_placeholder: labels,
                         keep_prob: 1.0})
                         print("step %d  training final-batch accuracy %g"%(step, train_accuracy))
     
                         # 1step終わるたびにTensorBoardに表示する値を追加する
                         summary_str = sess.run(summary_op, feed_dict={
-                            images_placeholder1: batch,
-                            images_placeholder2: batch,
+                            images_placeholder1: batch1,
+                            images_placeholder2: batch2,
                             labels_placeholder: labels,
                             keep_prob: 1.0})
                         summary_writer.add_summary(summary_str, step)
-    
+            
             # testdataのaccuracy
-            test_data, test_labels = dataset.getTestData()
+            test1_data, test2_data, test_labels = dataset.getTestData()
             print("test accuracy %g" % sess.run(acc, feed_dict={
-                images_placeholder1: test_data,
-                images_placeholder2: test_data,
+                images_placeholder1: test1_data,
+                images_placeholder2: test2_data,
                 labels_placeholder: test_labels,
                 keep_prob: 1.0}))
-        
+            
             #print(vars_all[0], sess.run(vars_all[0])) # 重みの取得 (ちゃんとPrimaryのVariablesの重みがfixされてる？)
     
             # 最終的なモデルを保存
@@ -354,9 +354,10 @@ def secondaryTrain(args):
 
 def main():
     parser = argparse.ArgumentParser(description='Learning your dataset, and evaluate the trained model')
-    parser.add_argument('train', help='File name of train data')
-    parser.add_argument('--train_sub', '-sub', help='File name of train data (sub)')
-    parser.add_argument('test', help='File name of train data')
+    parser.add_argument('train1', help='File name of train data')
+    parser.add_argument('--train2', help='File name of train data (subset)')
+    parser.add_argument('test1', help='File name of train data')
+    parser.add_argument('--test2', help='File name of train data (subset)')
 
     parser.add_argument('--max_steps', '-s', type=int, default=100)
     parser.add_argument('--batch_size', '-b', type=int, default=10)

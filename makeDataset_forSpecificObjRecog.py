@@ -37,8 +37,9 @@ def main():
 
     test1 = sorted(list(map(lambda x: re.sub(r'_cropped','',  x), test2)))
     assert set(test1) & set(train1_list) == set(test1) # test1を保障する
-    train1 = sorted(list(set(train1_list) - set(test1)))
-    # print("len(train2_list)", len(train2_list), "len(train1_list)", len(train1_list), "len(test2)",len(test2), "len(train2)",len(train2), "len(test1)", len(test1), "len(train1)", len(train1))
+    train1 = sorted(list(map(lambda x: re.sub(r'_cropped','',  x), train2)))
+    assert set(train1) <= set(train1_list) # 実際に存在するか
+    #print("len(train2_list)", len(train2_list), "len(train1_list)", len(train1_list), "len(test2)",len(test2), "len(train2)",len(train2), "len(test1)", len(test1), "len(train1)", len(train1))
     
 
     with open(args.dataset + "/train1.txt", 'w') as f:

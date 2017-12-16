@@ -64,22 +64,19 @@
 
 ## SpecificObjectRecognition.py
 
-* PrimaryCNN : 画面全体を学習するモデル
+* PrimaryCNN : 普通のCNN
 * SecondaryCNN : PrimaryCNNのfeature mapと，特定物体の局所的な画像情報によるfeature mapをconcatしたものを学習するモデル
 
-* まずPrimaryCNNを普通に学習させて，得たmodelのweights(fixed)を，SecondaryCNNで転移学習する感じ．
-* 特定物体認識 <-> 一般物体認識
+* まずPrimaryCNNを学習させて，得たmodelのweights(fixed)を，SecondaryCNNで転移学習する．
+* おそらく，特定物体の認識について大きく精度が向上すると思われる．
+  * 特定物体認識 <-> 一般物体認識
 
 ## TwoInputDataset.py
 
 * `Dataset.py`の派生クラス
 * 2入力に対応
-* 今は本データセットとサブデータセットのindex関係が正常ではない
-    * サブデータセットのtrackingの際にフレームが抜ける可能性があるため
-    * フレーム数の情報がファイル名に保持されるように，データセットのファイル名を記述しているtxtファイルを新たに作成するスクリプトが必要
-    * とりあえずサブデータセットがフレーム抜けしていないデータを用いる．
-        * あとで`shuffle()`, `getTrainBatch()`を修正する必要がある
-*FovealCNN サブデータセットの作成 : [opencv_tracking.py](https://github.com/shigenius/python_sources)を用いる．
+* train1とtrain2，またtest1とtest2は元ファイルの行番号によって対応する．
+  * そのためそれぞれ行数が一致していなければならない
 
 ##  makeDataset_forSpecificObjRecog.py
 
