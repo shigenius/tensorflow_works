@@ -15,7 +15,7 @@ from TwoInputDataset import TwoInputDataset
 class PrimaryCNN:
     def __init__(self):
         self.image_size = 227
-        self.num_classes = 10
+        self.num_classes = 53
 
     def inference(self, images_placeholder, keep_prob):
         with tf.variable_scope('Primary') as scope:
@@ -216,14 +216,9 @@ def primaryTrain(args) :
             dataset.shuffle() # バッチで取る前にデータセットをshuffleする   
             #batch処理
             for i in range(int(len(dataset.train_image_paths)/args.batch_size)): # iがbatchのindexになる #バッチのあまりが出る
+
                 batch, labels = dataset.getTrainBatch(args.batch_size, i)
-    
-                # feed_dictでplaceholderに入れるデータを指定する
-                sess.run(train_op, feed_dict={
-                  images_placeholder: batch,
-                  labels_placeholder: labels,
-                  keep_prob: args.dropout_prob})
-    
+
                 # 最終バッチの処理
                 if i >= int(len(dataset.train_image_paths)/args.batch_size)-1:
                     # 最終バッチの学習のあと，そのバッチを使って評価．毎step毎にデータセット全体をシャッフルしてるから多少は有効な値が取れそう(母集団に対して)
@@ -239,6 +234,12 @@ def primaryTrain(args) :
                         labels_placeholder: labels,
                         keep_prob: 1.0})
                     summary_writer.add_summary(summary_str, step)
+    
+                # feed_dictでplaceholderに入れるデータを指定する
+                sess.run(train_op, feed_dict={
+                  images_placeholder: batch,
+                  labels_placeholder: labels,
+                  keep_prob: args.dropout_prob})
     
         # testdataのaccuracy
         test_data, test_labels = dataset.getTestData()

@@ -98,6 +98,8 @@ class Dataset:
 
         for path in self.train_image_paths[start:start+batchsize]:
             image = cv2.imread(path)
+            if image is None:
+                continue
             image = cv2.resize(image, (self.image_size, self.image_size)) 
 
             # 一列にした後、0-1のfloat値にする
@@ -116,6 +118,8 @@ class Dataset:
 
         for path in self.test_image_paths:
             image = cv2.imread(path)
+            if image is None:
+                continue
             image = cv2.resize(image, (self.image_size, self.image_size)) 
 
             test_images.append(image.flatten().astype(np.float32)/255.0)
