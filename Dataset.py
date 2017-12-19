@@ -94,20 +94,23 @@ class Dataset:
         # (あとでaugumentation諸々も実装したい)
 
         train_batch = []
+        labels_batch = []
         start = batchsize*index
 
-        for path in self.train_image_paths[start:start+batchsize]:
+        for i, path in enumerate(self.train_image_paths[start:start+batchsize]):
             image = cv2.imread(path)
             if image is None:
                 continue
+
             image = cv2.resize(image, (self.image_size, self.image_size)) 
 
             # 一列にした後、0-1のfloat値にする
             train_batch.append(image.flatten().astype(np.float32)/255.0)
+            labels_batch.append(self.train_labels[start+i])
 
         train_batch = np.asarray(train_batch)
-        labels_batch = self.train_labels[start:start+batchsize]
-
+        labels_batch = np.asarray(labels_batch)
+        
         return train_batch, labels_batch
         
 
@@ -115,16 +118,20 @@ class Dataset:
         # testdataを全部とってくる
 
         test_images = []
+        labels = []
 
-        for path in self.test_image_paths:
+        for i, path in enumerate(self.test_image_paths):
             image = cv2.imread(path)
             if image is None:
                 continue
+
             image = cv2.resize(image, (self.image_size, self.image_size)) 
 
-            test_images.append(image.flatten().astype(np.float32)/255.0)
+            test_images.append(image.flatten().astype(np.float32)/255.0) 
+            labels.append(self.test_labels[i])
 
         test_images = np.asarray(test_images)
+        labels = np.asarray(labels)
 
-        return test_images, self.test_labels
+        return test_images, labels
 
