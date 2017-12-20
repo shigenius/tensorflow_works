@@ -30,33 +30,45 @@ class PrimaryCNN:
                 b_conv1 = bias_variable([64], "b")
                 h_conv1 = tf.nn.relu(tf.nn.conv2d(x_image, W_conv1, strides=[1,4,4,1], padding="VALID") + b_conv1)
 
-            with tf.name_scope('pool1') as scope:
-                h_pool1 = max_pool_2x2(h_conv1)
-
             with tf.variable_scope('conv2') as scope:
-                W_conv2 = weight_variable([3, 3, 64, 128], "w")
-                b_conv2 = bias_variable([128], "b")
-                h_conv2 = tf.nn.relu(tf.nn.conv2d(h_pool1, W_conv2, strides=[1,2,2,1], padding="VALID") + b_conv2)
+                W_conv2 = weight_variable([3, 3, 64, 64], "w")
+                b_conv2 = bias_variable([64], "b")
+                h_conv2 = tf.nn.relu(tf.nn.conv2d(h_conv1, W_conv2, strides=[1,2,2,1], padding="VALID") + b_conv2)
 
-            with tf.name_scope('pool2') as scope:
-                h_pool2 = max_pool_2x2(h_conv2)
+            with tf.variable_scope('conv3') as scope:
+                W_conv3 = weight_variable([3, 3, 64, 128], "w")
+                b_conv3 = bias_variable([128], "b")
+                h_conv3 = tf.nn.relu(tf.nn.conv2d(h_conv2, W_conv3, strides=[1,2,2,1], padding="VALID") + b_conv3)
+
+            with tf.variable_scope('conv4') as scope:
+                #h_pool2 = max_pool_2x2(h_conv2)
+                W_conv4 = weight_variable([3, 3, 128, 128], "w")
+                b_conv4 = bias_variable([128], "b")
+                h_conv4 = tf.nn.relu(tf.nn.conv2d(h_conv3, W_conv4, strides=[1,2,2,1], padding="VALID") + b_conv4)
 
             with tf.variable_scope('fc1') as scope:
-                h_pool2_flat = tf.reshape(h_pool2, [-1, 6*6*128])
+                h_conv4_flat = tf.reshape(h_conv4, [-1, 6*6*128])
     
-                W_fc1 = weight_variable([6*6*128, 256], "w")
-                b_fc1 = bias_variable([256], "b")
-                h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
+                W_fc1 = weight_variable([6*6*128, 1024], "w")
+                b_fc1 = bias_variable([1024], "b")
+                h_fc1 = tf.nn.relu(tf.matmul(h_conv4_flat, W_fc1) + b_fc1)
                 h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 
             with tf.variable_scope('fc2') as scope:
-                W_fc2 = weight_variable([256, self.num_classes], "w")
-                b_fc2 = bias_variable([self.num_classes], "b")
-                h_fc2 = tf.matmul(h_fc1_drop, W_fc2) + b_fc2
+                W_fc2 = weight_variable([1024, 256], "w")
+                b_fc2 = bias_variable([256], "b")
+                h_fc2 = tf.nn.relu(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
+                h_fc2_drop = tf.nn.dropout(h_fc2, keep_prob)
+
+            with tf.variable_scope('fc3') as scope:
+                W_fc3 = weight_variable([256, self.num_classes], "w")
+                b_fc3 = bias_variable([self.num_classes], "b")
+                h_fc3 = tf.matmul(h_fc2_drop, W_fc3) + b_fc3
+
         with tf.name_scope('softmax') as scope:
-            y_conv=tf.nn.softmax(h_fc2)
+            y = tf.nn.softmax(h_fc3)
     
-        return y_conv
+        return y
 
 
 class SecondaryCNN:

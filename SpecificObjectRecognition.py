@@ -14,6 +14,9 @@ from Dataset import Dataset
 from TwoInputDataset import TwoInputDataset
 from TwostepCNN import PrimaryCNN, SecondaryCNN
 
+
+### あとで消す
+
 def loss(logits, labels):
     # 交差エントロピーの計算
     # log(0) = NaN になる可能性があるので1e-10~1の範囲で正規化
@@ -71,7 +74,7 @@ def primaryTrain(args) :
             loss_summary_train = tf.summary.scalar("train_loss", loss)
 
         with tf.name_scope('test') as scope:
-            acc_summary_test = tf.summary.scalar("train_accuracy", accuracy)
+            acc_summary_test = tf.summary.scalar("test_accuracy", accuracy)
 
         # 保存の準備
         saver = tf.train.Saver()
@@ -103,14 +106,14 @@ def primaryTrain(args) :
 
                     training_op_list = [accuracy, acc_summary_train, loss_summary_train]
 
-                    # 最終バッチの学習のあと，そのバッチを使って評価．毎step毎にデータセット全体をシャッフルしてるから多少は有効な値が取れそう(母集団に対して)
+                    # 最終バッチの学習のあと，そのバッチを使って評価．
                     result = sess.run(training_op_list, feed_dict={images_placeholder: batch, labels_placeholder: labels, keep_prob: 1.0})
 
                     # 必要なサマリーを追記
                     for j in range(1, len(result)):
                         summary_writer.add_summary(result[j], step)
 
-                    print("step %d  training final-batch accuracy %g"%(step, result[0]))
+                    print("step %d  training final-batch accuracy: %g"%(step, result[0]))
     
                     # validation
                     test_data, test_labels = dataset.getTestData()
