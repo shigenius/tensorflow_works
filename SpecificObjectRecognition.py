@@ -8,6 +8,7 @@ import tensorflow as tf
 import tensorflow.python.platform
 import argparse
 import random
+from datetime import datetime 
 
 from Dataset import Dataset
 from TwoInputDataset import TwoInputDataset
@@ -26,12 +27,20 @@ def training(loss, learning_rate):
     train_step = tf.train.AdamOptimizer(learning_rate).minimize(loss)
     return train_step
 
-def accuracy(logits, labels):
-    correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(labels, 1))
-    accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
-    tf.summary.scalar("accuracy", accuracy)
-    return accuracy
+def accuracy(logits, labels, train=True):
+    if train == True:
+        with tf.name_scope('train') as scope:
+            correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(labels, 1))
+            accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
+            tf.summary.scalar("accuracy", accuracy)
 
+    else:
+        with tf.name_scope('test') as scope:
+            correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(labels, 1))
+            accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
+            tf.summary.scalar("accuracy", accuracy)
+
+    return accuracy
 
 def primaryTrain(args) : 
 
@@ -39,33 +48,45 @@ def primaryTrain(args) :
     dataset = Dataset(train=args.train1, test=args.test1, num_classes=arch.num_classes, image_size=arch.image_size)
     
     with tf.Graph().as_default():
-        # imageとlabelを入れる仮のTensor
+        # imageとlabelを入れるTensor
         images_placeholder = tf.placeholder(dtype="float", shape=(None, arch.image_size*arch.image_size*3)) # shapeの第一引数をNoneにすることによっておそらく可変長batchに対応できる
         labels_placeholder = tf.placeholder(dtype="float", shape=(None, arch.num_classes))
-        # dropout率を入れる仮のTensor
+        # dropout率を入れるTensor
         keep_prob = tf.placeholder(dtype="float")
     
-        # モデルを作る
+        # 計算モデルのop
         logits = arch.inference(images_placeholder, keep_prob)
-        #print(tf.global_variables())
-        saver = tf.train.Saver()
-        # lossを計算
-        loss_value = loss(logits, labels_placeholder)
-        # 訓練のoperation
-        train_op = training(loss_value, args.learning_rate)
-        # accuracyの計算
-        acc = accuracy(logits, labels_placeholder)
-    
+
+        # log(0) = NaN になる可能性があるので1e-10~1の範囲で正規化
+        loss = -tf.reduce_sum(labels_placeholder*tf.log(tf.clip_by_value(logits, 1e-10,1)))
+
+        # accuracyのop
+        correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(labels_placeholder, 1))
+        accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
+
+        with tf.name_scope('train') as scope:
+            # trainのop
+            train_step = tf.train.AdamOptimizer(args.learning_rate).minimize(loss)
+            acc_summary_train = tf.summary.scalar("train_accuracy", accuracy)
+            loss_summary_train = tf.summary.scalar("train_loss", loss)
+
+        with tf.name_scope('test') as scope:
+            acc_summary_test = tf.summary.scalar("train_accuracy", accuracy)
+
         # 保存の準備
-        #saver = tf.train.Saver()
+        saver = tf.train.Saver()
+
         # Sessionの作成
         sess = tf.Session()
+    
         # 変数の初期化
         sess.run(tf.global_variables_initializer())
+
         # TensorBoardで表示する値の設定
-        summary_op = tf.summary.merge_all()
-        summary_writer = tf.summary.FileWriter(args.train_dir, sess.graph_def)
-    
+        #summary_op = tf.summary.merge_all()
+        summary_writer = tf.summary.FileWriter(args.logdir+"/"+datetime.now().isoformat(), sess.graph)
+
+
         # 訓練の実行
         for step in range(args.max_steps):
             dataset.shuffle() # バッチで取る前にデータセットをshuffleする   
@@ -74,35 +95,31 @@ def primaryTrain(args) :
 
                 batch, labels = dataset.getTrainBatch(args.batch_size, i)
 
+                # バッチを学習
+                sess.run(train_step, feed_dict={images_placeholder: batch, labels_placeholder: labels, keep_prob: args.dropout_prob})
+
                 # 最終バッチの処理
                 if i >= int(len(dataset.train_image_paths)/args.batch_size)-1:
-                    # 最終バッチの学習のあと，そのバッチを使って評価．毎step毎にデータセット全体をシャッフルしてるから多少は有効な値が取れそう(母集団に対して)
-                    train_accuracy = sess.run(acc, feed_dict={
-                    images_placeholder: batch,
-                    labels_placeholder: labels,
-                    keep_prob: 1.0})
-                    print("step %d  training final-batch accuracy %g"%(step, train_accuracy))
-    
-                    # testdataのaccuracy
-                    test_data, test_labels = dataset.getTestData()
-                    print("test accuracy %g" % sess.run(acc, feed_dict={
-                    images_placeholder: test_data,
-                    labels_placeholder: test_labels,
-                    keep_prob: 1.0}))
 
-                    # 1step終わるたびにTensorBoardに表示する値を追加する
-                    summary_str = sess.run(summary_op, feed_dict={
-                        images_placeholder: batch,
-                        labels_placeholder: labels,
-                        keep_prob: 1.0})
-                    summary_writer.add_summary(summary_str, step)
+                    training_op_list = [accuracy, acc_summary_train, loss_summary_train]
+
+                    # 最終バッチの学習のあと，そのバッチを使って評価．毎step毎にデータセット全体をシャッフルしてるから多少は有効な値が取れそう(母集団に対して)
+                    result = sess.run(training_op_list, feed_dict={images_placeholder: batch, labels_placeholder: labels, keep_prob: 1.0})
+
+                    # 必要なサマリーを追記
+                    for j in range(1, len(result)):
+                        summary_writer.add_summary(result[j], step)
+
+                    print("step %d  training final-batch accuracy %g"%(step, result[0]))
     
-                # feed_dictでplaceholderに入れるデータを指定する
-                sess.run(train_op, feed_dict={
-                  images_placeholder: batch,
-                  labels_placeholder: labels,
-                  keep_prob: args.dropout_prob})
-    
+                    # validation
+                    test_data, test_labels = dataset.getTestData()
+                    val_op_list = [accuracy, acc_summary_test]
+                    val_result = sess.run(val_op_list, feed_dict={images_placeholder: test_data, labels_placeholder: test_labels, keep_prob: 1.0})
+
+                    summary_writer.add_summary(val_result[1], step)
+
+                    print("test accuracy %g" % val_result[0])
     
     # 最終的なモデルを保存
     save_path = saver.save(sess, args.save_path)
@@ -220,7 +237,7 @@ def main():
     parser.add_argument('--batch_size', '-b', type=int, default=10)
 
     parser.add_argument('--save_path', '-save', default='/home/akalab/tensorflow_works/model.ckpt', help='FullPath of output model')
-    parser.add_argument('--train_dir', '-dir', default='/tmp/data', help='Directory to put the training data. (TensorBoard)')
+    parser.add_argument('--logdir', '-log', default='/tmp/data', help='Directory to put the training data. (TensorBoard)')
 
     parser.add_argument('--learning_rate', '-lr', type=float, default=1e-4)
     parser.add_argument('--dropout_prob', '-d', type=float, default=0.5)

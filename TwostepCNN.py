@@ -52,9 +52,9 @@ class PrimaryCNN:
             with tf.variable_scope('fc2') as scope:
                 W_fc2 = weight_variable([256, self.num_classes], "w")
                 b_fc2 = bias_variable([self.num_classes], "b")
-
+                h_fc2 = tf.matmul(h_fc1_drop, W_fc2) + b_fc2
         with tf.name_scope('softmax') as scope:
-            y_conv=tf.nn.softmax(tf.matmul(h_fc1_drop, W_fc2) + b_fc2)
+            y_conv=tf.nn.softmax(h_fc2)
     
         return y_conv
 
