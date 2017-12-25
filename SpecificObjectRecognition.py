@@ -16,34 +16,34 @@ from TwostepCNN import PrimaryCNN, SecondaryCNN
 
 
 ### あとで消す
-
-def loss(logits, labels):
-    # 交差エントロピーの計算
-    # log(0) = NaN になる可能性があるので1e-10~1の範囲で正規化
-    cross_entropy = -tf.reduce_sum(labels*tf.log(tf.clip_by_value(logits, 1e-10,1)))
-    # TensorBoardで表示するよう指定
-    tf.summary.scalar("cross_entropy", cross_entropy)
-    return cross_entropy
-
-def training(loss, learning_rate):
-    # 重みの更新
-    train_step = tf.train.AdamOptimizer(learning_rate).minimize(loss)
-    return train_step
-
-def accuracy(logits, labels, train=True):
-    if train == True:
-        with tf.name_scope('train') as scope:
-            correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(labels, 1))
-            accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
-            tf.summary.scalar("accuracy", accuracy)
-
-    else:
-        with tf.name_scope('test') as scope:
-            correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(labels, 1))
-            accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
-            tf.summary.scalar("accuracy", accuracy)
-
-    return accuracy
+#
+# def loss(logits, labels):
+#     # 交差エントロピーの計算
+#     # log(0) = NaN になる可能性があるので1e-10~1の範囲で正規化
+#     cross_entropy = -tf.reduce_sum(labels*tf.log(tf.clip_by_value(logits, 1e-10,1)))
+#     # TensorBoardで表示するよう指定
+#     tf.summary.scalar("cross_entropy", cross_entropy)
+#     return cross_entropy
+#
+# def training(loss, learning_rate):
+#     # 重みの更新
+#     train_step = tf.train.AdamOptimizer(learning_rate).minimize(loss)
+#     return train_step
+#
+# def accuracy(logits, labels, train=True):
+#     if train == True:
+#         with tf.name_scope('train') as scope:
+#             correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(labels, 1))
+#             accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
+#             tf.summary.scalar("accuracy", accuracy)
+#
+#     else:
+#         with tf.name_scope('test') as scope:
+#             correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(labels, 1))
+#             accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
+#             tf.summary.scalar("accuracy", accuracy)
+#
+#     return accuracy
 
 def primaryTrain(args) : 
 
@@ -81,13 +81,17 @@ def primaryTrain(args) :
 
         # Sessionの作成
         sess = tf.Session()
-    
+
+        # # variables
+        # vars_all = tf.global_variables()
+        # print("\nvars_all", vars_all, len(vars_all))
+
         # 変数の初期化
         sess.run(tf.global_variables_initializer())
 
         # TensorBoardで表示する値の設定
         #summary_op = tf.summary.merge_all()
-        summary_writer = tf.summary.FileWriter(args.logdir+"/"+datetime.now().isoformat(), sess.graph)
+        summary_writer = tf.summary.FileWriter(args.logdir+"/Primary/"+datetime.now().isoformat(), sess.graph)
 
 
         # 訓練の実行
@@ -140,90 +144,112 @@ def secondaryTrain(args):
 
         with tf.Session() as sess:
             # placeholderたち
-            images_placeholder1 = tf.placeholder(dtype="float", shape=(None, arch.image_size*arch.image_size*3)) # shapeの第一引数をNoneにすることによっておそらく可変長batchに対応できる
-            images_placeholder2 = tf.placeholder(dtype="float", shape=(None, arch.image_size*arch.image_size*3))
+            images_placeholderA = tf.placeholder(dtype="float", shape=(None, arch.image_size*arch.image_size*3)) # shapeの第一引数をNoneにすることによっておそらく可変長batchに対応できる
+            images_placeholderB = tf.placeholder(dtype="float", shape=(None, arch.image_size*arch.image_size*3))
             labels_placeholder = tf.placeholder(dtype="float", shape=(None, arch.num_classes))
             keep_prob = tf.placeholder(dtype="float")
-    
+
             # 仮のinference (ckptに保存されている変数の数と，tf.train.Saver()を呼ぶ前に宣言する変数数を揃える必要があるため．) もうちょいいい書き方があるかもしれない
-            P_logits = arch.inference(images_placeholder1, keep_prob)
+            P_logits = arch.inference(images_placeholderA, keep_prob)
     
             # restore
             saver = tf.train.Saver()
             saver.restore(sess, args.model)
             print("Model restored from : ", args.model)
             vars_restored = tf.global_variables() # restoreしてきたvariableのリスト
-            
-            logits = subarch.inference(images_placeholder1, images_placeholder2, keep_prob) # namescope "Primary/"以下はrestoreしたVariableになっている，はず
+            # print("\nvars_restored", vars_restored)
 
-            # 初期化するvariableをもとめる
+            # 計算モデルのop
+            logits = subarch.inference(images_placeholderA, images_placeholderB, keep_prob) # namescope "Primary/"以下はrestoreしたVariableになっている，はず
+
+            # 更新するvariableをもとめる
             vars_all = tf.global_variables()
-            vars_F = list(set(vars_all) - (set(vars_restored))) # SecondaryCNNにのみ定義してあるvariable
+            vars_S = list(set(vars_all) - (set(vars_restored))) # SecondaryCNNにのみ定義してあるvariable
             # print("\nvars_all", vars_all, len(vars_all))
-            # print("\nvars_F", vars_F, len(vars_F))
+            # print("\nvars_S", vars_S, len(vars_S))
 
-            loss_value = loss(logits, labels_placeholder)
-            train_op = tf.train.AdamOptimizer(args.learning_rate).minimize(loss_value, var_list=vars_F) # vars_Fのみloss用いて重みを更新する．
-            acc = accuracy(logits, labels_placeholder)
+            # loss_value = loss(logits, labels_placeholder)
+            # train_op = tf.train.AdamOptimizer(args.learning_rate).minimize(loss_value, var_list=vars_S) # vars_Sのみloss用いて重みを更新する．
+            # acc = accuracy(logits, labels_placeholder)
+
+
+            # log(0) = NaN になる可能性があるので1e-10~1の範囲で正規化
+            loss = -tf.reduce_sum(labels_placeholder * tf.log(tf.clip_by_value(logits, 1e-10, 1)))
+
+            # accuracyのop
+            correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(labels_placeholder, 1))
+            accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
+
+            with tf.name_scope('train') as scope:
+                # trainのop
+                train_step = tf.train.AdamOptimizer(args.learning_rate).minimize(loss, var_list=vars_S)
+                acc_summary_train = tf.summary.scalar("train_accuracy", accuracy)
+                loss_summary_train = tf.summary.scalar("train_loss", loss)
+
+            with tf.name_scope('test') as scope:
+                acc_summary_test = tf.summary.scalar("test_accuracy", accuracy)
+
 
             vars_all = tf.global_variables()
             vars_init = list(set(vars_all) - (set(vars_restored)))
+            # print("\nvars_all", vars_all)
+            # print("\nvars_init", vars_init)
 
             # variableの初期化．restoreしてきたものは初期化しない．
             sess.run(tf.variables_initializer(vars_init))
 
-            #print(vars_all, vars_all[0], sess.run(vars_all[0])) # 重みの取得
+            # print(vars_restored, vars_restored[0], sess.run(vars_restored[0])) # 重みの取得
     
             saver = tf.train.Saver() # 再びsaverを呼び出す
-    
+
+            # # variables
+            # vars_all = tf.global_variables()
+            # print("\nvars_all", vars_all, len(vars_all))
+
             # TensorBoardで表示する値の設定
-            summary_op = tf.summary.merge_all()
-            summary_writer = tf.summary.FileWriter(args.train_dir, sess.graph_def)
-    
-            ### trainの処理 
-    
+            summary_writer = tf.summary.FileWriter(args.logdir + "/Secondary/" + datetime.now().isoformat(), sess.graph)
+
             # 訓練の実行
             for step in range(args.max_steps):
-                dataset.shuffle() # バッチで取る前にデータセットをshuffleする   
-                #batch処理
-                for i in range(int(len(dataset.train2_path)/args.batch_size)): # iがbatchのindexになる #バッチのあまりが出る
-                    batch1, batch2, labels = dataset.getTrainBatch(args.batch_size, i)
-    
-                    # feed_dictでplaceholderに入れるデータを指定する
-                    sess.run(train_op, feed_dict={
-                      images_placeholder1: batch1,
-                      images_placeholder2: batch2,
-                      labels_placeholder: labels,
-                      keep_prob: args.dropout_prob})
-    
+                dataset.shuffle()  # バッチで取る前にデータセットをshuffleする
+                # batch処理
+                for i in range(int(len(dataset.train2_path) / args.batch_size)):  # iがbatchのindexになる #バッチのあまりが出る
+
+                    batchA, batchB, labels = dataset.getTrainBatch(args.batch_size, i)
+
+                    # バッチを学習
+                    sess.run(train_step, feed_dict={images_placeholderA: batchA, images_placeholderB: batchB, labels_placeholder: labels,
+                                                    keep_prob: args.dropout_prob})
+
                     # 最終バッチの処理
-                    if i >= int(len(dataset.train2_path)/args.batch_size)-1:
-                        # 最終バッチの学習のあと，そのバッチを使って評価．毎step毎にデータセット全体をシャッフルしてるから多少は有効な値が取れそう(母集団に対して)
-                        train_accuracy = sess.run(acc, feed_dict={
-                        images_placeholder1: batch1,
-                        images_placeholder2: batch2,
-                        labels_placeholder: labels,
-                        keep_prob: 1.0})
-                        print("step %d  training final-batch accuracy %g"%(step, train_accuracy))
-    
-                        # 1step終わるたびにTensorBoardに表示する値を追加する
-                        summary_str = sess.run(summary_op, feed_dict={
-                            images_placeholder1: batch1,
-                            images_placeholder2: batch2,
-                            labels_placeholder: labels,
-                            keep_prob: 1.0})
-                        summary_writer.add_summary(summary_str, step)
-            
-            # testdataのaccuracy
-            test1_data, test2_data, test_labels = dataset.getTestData()
-            print("test accuracy %g" % sess.run(acc, feed_dict={
-                images_placeholder1: test1_data,
-                images_placeholder2: test2_data,
-                labels_placeholder: test_labels,
-                keep_prob: 1.0}))
-            
-            #print(vars_all[0], sess.run(vars_all[0])) # 重みの取得 (ちゃんとPrimaryのVariablesの重みがfixされてる？)
-    
+                    if i >= int(len(dataset.train2_path) / args.batch_size) - 1:
+
+                        training_op_list = [accuracy, acc_summary_train, loss_summary_train]
+
+                        # 最終バッチの学習のあと，そのバッチを使って評価．
+                        result = sess.run(training_op_list,
+                                          feed_dict={images_placeholderA: batchA, images_placeholderB: batchB, labels_placeholder: labels,
+                                                     keep_prob: 1.0})
+
+                        # 必要なサマリーを追記
+                        for j in range(1, len(result)):
+                            summary_writer.add_summary(result[j], step)
+
+                        print("step %d  training final-batch accuracy: %g" % (step, result[0]))
+
+                        # validation
+                        test_dataA, test_dataB, test_labels = dataset.getTestData()
+                        val_op_list = [accuracy, acc_summary_test]
+                        val_result = sess.run(val_op_list,
+                                              feed_dict={images_placeholderA: test_dataA, images_placeholderB: test_dataB, labels_placeholder: test_labels,
+                                                         keep_prob: 1.0})
+
+                        summary_writer.add_summary(val_result[1], step)
+
+                        print("test accuracy %g" % val_result[0])
+
+                        # print(vars_restored, vars_restored[0], sess.run(vars_restored[0]))  # 重みの取得
+
             # 最終的なモデルを保存
             save_path = saver.save(sess, args.save_path)
             print("save the trained model at :", save_path)
