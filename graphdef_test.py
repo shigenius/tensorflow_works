@@ -7,9 +7,10 @@ import tensorflow as tf
 import numpy as np
 
 import argparse
+from datetime import datetime
 
-MODEL_PATH = '/tmp/imagenet/classify_image_graph_def.pb' # pre-trained inception v3 model
-IMAGE_PATH = '/Users/shigetomi/Desktop/samplepictures/dog.jpg'
+MODEL_PATH = '/Users/shigetomi/Downloads/imagenet/classify_image_graph_def.pb' # pre-trained inception v3 model
+IMAGE_PATH = '/Users/shigetomi/Desktop/samplepictures/image_0011.jpg'
 
 
 def create_graph():
@@ -23,6 +24,7 @@ def sandbox():
     if not tf.gfile.Exists(IMAGE_PATH):
         tf.logging.fatal('File does not exist %s', IMAGE_PATH)
     image_data = tf.gfile.FastGFile(IMAGE_PATH, 'rb').read()
+    print(image_data)
 
     create_graph()
 
@@ -48,7 +50,7 @@ def sandbox():
 
         NUM_TOP_PREDICTIONS = 5
 
-        node_lookup = NodeLookup(label_lookup_path='/tmp/imagenet/imagenet_2012_challenge_label_map_proto.pbtxt', uid_lookup_path='/tmp/imagenet/imagenet_synset_to_human_label_map.txt')
+        node_lookup = NodeLookup(label_lookup_path='/Users/shigetomi/Downloads/imagenet/imagenet_2012_challenge_label_map_proto.pbtxt', uid_lookup_path='/Users/shigetomi/Downloads/imagenet/imagenet_synset_to_human_label_map.txt')
         top_k = logits.argsort()[-NUM_TOP_PREDICTIONS:][::-1]
         for node_id in top_k:
             human_string = node_lookup.id_to_string(node_id)
@@ -63,7 +65,7 @@ def sandbox():
         pool3_features = sess.run(pool3, {'DecodeJpeg/contents:0': image_data})
         # pool3_features = np.squeeze(pool3_features)
 
-        print("pool3_features", pool3_features, pool3_features.shape) #(2048,)
+        print("pool3_features", type(pool3_features), pool3_features, pool3_features.shape) #(2048,)
 
 
 def train(args):
@@ -79,17 +81,18 @@ def train(args):
 
     # with tf.Graph().as_default():
     with tf.Session() as sess:
-        images_placeholderA = tf.placeholder(dtype="float", shape=(None, image_size * image_size * 3))
+        # images_placeholderA = tf.placeholder(dtype="float", shape=(None, image_size * image_size * 3))
         images_placeholderB = tf.placeholder(dtype="float", shape=(None, image_size * image_size * 3))
         labels_placeholder = tf.placeholder(dtype="float", shape=(None, num_classes))
+        features_placeholder = tf.placeholder(dtype="float", shape=(None, 1, 1, 2048)) # pool3 features. *shape & type is not nconfirmed yet
         keep_prob = tf.placeholder(dtype="float")
 
-        #---
-        assing_ops = tf.Graph.get_operations(sess.graph)
-        for op in assing_ops:
-            print("operation name :", op.name, op.op_def.name)
-            for outputname in op.outputs:
-                print("  output :", outputname)  # 出力テンソルの名前
+        #--- graph内のtensor名の確認．
+        # assing_ops = tf.Graph.get_operations(sess.graph)
+        # for op in assing_ops:
+        #     print("operation name :", op.name, op.op_def.name)
+        #     for outputname in op.outputs:
+        #         print("  output :", outputname)
         #---
 
         incep_pool3 = sess.graph.get_tensor_by_name('pool_3:0')
@@ -99,6 +102,7 @@ def train(args):
         # incep_features = np.squeeze(incep_features)
         # print(incep_features)
 
+        # base archtecture
         with tf.variable_scope('SimpleCNN') as scope:
             def weight_variable(shape, name):
                 initial = tf.truncated_normal(shape, stddev=0.1)
@@ -128,13 +132,11 @@ def train(args):
 
             with tf.name_scope('pool2') as scope:
                 h_pool2 = max_pool_2x2(h_conv2)
-                h_pool2_flat = tf.reshape(h_pool2, [-1,  6 * 6 * 128])
-
-            incep_pool3_flat = tf.reshape(incep_pool3, [-1,  2048]) # batch処理できる...?
 
             with tf.name_scope('concat') as scope:
-                h_concated = tf.concat([h_pool2_flat, incep_pool3_flat], 1)  # (?, x, y, z)
-                print(h_concated.shape)
+                h_pool2_flat = tf.reshape(h_pool2, [-1,  6 * 6 * 128])
+                incep_pool3_features_flat = tf.reshape(features_placeholder, [-1, 2048])
+                h_concated = tf.concat([h_pool2_flat, incep_pool3_features_flat], 1)  # (?, x, y, z)
 
             with tf.variable_scope('fc1') as scope:
                 W_fc1 = weight_variable([6 * 6 * 128 + 2048, 1024], "w")
@@ -168,6 +170,8 @@ def train(args):
         # 変数の初期化
         sess.run(tf.global_variables_initializer())
 
+        summary_writer = tf.summary.FileWriter(args.logdir + "/twostep/" + datetime.now().isoformat(), sess.graph)
+
         # 学習の処理
         for step in range(args.max_steps):
             dataset.shuffle()  # バッチで取る前にデータセットをshuffleする
@@ -176,12 +180,24 @@ def train(args):
 
                 batchA, batchB, labels = dataset.getTrainBatch(args.batch_size, i)
 
+                # get features
+                incep_features_batch = np.zeros((len(batchA), 1, 1, 2048))
+                for j, image in enumerate(batchA):
+                    # ndarray image -> tensor -> encoded image
+                    image_tensor = tf.convert_to_tensor(np.uint8(np.reshape(image, [image_size, image_size, 3])[:, :, ::-1].copy()))
+                    encoded = tf.image.encode_jpeg(image_tensor)
+                    encoded_data = sess.run(encoded)
+                    incep_features_batch[j] = sess.run(incep_pool3, {'DecodeJpeg/contents:0': encoded_data})
+
+                # print(incep_features_batch.shape) # (batchsize, 1, 1, 2048)
+
                 # バッチを学習
-                sess.run(train_step, feed_dict={'DecodeJpeg/contents:0': batchA, # image dataを入力にしなければならない(batch処理は不可能？)
+                sess.run(train_step, feed_dict={features_placeholder: incep_features_batch,
                                                 images_placeholderB: batchB,
                                                 labels_placeholder: labels,
                                                 keep_prob: args.dropout_prob})
 
+                # print("i:", i, "int(len(dataset.train2_path) / args.batch_size): ", int(len(dataset.train2_path) / args.batch_size))
                 # 最終バッチの処理
                 if i >= int(len(dataset.train2_path) / args.batch_size) - 1:
 
@@ -189,21 +205,35 @@ def train(args):
 
                     # 最終バッチの学習のあと，そのバッチを使って評価．
                     result = sess.run(training_op_list,
-                                      feed_dict={images_placeholderA: batchA, images_placeholderB: batchB,
+                                      feed_dict={features_placeholder: incep_features_batch, images_placeholderB: batchB,
                                                  labels_placeholder: labels,
                                                  keep_prob: 1.0})
 
                     # 必要なサマリーを追記
-                    for j in range(1, len(result)):
-                        summary_writer.add_summary(result[j], step)
+                    for l in range(1, len(result)):
+                        summary_writer.add_summary(result[l], step)
 
                     print("step %d  training final-batch accuracy: %g" % (step, result[0]))
 
                     # validation
                     test_dataA, test_dataB, test_labels = dataset.getTestData()
+
+                    # print("test_dataA length :", len(test_dataA))
+                    # get features
+                    incep_features_test_batch = np.zeros((len(test_dataA), 1, 1, 2048))
+
+                    for k, image in enumerate(test_dataA):
+                        # ndarray image -> tensor -> encoded image
+                        image_tensor = tf.convert_to_tensor(
+                            np.uint8(np.reshape(image, [image_size, image_size, 3])[:, :, ::-1].copy()))
+                        encoded = tf.image.encode_jpeg(image_tensor)
+                        encoded_data = sess.run(encoded)
+                        incep_features_test_batch[k] = sess.run(incep_pool3, {'DecodeJpeg/contents:0': encoded_data})
+
                     val_op_list = [accuracy, acc_summary_test]
                     val_result = sess.run(val_op_list,
-                                          feed_dict={images_placeholderA: test_dataA, images_placeholderB: test_dataB,
+                                          feed_dict={features_placeholder:incep_features_test_batch,
+                                                     images_placeholderB: test_dataB,
                                                      labels_placeholder: test_labels,
                                                      keep_prob: 1.0})
 
@@ -211,7 +241,13 @@ def train(args):
 
                     print("test accuracy %g" % val_result[0])
 
-                    # print(vars_restored, vars_restored[0], sess.run(vars_restored[0]))  # 重みの取得
+                    # print("incep_pool3 weight? :", sess.run(incep_pool3), incep_pool3.shape)
+
+        # 最終的なモデルを保存
+        save_path = saver.save(sess, args.save_path)
+        print("save the trained model at :", save_path)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('train1', help='File name of train data')
@@ -222,7 +258,7 @@ if __name__ == '__main__':
     parser.add_argument('--max_steps', '-s', type=int, default=100)
     parser.add_argument('--batch_size', '-b', type=int, default=10)
 
-    parser.add_argument('--save_path', '-save', default='/home/akalab/tensorflow_works/model.ckpt', help='FullPath of output model')
+    parser.add_argument('--save_path', '-save', default='/home/akalab/tensorflow_works/model/twostep.ckpt', help='FullPath of output model')
     parser.add_argument('--logdir', '-log', default='/tmp/data', help='Directory to put the training data. (TensorBoard)')
 
     parser.add_argument('--learning_rate', '-lr', type=float, default=1e-4)
