@@ -1,7 +1,7 @@
 # after running : models/tutorials/image/imagenet/classify_image.py
 
 # Q. これはなに？
-# A. .pb形式で保存されたgraph構造とパラメータを呼び出してなんやかんやするサンプルコード
+#  .pb形式で保存されたgraph構造とパラメータを呼び出してなんやかんやするサンプルコードです
 
 import tensorflow as tf
 import numpy as np
@@ -9,7 +9,7 @@ import numpy as np
 import argparse
 from datetime import datetime
 
-MODEL_PATH = '/Users/shigetomi/Downloads/imagenet/classify_image_graph_def.pb' # pre-trained inception v3 model
+MODEL_PATH = '/home/akalab/classify_image_graph_def.pb' # pre-trained inception v3 model
 IMAGE_PATH = '/Users/shigetomi/Desktop/samplepictures/image_0011.jpg'
 
 
@@ -67,12 +67,12 @@ def sandbox():
 
         print("pool3_features", type(pool3_features), pool3_features, pool3_features.shape) #(2048,)
 
-
+@profile
 def train(args):
     from TwoInputDataset import TwoInputDataset
 
     image_size = 227
-    num_classes = 10
+    num_classes = 4
 
     # arch = SimpleCNN()
     dataset = TwoInputDataset(train1=args.train1, train2=args.train2, test1=args.test1, test2=args.test2,  num_classes=num_classes, image_size=image_size)
@@ -82,10 +82,10 @@ def train(args):
     # with tf.Graph().as_default():
     with tf.Session() as sess:
         # images_placeholderA = tf.placeholder(dtype="float", shape=(None, image_size * image_size * 3))
-        images_placeholderB = tf.placeholder(dtype="float", shape=(None, image_size * image_size * 3))
-        labels_placeholder = tf.placeholder(dtype="float", shape=(None, num_classes))
-        features_placeholder = tf.placeholder(dtype="float", shape=(None, 1, 1, 2048)) # pool3 features. *shape & type is not nconfirmed yet
-        keep_prob = tf.placeholder(dtype="float")
+        images_placeholderB = tf.placeholder(dtype="float32", shape=(None, image_size * image_size * 3))
+        labels_placeholder = tf.placeholder(dtype="float32", shape=(None, num_classes))
+        features_placeholder = tf.placeholder(dtype="float32", shape=(None, 1, 1, 2048)) # pool3 features. *shape & type is not nconfirmed yet
+        keep_prob = tf.placeholder(dtype="float32")
 
         #--- graph内のtensor名の確認．
         # assing_ops = tf.Graph.get_operations(sess.graph)
@@ -96,7 +96,7 @@ def train(args):
         #---
 
         incep_pool3 = sess.graph.get_tensor_by_name('pool_3:0')
-        print("incep_pool3 weight? :", sess.run(incep_pool3), incep_pool3.shape) # 重みの出力？
+        # print("incep_pool3 weight? :", sess.run(incep_pool3), incep_pool3.shape) # 重みの出力？
 
         # incep_features = sess.run(incep_pool3, {'DecodeJpeg/contents:0': image_data})
         # incep_features = np.squeeze(incep_features)
@@ -239,7 +239,7 @@ def train(args):
 
                     summary_writer.add_summary(val_result[1], step)
 
-                    print("test accuracy %g" % val_result[0])
+                    print(" test accuracy %g" % val_result[0])
 
                     # print("incep_pool3 weight? :", sess.run(incep_pool3), incep_pool3.shape)
 
@@ -247,26 +247,40 @@ def train(args):
         save_path = saver.save(sess, args.save_path)
         print("save the trained model at :", save_path)
 
+class tmpparse:
+    def __init__(self):
+        self.train1 = '/home/akalab/dataset_walls/train2.txt'
+        self.train2 = '/home/akalab/dataset_walls/train1.txt'
+        self.test1 = '/home/akalab/dataset_walls/test2.txt'
+        self.test2 = '/home/akalab/dataset_walls/test1.txt'
+        self.max_steps = 3
+        self.batch_size = 10
+        self.save_path = '/home/akalab/tensorflow_works/model/twostep.ckpt'
+        self.logdir = '/home/akalab/tensorflow_works/log/'
+        self.learning_rate = 1e-4
+        self.dropout_prob = 0.5
 
 if __name__ == '__main__':
+    """
     parser = argparse.ArgumentParser(description='')
-    parser.add_argument('train1', help='File name of train data')
-    parser.add_argument('--train2', help='File name of train data (subset)')
-    parser.add_argument('test1', help='File name of train data')
-    parser.add_argument('--test2', help='File name of train data (subset)')
+    parser.add_argument('--train1', help='File name of train data', default='~/dataset_walls/train2.txt ')
+    parser.add_argument('--train2', help='File name of train data (subset)', default='~/dataset_walls/train1.txt')
+    parser.add_argument('--test1', help='File name of train data', default='~/dataset_walls/test2.txt')
+    parser.add_argument('--test2', help='File name of train data (subset)', default='~/dataset_walls/test1.txt')
 
-    parser.add_argument('--max_steps', '-s', type=int, default=100)
+    parser.add_argument('--max_steps', '-s', type=int, default=3)
     parser.add_argument('--batch_size', '-b', type=int, default=10)
 
     parser.add_argument('--save_path', '-save', default='/home/akalab/tensorflow_works/model/twostep.ckpt', help='FullPath of output model')
-    parser.add_argument('--logdir', '-log', default='/tmp/data', help='Directory to put the training data. (TensorBoard)')
+    parser.add_argument('--logdir', '-log', default='/home/akalab/tensorflow_works/log/', help='Directory to put the training data. (TensorBoard)')
 
     parser.add_argument('--learning_rate', '-lr', type=float, default=1e-4)
     parser.add_argument('--dropout_prob', '-d', type=float, default=0.5)
 
-    parser.add_argument('--model', '-m', default='/home/akalab/tensorflow_works/model.ckpt', help='FullPath of loading model')
+    # parser.add_argument('--model', '-m', default='/home/akalab/tensorflow_works/model.ckpt', help='FullPath of loading model')
 
     args = parser.parse_args()
-
+    """
+    args = tmpparse()
     # sandbox()
     train(args)

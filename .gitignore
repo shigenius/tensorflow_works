@@ -3,3 +3,4 @@ model/
 gh-md-toc 
 __pycache__/
 *log.log
+log/
