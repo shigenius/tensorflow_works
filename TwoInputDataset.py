@@ -101,9 +101,27 @@ class TwoInputDataset(Dataset):
         self.train2_path = shuffled_data2
         self.train2_label = shuffled_labels
 
+
+        indexl = [i for i in range(len(self.test1_path))]
+        shuffled_indexl = list(indexl)
+        random.shuffle(shuffled_indexl)
+
+        shuffled_data1 = self.test1_path
+        shuffled_data2 = self.test2_path
+        shuffled_labels = self.test2_label
+
+        for i, (test1, test2, label) in enumerate(zip(self.test1_path, self.test2_path, self.test2_label)):
+            shuffled_data1[shuffled_indexl[i]] = test1
+            shuffled_data2[shuffled_indexl[i]] = test2
+            shuffled_labels[shuffled_indexl[i]] = label
+
+        self.test1_path = shuffled_data1
+        self.test2_path = shuffled_data2
+        self.test2_label = shuffled_labels
+
         # indexの対応関係が破壊されてないかの確認
-        #for i, (train, label) in enumerate(zip(self.train_image_paths, self.train_labels)):
-        #    print(i, train, label)
+        # for i, (test1, test2, label) in enumerate(zip(self.test1_path, self.test2_path, self.test2_label)):
+        #     print(i, test1, test2, label)
 
 
     def getTrainBatch(self, batchsize, index):
@@ -135,21 +153,45 @@ class TwoInputDataset(Dataset):
         return train1_batch, train2_batch, labels_batch
 
 
-    def getTestData(self):
-        # testdataを全部とってくる
+    # def getTestData(self):
+    #     # testdataを全部とってくる
+    #
+    #     test1_images = []
+    #     test2_images = []
+    #     for path1, path2 in zip(self.test1_path, self.test2_path):
+    #         image1 = cv2.imread(path1)
+    #         image2 = cv2.imread(path2)
+    #         image1 = cv2.resize(image1, (self.image_size, self.image_size))
+    #         image2 = cv2.resize(image2, (self.image_size, self.image_size))
+    #         test1_images.append(image1.flatten().astype(np.float32)/255.0)
+    #         test2_images.append(image2.flatten().astype(np.float32)/255.0)
+    #
+    #     test1_images = np.asarray(test1_images)
+    #     test2_images = np.asarray(test2_images)
+    #
+    #     return test1_images, test2_images, self.test2_label
 
-        test1_images = []
-        test2_images = []
-        for path1, path2 in zip(self.test1_path, self.test2_path):
+    def getTestData(self, batchsize, index):
+        test1_batch = []
+        test2_batch = []
+        start = batchsize * index
+        end = start + batchsize - 1
+
+        for i, path1 in enumerate(self.test1_path[start:end]):
+            path2 = self.test2_path[i]
+
             image1 = cv2.imread(path1)
             image2 = cv2.imread(path2)
-            image1 = cv2.resize(image1, (self.image_size, self.image_size)) 
-            image2 = cv2.resize(image2, (self.image_size, self.image_size)) 
-            test1_images.append(image1.flatten().astype(np.float32)/255.0)
-            test2_images.append(image2.flatten().astype(np.float32)/255.0)
+            image1 = cv2.resize(image1, (self.image_size, self.image_size))
+            image2 = cv2.resize(image2, (self.image_size, self.image_size))
 
-        test1_images = np.asarray(test1_images)
-        test2_images = np.asarray(test2_images)
+            # 一列にした後、0-1のfloat値にする
+            test1_batch.append(image1.flatten().astype(np.float32)/255.0)
+            test2_batch.append(image2.flatten().astype(np.float32)/255.0)
 
-        return test1_images, test2_images, self.test2_label
+        test1_batch = np.asarray(test1_batch)
+        test2_batch = np.asarray(test2_batch)
+        labels_batch = self.test2_label[start:end]
+
+        return test1_batch, test2_batch, labels_batch
         

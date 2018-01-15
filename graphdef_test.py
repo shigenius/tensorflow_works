@@ -9,7 +9,8 @@ import numpy as np
 import argparse
 from datetime import datetime
 
-MODEL_PATH = '/home/akalab/classify_image_graph_def.pb' # pre-trained inception v3 model
+MODEL_PATH = '/Users/shigetomi/Downloads/imagenet/classify_image_graph_def.pb'
+#  MODEL_PATH = '/home/akalab/classify_image_graph_def.pb' # pre-trained inception v3 model
 IMAGE_PATH = '/Users/shigetomi/Desktop/samplepictures/image_0011.jpg'
 
 
@@ -67,7 +68,7 @@ def sandbox():
 
         print("pool3_features", type(pool3_features), pool3_features, pool3_features.shape) #(2048,)
 
-@profile
+#@profile
 def train(args):
     from TwoInputDataset import TwoInputDataset
 
@@ -216,7 +217,7 @@ def train(args):
                     print("step %d  training final-batch accuracy: %g" % (step, result[0]))
 
                     # validation
-                    test_dataA, test_dataB, test_labels = dataset.getTestData()
+                    test_dataA, test_dataB, test_labels = dataset.getTestData(args.batch_size, i)
 
                     # print("test_dataA length :", len(test_dataA))
                     # get features
@@ -239,7 +240,7 @@ def train(args):
 
                     summary_writer.add_summary(val_result[1], step)
 
-                    print(" test accuracy %g" % val_result[0])
+                    print(" ramdom test batch accuracy %g" % val_result[0])
 
                     # print("incep_pool3 weight? :", sess.run(incep_pool3), incep_pool3.shape)
 
@@ -261,7 +262,7 @@ class tmpparse:
         self.dropout_prob = 0.5
 
 if __name__ == '__main__':
-    """
+
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('--train1', help='File name of train data', default='~/dataset_walls/train2.txt ')
     parser.add_argument('--train2', help='File name of train data (subset)', default='~/dataset_walls/train1.txt')
@@ -271,8 +272,10 @@ if __name__ == '__main__':
     parser.add_argument('--max_steps', '-s', type=int, default=3)
     parser.add_argument('--batch_size', '-b', type=int, default=10)
 
-    parser.add_argument('--save_path', '-save', default='/home/akalab/tensorflow_works/model/twostep.ckpt', help='FullPath of output model')
-    parser.add_argument('--logdir', '-log', default='/home/akalab/tensorflow_works/log/', help='Directory to put the training data. (TensorBoard)')
+    #parser.add_argument('--save_path', '-save', default='/home/akalab/tensorflow_works/model/twostep.ckpt', help='FullPath of output model')
+    #parser.add_argument('--logdir', '-log', default='/home/akalab/tensorflow_works/log/', help='Directory to put the training data. (TensorBoard)')
+    parser.add_argument('--save_path', '-save', default='/Users/shigetomi/workspace/tensorflow_works/model/twostep.ckpt', help='FullPath of output model')
+    parser.add_argument('--logdir', '-log', default='/Users/shigetomi/workspace/tensorflow_works/tensorflow_works/log/', help='Directory to put the training data. (TensorBoard)')
 
     parser.add_argument('--learning_rate', '-lr', type=float, default=1e-4)
     parser.add_argument('--dropout_prob', '-d', type=float, default=0.5)
@@ -280,7 +283,7 @@ if __name__ == '__main__':
     # parser.add_argument('--model', '-m', default='/home/akalab/tensorflow_works/model.ckpt', help='FullPath of loading model')
 
     args = parser.parse_args()
-    """
-    args = tmpparse()
+
+    #args = tmpparse()
     # sandbox()
     train(args)
