@@ -171,7 +171,7 @@ class TwoInputDataset(Dataset):
     #
     #     return test1_images, test2_images, self.test2_label
 
-    def getTestData(self, batchsize, index):
+    def getTestData(self, batchsize, index=0):
         test1_batch = []
         test2_batch = []
         start = batchsize * index

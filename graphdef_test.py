@@ -9,8 +9,8 @@ import numpy as np
 import argparse
 from datetime import datetime
 
-MODEL_PATH = '/Users/shigetomi/Downloads/imagenet/classify_image_graph_def.pb'
-#  MODEL_PATH = '/home/akalab/classify_image_graph_def.pb' # pre-trained inception v3 model
+#MODEL_PATH = '/Users/shigetomi/Downloads/imagenet/classify_image_graph_def.pb'
+MODEL_PATH = '/home/akalab/classify_image_graph_def.pb' # pre-trained inception v3 model
 IMAGE_PATH = '/Users/shigetomi/Desktop/samplepictures/image_0011.jpg'
 
 
@@ -68,7 +68,7 @@ def sandbox():
 
         print("pool3_features", type(pool3_features), pool3_features, pool3_features.shape) #(2048,)
 
-#@profile
+@profile
 def train(args):
     from TwoInputDataset import TwoInputDataset
 
@@ -167,6 +167,9 @@ def train(args):
             acc_summary_test = tf.summary.scalar("test_accuracy", accuracy)
 
         saver = tf.train.Saver()
+        if args.restore is not None:
+            saver.restore(sess, args.restore)
+            print("Model restored from : ", args.restore)
 
         # 変数の初期化
         sess.run(tf.global_variables_initializer())
@@ -217,7 +220,7 @@ def train(args):
                     print("step %d  training final-batch accuracy: %g" % (step, result[0]))
 
                     # validation
-                    test_dataA, test_dataB, test_labels = dataset.getTestData(args.batch_size, i)
+                    test_dataA, test_dataB, test_labels = dataset.getTestData(args.batch_size)
 
                     # print("test_dataA length :", len(test_dataA))
                     # get features
@@ -230,7 +233,7 @@ def train(args):
                         encoded = tf.image.encode_jpeg(image_tensor)
                         encoded_data = sess.run(encoded)
                         incep_features_test_batch[k] = sess.run(incep_pool3, {'DecodeJpeg/contents:0': encoded_data})
-
+                    
                     val_op_list = [accuracy, acc_summary_test]
                     val_result = sess.run(val_op_list,
                                           feed_dict={features_placeholder:incep_features_test_batch,
@@ -244,9 +247,11 @@ def train(args):
 
                     # print("incep_pool3 weight? :", sess.run(incep_pool3), incep_pool3.shape)
 
-        # 最終的なモデルを保存
-        save_path = saver.save(sess, args.save_path)
-        print("save the trained model at :", save_path)
+                    # 最終的なモデルを保存
+                    save_path = saver.save(sess, args.save_path)
+                    #print("save the trained model at :", save_path)
+
+        print("all process finished.")
 
 class tmpparse:
     def __init__(self):
@@ -254,15 +259,16 @@ class tmpparse:
         self.train2 = '/home/akalab/dataset_walls/train1.txt'
         self.test1 = '/home/akalab/dataset_walls/test2.txt'
         self.test2 = '/home/akalab/dataset_walls/test1.txt'
-        self.max_steps = 3
+        self.max_steps = 200
         self.batch_size = 10
         self.save_path = '/home/akalab/tensorflow_works/model/twostep.ckpt'
         self.logdir = '/home/akalab/tensorflow_works/log/'
         self.learning_rate = 1e-4
         self.dropout_prob = 0.5
+        self.restore = '/home/akalab/tensorflow_works/model/twostep.ckpt'
 
 if __name__ == '__main__':
-
+    """
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('--train1', help='File name of train data', default='~/dataset_walls/train2.txt ')
     parser.add_argument('--train2', help='File name of train data (subset)', default='~/dataset_walls/train1.txt')
@@ -280,10 +286,10 @@ if __name__ == '__main__':
     parser.add_argument('--learning_rate', '-lr', type=float, default=1e-4)
     parser.add_argument('--dropout_prob', '-d', type=float, default=0.5)
 
-    # parser.add_argument('--model', '-m', default='/home/akalab/tensorflow_works/model.ckpt', help='FullPath of loading model')
+    # parser.add_argument('--resotre', '-r', default=None, help='FullPath of loading model')
 
     args = parser.parse_args()
-
-    #args = tmpparse()
+    """
+    args = tmpparse()
     # sandbox()
     train(args)
