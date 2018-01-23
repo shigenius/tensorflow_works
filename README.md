@@ -102,3 +102,7 @@ dataset/
 ~~~
 % python makeDataset_forSpecificObjRecog.py <dataset path> -r <test set rate(default=0.1)>
 ~~~
+
+##  graphdef_test.py
+
+* あとで書く

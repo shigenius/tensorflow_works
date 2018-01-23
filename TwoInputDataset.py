@@ -123,75 +123,46 @@ class TwoInputDataset(Dataset):
         # for i, (test1, test2, label) in enumerate(zip(self.test1_path, self.test2_path, self.test2_label)):
         #     print(i, test1, test2, label)
 
-
-    def getTrainBatch(self, batchsize, index):
+    def getBatch(self, batchsize, index, mode='train'):
         # 指定したindexからバッチサイズ分，データセットを読み込んでflattenなndarrayとして返す．resizeもする．
         # (あとでaugumentation諸々も実装したい)
         # train1,2のそれぞれの画像名で一致させる
 
-        train1_batch = []
-        train2_batch = []
+        if mode == 'trian':
+            pathsA = self.train1_path
+            pathsB = self.train2_path
+            labels = self.train2_label
+        else:
+            pathsA = self.test1_path
+            pathsB = self.test2_path
+            labels = self.test2_label
+
+        batchA = []
+        batchB = []
         start = batchsize * index
         end = start + batchsize - 1
 
-        for i, path1 in enumerate(self.train1_path[start:end]):
-            path2 = self.train2_path[i]
+        for i, pathA in enumerate(pathsA[start:end]):
+            pathB = pathsB[i]
 
-            image1 = cv2.imread(path1)
-            image2 = cv2.imread(path2)
-            image1 = cv2.resize(image1, (self.image_size, self.image_size)) 
-            image2 = cv2.resize(image2, (self.image_size, self.image_size)) 
+            imageA = cv2.imread(pathA)
+            imageB = cv2.imread(pathB)
+            imageA = cv2.resize(imageA, (self.image_size, self.image_size))
+            imageB = cv2.resize(imageB, (self.image_size, self.image_size))
+
 
             # 一列にした後、0-1のfloat値にする
-            train1_batch.append(image1.flatten().astype(np.float32)/255.0)
-            train2_batch.append(image2.flatten().astype(np.float32)/255.0)
+            batchA.append(imageA.flatten().astype(np.float32)/255.0)
+            batchB.append(imageB.flatten().astype(np.float32)/255.0)
 
-        train1_batch = np.asarray(train1_batch)
-        train2_batch = np.asarray(train2_batch)
-        labels_batch = self.train2_label[start:end]
+        batchA = np.asarray(batchA)
+        batchB = np.asarray(batchB)
+        label_batch = labels[start:end]
 
-        return train1_batch, train2_batch, labels_batch
+        return batchA, batchB, label_batch
 
-
-    # def getTestData(self):
-    #     # testdataを全部とってくる
-    #
-    #     test1_images = []
-    #     test2_images = []
-    #     for path1, path2 in zip(self.test1_path, self.test2_path):
-    #         image1 = cv2.imread(path1)
-    #         image2 = cv2.imread(path2)
-    #         image1 = cv2.resize(image1, (self.image_size, self.image_size))
-    #         image2 = cv2.resize(image2, (self.image_size, self.image_size))
-    #         test1_images.append(image1.flatten().astype(np.float32)/255.0)
-    #         test2_images.append(image2.flatten().astype(np.float32)/255.0)
-    #
-    #     test1_images = np.asarray(test1_images)
-    #     test2_images = np.asarray(test2_images)
-    #
-    #     return test1_images, test2_images, self.test2_label
+    def getTrainBatch(self, batchsize, index):
+        return self.getBatch(batchsize, index, mode='train')
 
     def getTestData(self, batchsize, index=0):
-        test1_batch = []
-        test2_batch = []
-        start = batchsize * index
-        end = start + batchsize - 1
-
-        for i, path1 in enumerate(self.test1_path[start:end]):
-            path2 = self.test2_path[i]
-
-            image1 = cv2.imread(path1)
-            image2 = cv2.imread(path2)
-            image1 = cv2.resize(image1, (self.image_size, self.image_size))
-            image2 = cv2.resize(image2, (self.image_size, self.image_size))
-
-            # 一列にした後、0-1のfloat値にする
-            test1_batch.append(image1.flatten().astype(np.float32)/255.0)
-            test2_batch.append(image2.flatten().astype(np.float32)/255.0)
-
-        test1_batch = np.asarray(test1_batch)
-        test2_batch = np.asarray(test2_batch)
-        labels_batch = self.test2_label[start:end]
-
-        return test1_batch, test2_batch, labels_batch
-        
+        return self.getBatch(batchsize, index, mode='test')
