@@ -88,6 +88,8 @@ def train(args):
         features_placeholder = tf.placeholder(dtype="float32", shape=(None, 1, 1, 2048)) # pool3 features. *shape & type is not nconfirmed yet
         keep_prob = tf.placeholder(dtype="float32")
 
+        image_for_extractor_placeholder = tf.placeholder(dtype="float32", shape=(image_size*image_size*3))
+
         #--- graph内のtensor名の確認．
         # assing_ops = tf.Graph.get_operations(sess.graph)
         # for op in assing_ops:
@@ -95,8 +97,16 @@ def train(args):
         #     for outputname in op.outputs:
         #         print("  output :", outputname)
         #---
+        graph = tf.get_default_graph()
+        print(len(graph.get_operations()), "-----------------------------------------------------------------------------------------------------------")
+        #---グラフのオペレーションの取得
+        #for op in graph.get_operations():
+        #    print("\nname:", op.name, "\ntype :", op.type)i
 
         incep_pool3 = sess.graph.get_tensor_by_name('pool_3:0')
+        image_tensor_op = tf.convert_to_tensor(tf.cast( tf.reshape(image_for_extractor_placeholder, [image_size, image_size, 3])[:, ::-1], dtype='uint8'))
+        #image_tensor_op = tf.convert_to_tensor(tf.uint8(image_for_extractor_placeholder))
+        encoded_op = tf.image.encode_jpeg(image_tensor_op)
         # print("incep_pool3 weight? :", sess.run(incep_pool3), incep_pool3.shape) # 重みの出力？
 
         # incep_features = sess.run(incep_pool3, {'DecodeJpeg/contents:0': image_data})
@@ -179,18 +189,18 @@ def train(args):
         # 学習の処理
         for step in range(args.max_steps):
             dataset.shuffle()  # バッチで取る前にデータセットをshuffleする
+            #for op in graph.get_operations():
+            #    print("\nname:", op.name, "\ntype :", op.type)
             # batch処理
             for i in range(int(len(dataset.train2_path) / args.batch_size)):  # iがbatchのindexになる #バッチのあまりが出る
 
                 batchA, batchB, labels = dataset.getTrainBatch(args.batch_size, i)
-
+                print(len(graph.get_operations()), "------------------------------------------------------------------------------------------------ -----------")
                 # get features
                 incep_features_batch = np.zeros((len(batchA), 1, 1, 2048))
                 for j, image in enumerate(batchA):
                     # ndarray image -> tensor -> encoded image
-                    image_tensor = tf.convert_to_tensor(np.uint8(np.reshape(image, [image_size, image_size, 3])[:, :, ::-1].copy()))
-                    encoded = tf.image.encode_jpeg(image_tensor)
-                    encoded_data = sess.run(encoded)
+                    encoded_data = sess.run(encoded_op, {image_for_extractor_placeholder : image})
                     incep_features_batch[j] = sess.run(incep_pool3, {'DecodeJpeg/contents:0': encoded_data})
 
                 # print(incep_features_batch.shape) # (batchsize, 1, 1, 2048)
@@ -228,12 +238,10 @@ def train(args):
 
                     for k, image in enumerate(test_dataA):
                         # ndarray image -> tensor -> encoded image
-                        image_tensor = tf.convert_to_tensor(
-                            np.uint8(np.reshape(image, [image_size, image_size, 3])[:, :, ::-1].copy()))
-                        encoded = tf.image.encode_jpeg(image_tensor)
-                        encoded_data = sess.run(encoded)
+                        # image_tensor = tf.convert_to_tensor(np.uint8(np.reshape(image, [image_size, image_size, 3])[:, :, ::-1].copy()))
+                        encoded_data = sess.run(encoded_op, {image_for_extractor_placeholder : image})
                         incep_features_test_batch[k] = sess.run(incep_pool3, {'DecodeJpeg/contents:0': encoded_data})
-                    
+
                     val_op_list = [accuracy, acc_summary_test]
                     val_result = sess.run(val_op_list,
                                           feed_dict={features_placeholder:incep_features_test_batch,
@@ -260,7 +268,7 @@ class tmpparse:
         self.test1 = '/home/akalab/dataset_walls/test2.txt'
         self.test2 = '/home/akalab/dataset_walls/test1.txt'
         self.max_steps = 200
-        self.batch_size = 10
+        self.batch_size = 20
         self.save_path = '/home/akalab/tensorflow_works/model/twostep.ckpt'
         self.logdir = '/home/akalab/tensorflow_works/log/'
         self.learning_rate = 1e-4
