@@ -128,7 +128,7 @@ class TwoInputDataset(Dataset):
         # (あとでaugumentation諸々も実装したい)
         # train1,2のそれぞれの画像名で一致させる
 
-        if mode == 'trian':
+        if mode == 'train':
             pathsA = self.train1_path
             pathsB = self.train2_path
             labels = self.train2_label
