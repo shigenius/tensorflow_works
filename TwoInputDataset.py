@@ -171,8 +171,9 @@ class TwoInputDataset(Dataset):
             # datagen = ImageDataGenerator(zca_whitening=True)
             #datagen.fit(batchA) # zca whiteningを行う際に必要．実行するとなぜかzsh killedになる...
 
-            gA = datagen.flow(batchA, batch_size=batchsize, save_to_dir='./temp', save_prefix='img', save_format='jpg')
-            gB = datagen.flow(batchB, batch_size=batchsize, save_to_dir='./temp', save_prefix='img', save_format='jpg')
+            gA = datagen.flow(batchA, batch_size=batchsize)
+            gB = datagen.flow(batchB, batch_size=batchsize)
+            #gB = datagen.flow(batchB, batch_size=batchsize, save_to_dir='./temp', save_prefix='img', save_format='jpg')
             batchA = gA.next()
             batchB = gB.next()
             # # for debug
@@ -181,7 +182,8 @@ class TwoInputDataset(Dataset):
             #     print(img)
             #     cv2.imshow("window", img)
             #     cv2.waitKey(0)
-            print(batchA.shape)
+
+        # print(batchA.shape)
 
         batchA = np.reshape(batchA, (batchsize-1, -1))
         batchB = np.reshape(batchB, (batchsize-1, -1))
