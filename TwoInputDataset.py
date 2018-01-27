@@ -6,6 +6,9 @@ import random
 import sys
 import re
 
+from keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array, array_to_img
+from keras.datasets import cifar10
+
 from Dataset import Dataset
 
 class TwoInputDataset(Dataset):
@@ -128,7 +131,7 @@ class TwoInputDataset(Dataset):
         # (あとでaugumentation諸々も実装したい)
         # train1,2のそれぞれの画像名で一致させる
 
-        if mode == 'trian':
+        if mode == 'train':
             pathsA = self.train1_path
             pathsB = self.train2_path
             labels = self.train2_label
@@ -150,14 +153,38 @@ class TwoInputDataset(Dataset):
             imageA = cv2.resize(imageA, (self.image_size, self.image_size))
             imageB = cv2.resize(imageB, (self.image_size, self.image_size))
 
-
             # 一列にした後、0-1のfloat値にする
-            batchA.append(imageA.flatten().astype(np.float32)/255.0)
-            batchB.append(imageB.flatten().astype(np.float32)/255.0)
+            batchA.append(imageA.astype(np.float32)/255.0)
+            batchB.append(imageB.astype(np.float32)/255.0)
 
         batchA = np.asarray(batchA)
         batchB = np.asarray(batchB)
         label_batch = labels[start:end]
+
+        # augumentation
+        if mode == 'train':
+            datagen = ImageDataGenerator(rotation_range=10,
+                                         width_shift_range=0.2,
+                                         height_shift_range=0.2,
+                                         fill_mode='constant',
+                                         zoom_range=0.2)
+            # datagen = ImageDataGenerator(zca_whitening=True)
+            #datagen.fit(batchA) # zca whiteningを行う際に必要．実行するとなぜかzsh killedになる...
+
+            gA = datagen.flow(batchA, batch_size=batchsize, save_to_dir='./temp', save_prefix='img', save_format='jpg')
+            gB = datagen.flow(batchB, batch_size=batchsize, save_to_dir='./temp', save_prefix='img', save_format='jpg')
+            batchA = gA.next()
+            batchB = gB.next()
+            # # for debug
+            # for i in range(batchsize-1):
+            #     img = batchA[i]
+            #     print(img)
+            #     cv2.imshow("window", img)
+            #     cv2.waitKey(0)
+            print(batchA.shape)
+
+        batchA = np.reshape(batchA, (batchsize-1, -1))
+        batchB = np.reshape(batchB, (batchsize-1, -1))
 
         return batchA, batchB, label_batch
 
