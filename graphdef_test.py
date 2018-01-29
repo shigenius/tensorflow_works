@@ -225,8 +225,8 @@ def train(args):
 
                     summary_writer.add_summary(val_result[1], step)
 
-                    print(" ramdom test batch((size=%d)) accuracy %g" % (args.batch_size, val_result[0]))
-
+                   # print(" ramdom test batch((size=%d)) accuracy %g" % (args.batch_size, val_result[0]))
+                    print("  Full test set accuracy %g" %  (val_result[0]))
                     # print("incep_pool3 weight? :", sess.run(get_incep_pool3_op), get_incep_pool3_op.shape)
 
                     # save checkpoint model

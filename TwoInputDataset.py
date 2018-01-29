@@ -193,5 +193,25 @@ class TwoInputDataset(Dataset):
     def getTrainBatch(self, batchsize, index):
         return self.getBatch(batchsize, index, mode='train')
 
+    """
     def getTestData(self, batchsize, index=0):
         return self.getBatch(batchsize, index, mode='test')
+    """
+
+    def getTestData(self, _):
+        # testdataを全部とってくる
+ 
+        test1_images = []
+        test2_images = []
+        for path1, path2 in zip(self.test1_path, self.test2_path):
+            image1 = cv2.imread(path1)
+            image2 = cv2.imread(path2)
+            image1 = cv2.resize(image1, (self.image_size, self.image_size))
+            image2 = cv2.resize(image2, (self.image_size, self.image_size))
+            test1_images.append(image1.flatten().astype(np.float32)/255.0)
+            test2_images.append(image2.flatten().astype(np.float32)/255.0)
+ 
+        test1_images = np.asarray(test1_images)
+        test2_images = np.asarray(test2_images)
+ 
+        return test1_images, test2_images, self.test2_label
