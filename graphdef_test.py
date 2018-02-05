@@ -71,7 +71,7 @@ def train(args):
     from TwoInputDataset import TwoInputDataset
 
     image_size = 227
-    num_classes = 4
+    num_classes = 5
     dataset = TwoInputDataset(train1=args.train1, train2=args.train2, test1=args.test1, test2=args.test2,  num_classes=num_classes, image_size=image_size)
 
     create_graph(pb_path=args.pb_path) # graphを作成する(restore)
