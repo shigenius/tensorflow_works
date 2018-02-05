@@ -48,7 +48,7 @@ dataset/
 negative-sampleを作成する.
 
 ~~~
-% makeRandomCropping-NegativeData.py <path of dataset directory>
+% python makeRandomCropping-NegativeData.py <path of dataset directory>
 ~~~
 
 データセットを作成(train1,2とtest1,2のtxtファイルが作成される)
