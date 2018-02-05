@@ -66,14 +66,19 @@ linuxの場合screenコマンドを用いれば，sshを切ってもプロセス
 * 一例
 
 ### 学習の経過を見る
+ローカル環境とリモート環境が同じネットワーク状にいる前提
+
 ローカル環境下で
 ~~~
 % ssh -L 8888:localhost:6006 <username@address>
 ~~~
 
+リモート環境下で
 ~~~
 % tensorboard --logdir tensorflow_works/log/twostep
 ~~~
+
+ローカル環境のブラウザで`localhost:8888`を開く．
 
 ## classify.py
 
