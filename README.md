@@ -18,6 +18,63 @@
 * tensorflow 1.4.0
 * python 3.5.x
 
+## 実験手順の再現
+コードが肥大化してきたため，ある程度まとめようと思う．
+
+### 環境構築
+
+### データセットの用意
+動画を用意する.
+
+[opencv_tracking.py](https://github.com/shigenius/python_sources) を用いてサブデータセットを作成する．
+~~~
+% opencv_tracking.py <movie_path> <output_dir_path> -s <skipflame_value>
+~~~
+
+datasetのディレクトリ構造を以下のようにしておく．
+
+~~~
+dataset/
+ + class1/
+ + class2/
+    + class2_video1.mp4
+    + class2_video2.mov
+    + class2_video1/
+        + image_0001.jpg
+    + class2_video1_cropped/
+        + image_0001.jpg
+~~~
+
+negative-sampleを作成する.
+
+~~~
+% makeRandomCropping-NegativeData.py <path of dataset directory>
+~~~
+
+データセットを作成(train1,2とtest1,2のtxtファイルが作成される)
+
+~~~
+% python makeDataset_forSpecificObjRecog.py <path of dataset directory>  -r <test set rate(default=0.1)>
+~~~
+
+### 学習
+linuxの場合screenコマンドを用いれば，sshを切ってもプロセスはkillされない．
+
+~~~
+% python graphdef_test.py --train1 ~/dataset_walls/train2.txt --test1 ~/dataset_walls/test2.txt --train2 ~/dataset_walls/train1.txt --test2 ~/dataset_walls/test1.txt -pb /home/akalab/classify_image_graph_def.pb -save /home/akalab/tensorflow_works/model/twostep.ckpt -log /home/akalab/tensorflow_works/log -b 20 -s 1000
+~~~
+* 一例
+
+### 学習の経過を見る
+ローカル環境下で
+~~~
+% ssh -L 8888:localhost:6006 <username@address>
+~~~
+
+~~~
+% tensorboard --logdir tensorflow_works/log/twostep
+~~~
+
 ## classify.py
 
 * mnistデータセットの分類問題を解く．公式のTutorial
