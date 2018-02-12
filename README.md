@@ -77,6 +77,8 @@ dataset/
 
 30fpsの動画に変換する場合
 ~~~
+動画の情報を取得
+% ffmpeg -i <videopath>
 フレームを間引く
 % ffmpeg -i <input>-r 30 <output>
 補完(とても重たい)
