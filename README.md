@@ -26,7 +26,7 @@
 ### データセットの用意
 動画を用意する.(スマートフォンなどで撮影したものも可)
 
-## 動画を画像にサンプリング
+#### 動画を画像にサンプリング
 [convert_to_image_each_labels.sh](https://github.com/shigenius/python_sources#convert_to_image_each_labelssh)を用いて動画を画像郡に変換する．
 このようなディレクトリ構造を作成する．
 ~~~
@@ -46,7 +46,7 @@ dataset/
 ~~~
 * ffmpegが必要
 
-## cropping
+#### cropping
 [opencv_tracking.py](https://github.com/shigenius/python_sources) を用いてサブデータセットを作成する．
 ~~~
 % opencv_tracking.py <movie_path> <output_dir_path> -s <skipflame_value>
@@ -66,13 +66,13 @@ dataset/
         + image_0001.jpg
 ~~~
 
-## negative-sampleを作成する.
+#### negative-sampleを作成する.
 
 ~~~
 % python makeRandomCropping-NegativeData.py <path of dataset directory>
 ~~~
 
-## データセットを作成(train1,2とtest1,2のtxtファイルが作成される)
+#### データセットを作成(train1,2とtest1,2のtxtファイルが作成される)
 
 ~~~
 % python makeDataset_forSpecificObjRecog.py <path of dataset directory>  -r <test set rate(default=0.1)>
