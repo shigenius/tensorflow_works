@@ -74,7 +74,8 @@ dataset/
 % opencv_tracking.py <movie_path> <output_dir_path> -s <skipflame_value>
 ~~~
 * 30fpsの動画のみ対応
-* 30fpsの動画に変換する
+
+30fpsの動画に変換する場合
 ~~~
 フレームを間引く
 % ffmpeg -i <input>-r 30 <output>
