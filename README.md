@@ -14,6 +14,8 @@
       * [TwoInputDataset.py](#twoinputdatasetpy)
       * [makeDataset_forSpecificObjRecog.py](#makedataset_forspecificobjrecogpy)
 
+下に書いてあるコードが新しいやつ
+
 ## 環境
 * tensorflow 1.4.0
 * python 3.5.x
@@ -188,5 +190,12 @@ dataset/
 ~~~
 
 ##  graphdef_test.py
+* graphdefのテストで書いていたのにいつのまにか実験コードになってしまった
+* SpecificObjectRecognition.pyで実装しようとした"特定"物体に対して有効な物体検出器アーキテクチャの実装．
+* 1段目の画像認識器にはinception-v3  
 
-* あとで書く
+使い方
+~~~
+% python graphdef_test.py --train1 ~/dataset_walls/train2.txt --test1 ~/dataset_walls/test2.txt --train2 ~/dataset_walls/train1.txt --test2 ~/dataset_walls/test1.txt -pb /home/akalab/classify_image_graph_def.pb -save /home/akalab/tensorflow_works/model/twostep.ckpt -log /home/akalab/tensorflow_works/log -b 20 -s 1000
+~~~
+* 一例
