@@ -71,7 +71,7 @@ dataset/
 #### cropping
 [opencv_tracking.py](https://github.com/shigenius/python_sources) を用いてサブデータセットを作成する．
 ~~~
-% opencv_tracking.py <movie_path> <output_dir_path> -s <skipflame_value>
+% python opencv_tracking.py <movie_path> <output_dir_path> -s <skipflame_value>
 ~~~
 * 30fpsの動画のみ対応
 
