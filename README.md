@@ -2,9 +2,6 @@
 
 ## Table of Contents
 
-Table of Contents
-=================
-
    * [tensorflow_works](#tensorflow_works)
       * [Table of Contents](#table-of-contents)
       * [環境](#環境)
@@ -27,7 +24,6 @@ Table of Contents
       * [TwoInputDataset.py](#twoinputdatasetpy)
       * [makeDataset_forSpecificObjRecog.py](#makedataset_forspecificobjrecogpy)
       * [graphdef_test.py](#graphdef_testpy)
-
 
 
 下に書いてあるコードが新しいやつ
