@@ -192,7 +192,8 @@ dataset/
 ##  graphdef_test.py
 * graphdefのテストで書いていたのにいつのまにか実験コードになってしまった
 * SpecificObjectRecognition.pyで実装しようとした"特定"物体に対して有効な物体検出器アーキテクチャの実装．
-* 1段目の画像認識器にはinception-v3  
+* 1段目の画像認識器にはpretrained inception-v3を用いる
+  * classify_image_graph_def.pbはtensorflow公式の[classify_image.py](https://github.com/tensorflow/models/tree/master/tutorials/image/imagenet)を実行する際にダウンロードされるやつを用いるとよい
 
 使い方
 ~~~
