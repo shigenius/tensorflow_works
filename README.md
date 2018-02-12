@@ -74,6 +74,13 @@ dataset/
 % opencv_tracking.py <movie_path> <output_dir_path> -s <skipflame_value>
 ~~~
 * 30fpsの動画のみ対応
+* 30fpsの動画に変換する
+~~~
+フレームを間引く
+% ffmpeg -i <input>-r 30 <output>
+補完(とても重たい)
+% ffmpeg -i <input> -vf "minterpolate=30:2:0:1:8:16:32:0:1:5" -c:v mpeg4 -q:v 1 <output>
+~~~
 
 datasetのディレクトリ構造を以下のようにしておく．
 
