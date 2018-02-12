@@ -42,7 +42,15 @@
 
 #### 動画を画像にサンプリング
 [convert_to_image_each_labels.sh](https://github.com/shigenius/python_sources#convert_to_image_each_labelssh)を用いて動画を画像郡に変換する．
+11行目の後に以下を挿入すると後が楽
+~~~
+if [ ! -d $label${dir}_cropped ]; 
+  then mkdir ./$label/${dir}_cropped
+fi;
+~~~
+
 このようなディレクトリ構造を作成する．
+
 ~~~
 dataset/
  + convert_to_image_each_labels.sh
