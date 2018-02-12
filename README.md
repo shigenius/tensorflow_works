@@ -81,7 +81,7 @@ dataset/
 % ffmpeg -i <videopath>
 フレームを間引く
 % ffmpeg -i <input>-r 30 <output>
-補完(とても重たい)
+フレームを補完する場合(とても重たい)
 % ffmpeg -i <input> -vf "minterpolate=30:2:0:1:8:16:32:0:1:5" -c:v mpeg4 -q:v 1 <output>
 ~~~
 
