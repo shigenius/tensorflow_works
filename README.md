@@ -2,8 +2,21 @@
 
 ## Table of Contents
 
+Table of Contents
+=================
+
    * [tensorflow_works](#tensorflow_works)
+      * [Table of Contents](#table-of-contents)
       * [環境](#環境)
+      * [実験手順の再現](#実験手順の再現)
+         * [環境構築](#環境構築)
+         * [データセットの用意](#データセットの用意)
+            * [動画を画像にサンプリング](#動画を画像にサンプリング)
+            * [cropping](#cropping)
+            * [negative-sampleを作成する.](#negative-sampleを作成する)
+            * [データセットを作成(train1,2とtest1,2のtxtファイルが作成される)](#データセットを作成train12とtest12のtxtファイルが作成される)
+         * [学習](#学習)
+         * [学習の経過を見る](#学習の経過を見る)
       * [classify.py](#classifypy)
       * [read_csv_images.py](#read_csv_imagespy)
       * [train_tf.py](#train_tfpy)
@@ -13,6 +26,9 @@
       * [SpecificObjectRecognition.py](#specificobjectrecognitionpy)
       * [TwoInputDataset.py](#twoinputdatasetpy)
       * [makeDataset_forSpecificObjRecog.py](#makedataset_forspecificobjrecogpy)
+      * [graphdef_test.py](#graphdef_testpy)
+
+
 
 下に書いてあるコードが新しいやつ
 
