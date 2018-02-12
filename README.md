@@ -51,6 +51,7 @@ dataset/
 ~~~
 % opencv_tracking.py <movie_path> <output_dir_path> -s <skipflame_value>
 ~~~
+* 30fpsの動画のみ対応
 
 datasetのディレクトリ構造を以下のようにしておく．
 
