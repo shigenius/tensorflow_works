@@ -46,6 +46,7 @@ from six.moves import urllib
 import tensorflow as tf
 
 import csv
+import copy
 
 FLAGS = None
 
@@ -183,6 +184,8 @@ def run_inference_on_image(row, writer, dict):
       else:
         dict[p] += scorel[i]
 
+    print(sorted(dict.items(), key=lambda x: x[1], reverse=True))
+
 
 def maybe_download_and_extract():
   """Download and extract model tar file."""
@@ -197,7 +200,6 @@ def maybe_download_and_extract():
           filename, float(count * block_size) / float(total_size) * 100.0))
       sys.stdout.flush()
     filepath, _ = urllib.request.urlretrieve(DATA_URL, filepath, _progress)
-    print()
     statinfo = os.stat(filepath)
     print('Successfully downloaded', filename, statinfo.st_size, 'bytes.')
   tarfile.open(filepath, 'r:gz').extractall(dest_directory)
@@ -217,26 +219,31 @@ def main(_):
   create_graph()
   dict = {}
   dicts = []
-  c = 1
+  c = 0
 
   with open(FLAGS.images_file, 'r') as f:
     for row in f:
-      if not int(row.split(" ")[1]) == 0: # negativeはskip
-        if int(row.split(" ")[1]) > c: # class毎に集計する
-          writer.writerow(sorted(dict.items(), key=lambda x:x[1], reverse=True))
-          dicts.append(dict)
-          dict.clear()
-          c += 1
+      #if not int(row.split(" ")[1]) == 0: # negativeはskip
+      if int(row.split(" ")[1]) > c: # class毎に集計する
+        writer.writerow(sorted(dict.items(), key=lambda x:x[1], reverse=True))
+        if not int(row.split(" ")[1]) == 1: # negative classはdictsに追加しない．
+          dicts.append(copy.deepcopy(dict))
+        dict.clear()
+        c = int(row.split(" ")[1])
 
-        print(row)
-        run_inference_on_image(row, writer, dict)
-        print(sorted(dict.items(), key=lambda x:x[1], reverse=True))
+      print(row)
+      run_inference_on_image(row, writer, dict)
+      #print(sorted(dict.items(), key=lambda x:x[1], reverse=True))
 
 
+  writer.writerow(sorted(dict.items(), key=lambda x: x[1], reverse=True)) #最後のクラス
+  dicts.append(dict)
+
+  print(len(dicts), dicts)
   # すべてのscoreのsum
   sumdicts = {vocab: sum(v for dic in dicts for k, v in dic.items() if k == vocab) for vocab in set([k for dic in dicts for k, v in dic.items()])}
-  writer.writerow(sorted(dict.items(), key=lambda x: x[1], reverse=True))
   writer.writerow(sorted(sumdicts.items(), key=lambda x: x[1], reverse=True))
+  print(sorted(sumdicts.items(), key=lambda x: x[1], reverse=True))
 
 
 
