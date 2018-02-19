@@ -230,3 +230,13 @@ dataset/
 % python graphdef_test.py --train1 ~/dataset_walls/train2.txt --test1 ~/dataset_walls/test2.txt --train2 ~/dataset_walls/train1.txt --test2 ~/dataset_walls/test1.txt -pb /home/akalab/classify_image_graph_def.pb -save /home/akalab/tensorflow_works/model/twostep.ckpt -log /home/akalab/tensorflow_works/log -b 20 -s 1000
 ~~~
 * 一例
+
+## classify_images.py
+* pre-trained modelにさまざまな入力をしてみて傾向があるか調査するスクリプト
+* 入力 : 画像のパス郡を記述したファイル
+* 出力 : 各クラス毎の合計スコアとデータセット全体の合計スコアを記述したcsvファイル
+
+実行例
+~~~
+% python classify_images.py --model_dir /Users/shigetomi/Downloads/imagenet/ --images_file /Users/shigetomi/Desktop/dataset_walls/train2.txt --log_path /Users/shigetomi/workspace/tensorflow_works/log/log_walls0218.csv
+~~~

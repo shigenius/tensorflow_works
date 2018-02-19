@@ -93,6 +93,8 @@ def primaryTrain(args) :
         #summary_op = tf.summary.merge_all()
         summary_writer = tf.summary.FileWriter(args.logdir+"/Primary/"+datetime.now().isoformat(), sess.graph)
 
+        training_op_list = [accuracy, acc_summary_train, loss_summary_train]
+        val_op_list = [accuracy, acc_summary_test]
 
         # 訓練の実行
         for step in range(args.max_steps):
@@ -108,8 +110,6 @@ def primaryTrain(args) :
                 # 最終バッチの処理
                 if i >= int(len(dataset.train_image_paths)/args.batch_size)-1:
 
-                    training_op_list = [accuracy, acc_summary_train, loss_summary_train]
-
                     # 最終バッチの学習のあと，そのバッチを使って評価．
                     result = sess.run(training_op_list, feed_dict={images_placeholder: batch, labels_placeholder: labels, keep_prob: 1.0})
 
@@ -121,7 +121,6 @@ def primaryTrain(args) :
     
                     # validation
                     test_data, test_labels = dataset.getTestData()
-                    val_op_list = [accuracy, acc_summary_test]
                     val_result = sess.run(val_op_list, feed_dict={images_placeholder: test_data, labels_placeholder: test_labels, keep_prob: 1.0})
 
                     summary_writer.add_summary(val_result[1], step)
