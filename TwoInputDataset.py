@@ -153,7 +153,7 @@ class TwoInputDataset(Dataset):
             imageA = cv2.resize(imageA, (self.image_size, self.image_size))
             imageB = cv2.resize(imageB, (self.image_size, self.image_size))
 
-            # 一列にした後、0-1のfloat値にする
+            # 0-1のfloat値にする
             batchA.append(imageA.astype(np.float32)/255.0)
             batchB.append(imageB.astype(np.float32)/255.0)
 

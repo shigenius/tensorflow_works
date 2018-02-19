@@ -4,6 +4,9 @@ import tensorflow as tf
 import tensorflow.python.platform
 import random
 
+from keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array, array_to_img
+from keras.datasets import cifar10
+
 class Dataset:
     """
     読み込むtxtファイルは，
@@ -102,17 +105,35 @@ class Dataset:
             if image is None:
                 continue
 
-            image = cv2.resize(image, (self.image_size, self.image_size)) 
+            image = cv2.resize(image, (self.image_size, self.image_size))
 
-            # 一列にした後、0-1のfloat値にする
-            train_batch.append(image.flatten().astype(np.float32)/255.0)
+            # 0-1のfloat値にする
+            #train_batch.append(image.flatten().astype(np.float32)/255.0)
+            train_batch.append(image.astype(np.float32) / 255.0)
             labels_batch.append(self.train_labels[start+i])
 
         train_batch = np.asarray(train_batch)
         labels_batch = np.asarray(labels_batch)
-        
+
+        datagen = ImageDataGenerator(rotation_range=10,
+                                     width_shift_range=0.2,
+                                     height_shift_range=0.2,
+                                     fill_mode='constant',
+                                     zoom_range=0.2)
+        gen = datagen.flow(train_batch, batch_size=batchsize)
+        train_batch = gen.next()
+        # # for debug
+        # for i in range(batchsize-1):
+        #     img = train_batch[i]
+        #     print(img)
+        #     cv2.imshow("window", img)
+        #     cv2.waitKey(0)
+        #
+        # print(train_batch.shape)
+        train_batch = np.reshape(train_batch, (batchsize - 1, -1))
+
         return train_batch, labels_batch
-        
+
 
     def getTestData(self):
         # testdataを全部とってくる
@@ -125,13 +146,14 @@ class Dataset:
             if image is None:
                 continue
 
-            image = cv2.resize(image, (self.image_size, self.image_size)) 
+            image = cv2.resize(image, (self.image_size, self.image_size))
 
-            test_images.append(image.flatten().astype(np.float32)/255.0) 
+            test_images.append(image.flatten().astype(np.float32)/255.0)
             labels.append(self.test_labels[i])
 
         test_images = np.asarray(test_images)
         labels = np.asarray(labels)
 
         return test_images, labels
+
 

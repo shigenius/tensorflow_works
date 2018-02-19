@@ -58,6 +58,7 @@ def main():
 
     for n, text in enumerate(random.sample(train2_list, n_negative_sample), 1):
         image_path = text.split(' ')[0].replace('_cropped', '')
+        print(image_path)
         corner_point = getCorrectCornerFromLog(image_path)
 
         count = 0
