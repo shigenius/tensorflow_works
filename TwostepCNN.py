@@ -8,7 +8,7 @@ import tensorflow.python.platform
 class PrimaryCNN:
     def __init__(self):
         self.image_size = 227
-        self.num_classes = 53
+        self.num_classes = 3
 
     def inference(self, images_placeholder, keep_prob):
         with tf.variable_scope('Primary') as scope:

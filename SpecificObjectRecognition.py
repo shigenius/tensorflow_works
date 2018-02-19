@@ -208,6 +208,9 @@ def secondaryTrain(args):
             # TensorBoardで表示する値の設定
             summary_writer = tf.summary.FileWriter(args.logdir + "/Secondary/" + datetime.now().isoformat(), sess.graph)
 
+            training_op_list = [accuracy, acc_summary_train, loss_summary_train]
+            val_op_list = [accuracy, acc_summary_test]
+
             # 訓練の実行
             for step in range(args.max_steps):
                 dataset.shuffle()  # バッチで取る前にデータセットをshuffleする
@@ -223,8 +226,6 @@ def secondaryTrain(args):
                     # 最終バッチの処理
                     if i >= int(len(dataset.train2_path) / args.batch_size) - 1:
 
-                        training_op_list = [accuracy, acc_summary_train, loss_summary_train]
-
                         # 最終バッチの学習のあと，そのバッチを使って評価．
                         result = sess.run(training_op_list,
                                           feed_dict={images_placeholderA: batchA, images_placeholderB: batchB, labels_placeholder: labels,
@@ -238,7 +239,6 @@ def secondaryTrain(args):
 
                         # validation
                         test_dataA, test_dataB, test_labels = dataset.getTestData()
-                        val_op_list = [accuracy, acc_summary_test]
                         val_result = sess.run(val_op_list,
                                               feed_dict={images_placeholderA: test_dataA, images_placeholderB: test_dataB, labels_placeholder: test_labels,
                                                          keep_prob: 1.0})
