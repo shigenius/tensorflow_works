@@ -99,10 +99,12 @@ class Dataset:
         train_batch = []
         labels_batch = []
         start = batchsize*index
+        end = start + batchsize - 1
 
-        for i, path in enumerate(self.train_image_paths[start:start+batchsize]):
+        for i, path in enumerate(self.train_image_paths[start:end]):
             image = cv2.imread(path)
             if image is None:
+                print("error in ", path)
                 continue
 
             image = cv2.resize(image, (self.image_size, self.image_size))
@@ -129,8 +131,8 @@ class Dataset:
         #     cv2.imshow("window", img)
         #     cv2.waitKey(0)
         #
-        # print(train_batch.shape)
-        train_batch = np.reshape(train_batch, (batchsize - 1, -1))
+        #print(train_batch.shape)
+        train_batch = np.reshape(train_batch, (batchsize-1, -1))
 
         return train_batch, labels_batch
 
