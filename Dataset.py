@@ -127,10 +127,11 @@ class Dataset:
         # # for debug
         # for i in range(batchsize-1):
         #     img = train_batch[i]
-        #     print(img)
+        #     # print(img)
+        #     print(labels_batch[i])
         #     cv2.imshow("window", img)
         #     cv2.waitKey(0)
-        #
+
         #print(train_batch.shape)
         train_batch = np.reshape(train_batch, (batchsize-1, -1))
 

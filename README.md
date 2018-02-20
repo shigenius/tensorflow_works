@@ -1,30 +1,35 @@
 # tensorflow_works
+メモ
+ * AtomでMarkdown+数式 $\Delta{x}$ (ctrl+shift+X)
 
 ## Table of Contents
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
-   * [tensorflow_works](#tensorflow_works)
-      * [Table of Contents](#table-of-contents)
-      * [環境](#環境)
-      * [実験手順の再現](#実験手順の再現)
-         * [環境構築](#環境構築)
-         * [データセットの用意](#データセットの用意)
-            * [動画を画像にサンプリング](#動画を画像にサンプリング)
-            * [cropping](#cropping)
-            * [negative-sampleを作成する.](#negative-sampleを作成する)
-            * [データセットを作成(train1,2とtest1,2のtxtファイルが作成される)](#データセットを作成train12とtest12のtxtファイルが作成される)
-         * [学習](#学習)
-         * [学習の経過を見る](#学習の経過を見る)
-      * [classify.py](#classifypy)
-      * [read_csv_images.py](#read_csv_imagespy)
-      * [train_tf.py](#train_tfpy)
-      * [train.py](#trainpy)
-      * [Dataset.py](#datasetpy)
-      * [evaluate.py](#evaluatepy)
-      * [SpecificObjectRecognition.py](#specificobjectrecognitionpy)
-      * [TwoInputDataset.py](#twoinputdatasetpy)
-      * [makeDataset_forSpecificObjRecog.py](#makedataset_forspecificobjrecogpy)
-      * [graphdef_test.py](#graphdef_testpy)
+- [tensorflow_works](#tensorflowworks)
+	- [Table of Contents](#table-of-contents)
+	- [環境](#環境)
+	- [実験手順の再現](#実験手順再現)
+		- [環境構築](#環境構築)
+		- [データセットの用意](#用意)
+			- [動画を画像にサンプリング](#動画画像)
+			- [cropping](#cropping)
+			- [negative-sampleを作成する.](#negative-sample作成)
+			- [データセットを作成(train1,2とtest1,2のtxtファイルが作成される)](#作成train12test12txt作成)
+		- [学習](#学習)
+		- [学習の経過を見る](#学習経過見)
+	- [classify.py](#classifypy)
+	- [read_csv_images.py](#readcsvimagespy)
+	- [train_tf.py](#traintfpy)
+	- [train.py](#trainpy)
+	- [Dataset.py](#datasetpy)
+	- [evaluate.py](#evaluatepy)
+	- [SpecificObjectRecognition.py](#specificobjectrecognitionpy)
+	- [TwoInputDataset.py](#twoinputdatasetpy)
+	- [makeDataset_forSpecificObjRecog.py](#makedatasetforspecificobjrecogpy)
+	- [graphdef_test.py](#graphdeftestpy)
+	- [classify_images.py](#classifyimagespy)
 
+<!-- /TOC -->
 
 下に書いてあるコードが新しいやつ
 
@@ -44,7 +49,7 @@
 [convert_to_image_each_labels.sh](https://github.com/shigenius/python_sources#convert_to_image_each_labelssh)を用いて動画を画像郡に変換する．
 11行目の後に以下を挿入すると後が楽
 ~~~
-if [ ! -d $label${dir}_cropped ]; 
+if [ ! -d $label${dir}_cropped ];
   then mkdir ./$label/${dir}_cropped
 fi;
 ~~~
@@ -147,7 +152,7 @@ linuxの場合screenコマンドを用いれば，sshを切ってもプロセス
 
 * 自作データセットの読み込み，学習，評価，モデルの保存
 * cross_entropy の部分でlog(0) = NaN になる可能性がある
-* 
+*
 
 ## train.py
 
@@ -170,7 +175,7 @@ linuxの場合screenコマンドを用いれば，sshを切ってもプロセス
 * `getTrainBatch()`で指定したbatch分ndarrayに変換して返す．`getTestData()`はすべてのtestデータをndarrayにして返す．
 * `shuffle()`はtrainデータの順番をシャッフルする．対応するラベルとのindexの関係は破壊されない．batch毎に呼ぶといいかも
 
-## evaluate.py 
+## evaluate.py
 
 * 保存したmodelの評価を行う
 * `saver.restore()`のサンプル
@@ -214,7 +219,7 @@ dataset/
 * サブデータセットの各ディレクトリのsuffixとして`_cropped`をつける
 * 上記の例を用いると，class2_video1/内の画像数 >= class2_video1_cropped/内の画像数 となるようにしなければならない．
   * trackingでフレームが抜ける可能性があるため
- 
+
 ~~~
 % python makeDataset_forSpecificObjRecog.py <dataset path> -r <test set rate(default=0.1)>
 ~~~
