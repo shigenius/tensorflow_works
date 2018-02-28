@@ -75,6 +75,7 @@ def primaryTrain(args) :
 
         with tf.name_scope('test') as scope:
             acc_summary_test = tf.summary.scalar("test_accuracy", accuracy)
+            loss_summary_test = tf.summary.scalar("test_loss", loss)
 
         # 保存の準備
         saver = tf.train.Saver()
@@ -94,7 +95,7 @@ def primaryTrain(args) :
         summary_writer = tf.summary.FileWriter(args.logdir+"/Primary/"+datetime.now().isoformat(), sess.graph)
 
         training_op_list = [accuracy, acc_summary_train, loss_summary_train]
-        val_op_list = [accuracy, acc_summary_test]
+        val_op_list = [accuracy, acc_summary_test, loss_summary_test]
 
         # 訓練の実行
         for step in range(args.max_steps):
@@ -123,7 +124,9 @@ def primaryTrain(args) :
                     test_data, test_labels = dataset.getTestData()
                     val_result = sess.run(val_op_list, feed_dict={images_placeholder: test_data, labels_placeholder: test_labels, keep_prob: 1.0})
 
-                    summary_writer.add_summary(val_result[1], step)
+                    # 必要なサマリーを追記
+                    for j in range(1, len(result)):
+                        summary_writer.add_summary(result[j], step)
 
                     print("test accuracy %g" % val_result[0])
     
