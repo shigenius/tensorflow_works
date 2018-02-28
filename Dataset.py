@@ -104,7 +104,6 @@ class Dataset:
         for i, path in enumerate(self.train_image_paths[start:end]):
             image = cv2.imread(path)
             if image is None:
-                print("error in ", path)
                 continue
 
             image = cv2.resize(image, (self.image_size, self.image_size))
@@ -117,20 +116,23 @@ class Dataset:
         train_batch = np.asarray(train_batch)
         labels_batch = np.asarray(labels_batch)
 
-        datagen = ImageDataGenerator(rotation_range=10,
-                                     width_shift_range=0.2,
-                                     height_shift_range=0.2,
-                                     fill_mode='constant',
-                                     zoom_range=0.2)
-        gen = datagen.flow(train_batch, batch_size=batchsize)
-        train_batch = gen.next()
-        # # for debug
-        # for i in range(batchsize-1):
-        #     img = train_batch[i]
-        #     # print(img)
-        #     print(labels_batch[i])
-        #     cv2.imshow("window", img)
-        #     cv2.waitKey(0)
+        #batchの順序が破壊される...?
+        # datagen = ImageDataGenerator(rotation_range=5,
+        #                              width_shift_range=0.1,
+        #                              height_shift_range=0.1,
+        #                              fill_mode='constant',
+        #                              zoom_range=0.1)
+        # gen = datagen.flow(train_batch, batch_size=batchsize)
+        # train_batch = gen.next()
+
+        # for debug
+        for i in range(batchsize-1):
+            img = train_batch[i]
+            # print(img)
+            print(self.train_image_paths[start+i])
+            print(labels_batch[i])
+            cv2.imshow("window", img)
+            cv2.waitKey(0)
 
         #print(train_batch.shape)
         train_batch = np.reshape(train_batch, (batchsize-1, -1))
