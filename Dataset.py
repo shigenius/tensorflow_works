@@ -109,8 +109,8 @@ class Dataset:
             image = cv2.resize(image, (self.image_size, self.image_size))
 
             # 0-1のfloat値にする
-            #train_batch.append(image.flatten().astype(np.float32)/255.0)
-            train_batch.append(image.astype(np.float32) / 255.0)
+            train_batch.append(image.flatten().astype(np.float32)/255.0)
+            # train_batch.append(image.astype(np.float32) / 255.0)
             labels_batch.append(self.train_labels[start+i])
 
         train_batch = np.asarray(train_batch)
@@ -125,17 +125,17 @@ class Dataset:
         # gen = datagen.flow(train_batch, batch_size=batchsize)
         # train_batch = gen.next()
 
-        # for debug
-        for i in range(batchsize-1):
-            img = train_batch[i]
-            # print(img)
-            print(self.train_image_paths[start+i])
-            print(labels_batch[i])
-            cv2.imshow("window", img)
-            cv2.waitKey(0)
+        # # for debug
+        # for i in range(batchsize-1):
+        #     img = train_batch[i]
+        #     # print(img)
+        #     print(self.train_image_paths[start+i])
+        #     print(labels_batch[i])
+        #     cv2.imshow("window", img)
+        #     cv2.waitKey(0)
 
         #print(train_batch.shape)
-        train_batch = np.reshape(train_batch, (batchsize-1, -1))
+        # train_batch = np.reshape(train_batch, (batchsize-1, -1))
 
         return train_batch, labels_batch
 
