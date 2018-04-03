@@ -15,36 +15,6 @@ from TwoInputDataset import TwoInputDataset
 from TwostepCNN import PrimaryCNN, SecondaryCNN
 
 
-### あとで消す
-#
-# def loss(logits, labels):
-#     # 交差エントロピーの計算
-#     # log(0) = NaN になる可能性があるので1e-10~1の範囲で正規化
-#     cross_entropy = -tf.reduce_sum(labels*tf.log(tf.clip_by_value(logits, 1e-10,1)))
-#     # TensorBoardで表示するよう指定
-#     tf.summary.scalar("cross_entropy", cross_entropy)
-#     return cross_entropy
-#
-# def training(loss, learning_rate):
-#     # 重みの更新
-#     train_step = tf.train.AdamOptimizer(learning_rate).minimize(loss)
-#     return train_step
-#
-# def accuracy(logits, labels, train=True):
-#     if train == True:
-#         with tf.name_scope('train') as scope:
-#             correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(labels, 1))
-#             accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
-#             tf.summary.scalar("accuracy", accuracy)
-#
-#     else:
-#         with tf.name_scope('test') as scope:
-#             correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(labels, 1))
-#             accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
-#             tf.summary.scalar("accuracy", accuracy)
-#
-#     return accuracy
-
 def primaryTrain(args) : 
 
     arch = PrimaryCNN()
@@ -140,7 +110,7 @@ def secondaryTrain(args):
     arch    = PrimaryCNN()
     subarch = SecondaryCNN()
     
-    dataset = TwoInputDataset(train1=args.train1, train2=args.train2, test1=args.test1, test2=args.test2,  num_classes=arch.num_classes, image_size=arch.image_size)
+    dataset = TwoInputDataset(train1=args.train1, train2=args.train2, test1=args.test1, test2=args.test2,  num_classes=subarch.num_classes, image_size=arch.image_size)
 
     with tf.Graph().as_default():
 
@@ -148,7 +118,7 @@ def secondaryTrain(args):
             # placeholderたち
             images_placeholderA = tf.placeholder(dtype="float", shape=(None, arch.image_size*arch.image_size*3)) # shapeの第一引数をNoneにすることによっておそらく可変長batchに対応できる
             images_placeholderB = tf.placeholder(dtype="float", shape=(None, arch.image_size*arch.image_size*3))
-            labels_placeholder = tf.placeholder(dtype="float", shape=(None, arch.num_classes))
+            labels_placeholder = tf.placeholder(dtype="float", shape=(None, subarch.num_classes))
             keep_prob = tf.placeholder(dtype="float")
 
             # 仮のinference (ckptに保存されている変数の数と，tf.train.Saver()を呼ぶ前に宣言する変数数を揃える必要があるため．) もうちょいいい書き方があるかもしれない
@@ -174,7 +144,6 @@ def secondaryTrain(args):
             # train_op = tf.train.AdamOptimizer(args.learning_rate).minimize(loss_value, var_list=vars_S) # vars_Sのみloss用いて重みを更新する．
             # acc = accuracy(logits, labels_placeholder)
 
-
             # log(0) = NaN になる可能性があるので1e-10~1の範囲で正規化
             loss = -tf.reduce_sum(labels_placeholder * tf.log(tf.clip_by_value(logits, 1e-10, 1)))
 
@@ -190,6 +159,7 @@ def secondaryTrain(args):
 
             with tf.name_scope('test') as scope:
                 acc_summary_test = tf.summary.scalar("test_accuracy", accuracy)
+                loss_summary_test = tf.summary.scalar("test_loss", loss)
 
 
             vars_all = tf.global_variables()
@@ -212,7 +182,7 @@ def secondaryTrain(args):
             summary_writer = tf.summary.FileWriter(args.logdir + "/Secondary/" + datetime.now().isoformat(), sess.graph)
 
             training_op_list = [accuracy, acc_summary_train, loss_summary_train]
-            val_op_list = [accuracy, acc_summary_test]
+            val_op_list = [accuracy, acc_summary_test, loss_summary_test]
 
             # 訓練の実行
             for step in range(args.max_steps):
@@ -246,7 +216,8 @@ def secondaryTrain(args):
                                               feed_dict={images_placeholderA: test_dataA, images_placeholderB: test_dataB, labels_placeholder: test_labels,
                                                          keep_prob: 1.0})
 
-                        summary_writer.add_summary(val_result[1], step)
+                        for j in range(1, len(val_result)):
+                            summary_writer.add_summary(val_result[j], step)
 
                         print("test accuracy %g" % val_result[0])
 

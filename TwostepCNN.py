@@ -18,7 +18,7 @@ class PrimaryCNN:
 class SecondaryCNN:
     def __init__(self):
         self.image_size = 227
-        self.num_classes = 53
+        self.num_classes = 10
 
     def inference(self, images_placeholderA, images_placeholderB, keep_prob):
         with tf.variable_scope('Primary', reuse=True) as scope:
