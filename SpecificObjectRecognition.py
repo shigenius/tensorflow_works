@@ -125,8 +125,8 @@ def primaryTrain(args) :
                     val_result = sess.run(val_op_list, feed_dict={images_placeholder: test_data, labels_placeholder: test_labels, keep_prob: 1.0})
 
                     # 必要なサマリーを追記
-                    for j in range(1, len(result)):
-                        summary_writer.add_summary(result[j], step)
+                    for j in range(1, len(val_result)):
+                        summary_writer.add_summary(val_result[j], step)
 
                     print("test accuracy %g" % val_result[0])
     
