@@ -208,8 +208,8 @@ class TwoInputDataset(Dataset):
         test1_images = []
         test2_images = []
 
-        print(self.test1_path, len(self.test1_path))
-        print(self.test2_path, len(self.test2_path))
+        # print(self.test1_path, len(self.test1_path))
+        # print(self.test2_path, len(self.test2_path))
 
         for path1, path2 in zip(self.test1_path, self.test2_path):
             image1 = cv2.imread(path1)
