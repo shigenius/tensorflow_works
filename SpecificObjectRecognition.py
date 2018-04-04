@@ -26,9 +26,10 @@ def primaryTrain(args) :
         labels_placeholder = tf.placeholder(dtype="float", shape=(None, arch.num_classes))
         # dropout率を入れるTensor
         keep_prob = tf.placeholder(dtype="float")
+        is_training = tf.placeholder(dtype="bool")
     
         # 計算モデルのop
-        logits = arch.inference(images_placeholder, keep_prob)
+        logits = arch.inference(images_placeholder, keep_prob, is_training)
 
         # log(0) = NaN になる可能性があるので1e-10~1の範囲で正規化
         loss = -tf.reduce_sum(labels_placeholder*tf.log(tf.clip_by_value(logits, 1e-10,1)))
@@ -39,7 +40,9 @@ def primaryTrain(args) :
 
         with tf.name_scope('train') as scope:
             # trainのop
-            train_step = tf.train.AdamOptimizer(args.learning_rate).minimize(loss)
+            update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
+            with tf.control_dependencies(update_ops):
+                train_step = tf.train.AdamOptimizer(args.learning_rate).minimize(loss)
             acc_summary_train = tf.summary.scalar("train_accuracy", accuracy)
             loss_summary_train = tf.summary.scalar("train_loss", loss)
 
@@ -76,13 +79,13 @@ def primaryTrain(args) :
                 batch, labels = dataset.getTrainBatch(args.batch_size, i)
 
                 # バッチを学習
-                sess.run(train_step, feed_dict={images_placeholder: batch, labels_placeholder: labels, keep_prob: args.dropout_prob})
+                sess.run(train_step, feed_dict={images_placeholder: batch, labels_placeholder: labels, keep_prob: args.dropout_prob, is_training: True})
 
                 # 最終バッチの処理
                 if i >= int(len(dataset.train_image_paths)/args.batch_size)-1:
 
                     # 最終バッチの学習のあと，そのバッチを使って評価．
-                    result = sess.run(training_op_list, feed_dict={images_placeholder: batch, labels_placeholder: labels, keep_prob: 1.0})
+                    result = sess.run(training_op_list, feed_dict={images_placeholder: batch, labels_placeholder: labels, keep_prob: 1.0, is_training: False})
 
                     # 必要なサマリーを追記
                     for j in range(1, len(result)):
@@ -92,7 +95,7 @@ def primaryTrain(args) :
     
                     # validation
                     test_data, test_labels = dataset.getTestData()
-                    val_result = sess.run(val_op_list, feed_dict={images_placeholder: test_data, labels_placeholder: test_labels, keep_prob: 1.0})
+                    val_result = sess.run(val_op_list, feed_dict={images_placeholder: test_data, labels_placeholder: test_labels, keep_prob: 1.0, is_training: False})
 
                     # 必要なサマリーを追記
                     for j in range(1, len(val_result)):
@@ -120,9 +123,10 @@ def secondaryTrain(args):
             images_placeholderB = tf.placeholder(dtype="float", shape=(None, arch.image_size*arch.image_size*3))
             labels_placeholder = tf.placeholder(dtype="float", shape=(None, subarch.num_classes))
             keep_prob = tf.placeholder(dtype="float")
+            is_training = tf.placeholder(dtype="bool")  #
 
             # 仮のinference (ckptに保存されている変数の数と，tf.train.Saver()を呼ぶ前に宣言する変数数を揃える必要があるため．) もうちょいいい書き方があるかもしれない
-            P_logits = arch.inference(images_placeholderA, keep_prob)
+            P_logits = arch.inference(images_placeholderA, keep_prob, is_training)
     
             # restore
             saver = tf.train.Saver()
@@ -132,7 +136,7 @@ def secondaryTrain(args):
             # print("\nvars_restored", vars_restored)
 
             # 計算モデルのop
-            logits = subarch.inference(images_placeholderA, images_placeholderB, keep_prob) # namescope "Primary/"以下はrestoreしたVariableになっている，はず
+            logits = subarch.inference(images_placeholderA, images_placeholderB, keep_prob, is_training) # namescope "Primary/"以下はrestoreしたVariableになっている，はず
 
             # 更新するvariableをもとめる
             vars_all = tf.global_variables()
@@ -153,7 +157,9 @@ def secondaryTrain(args):
 
             with tf.name_scope('train') as scope:
                 # trainのop
-                train_step = tf.train.AdamOptimizer(args.learning_rate).minimize(loss, var_list=vars_S)
+                update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
+                with tf.control_dependencies(update_ops):
+                    train_step = tf.train.AdamOptimizer(args.learning_rate).minimize(loss, var_list=vars_S)
                 acc_summary_train = tf.summary.scalar("train_accuracy", accuracy)
                 loss_summary_train = tf.summary.scalar("train_loss", loss)
 
@@ -194,7 +200,7 @@ def secondaryTrain(args):
 
                     # バッチを学習
                     sess.run(train_step, feed_dict={images_placeholderA: batchA, images_placeholderB: batchB, labels_placeholder: labels,
-                                                    keep_prob: args.dropout_prob})
+                                                    keep_prob: args.dropout_prob, is_training: True})
 
                     # 最終バッチの処理
                     if i >= int(len(dataset.train2_path) / args.batch_size) - 1:
@@ -202,7 +208,7 @@ def secondaryTrain(args):
                         # 最終バッチの学習のあと，そのバッチを使って評価．
                         result = sess.run(training_op_list,
                                           feed_dict={images_placeholderA: batchA, images_placeholderB: batchB, labels_placeholder: labels,
-                                                     keep_prob: 1.0})
+                                                     keep_prob: 1.0, is_training: False})
 
                         # 必要なサマリーを追記
                         for j in range(1, len(result)):
@@ -214,7 +220,7 @@ def secondaryTrain(args):
                         test_dataA, test_dataB, test_labels = dataset.getTestData()
                         val_result = sess.run(val_op_list,
                                               feed_dict={images_placeholderA: test_dataA, images_placeholderB: test_dataB, labels_placeholder: test_labels,
-                                                         keep_prob: 1.0})
+                                                         keep_prob: 1.0, is_training: False})
 
                         for j in range(1, len(val_result)):
                             summary_writer.add_summary(val_result[j], step)

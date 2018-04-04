@@ -3,16 +3,16 @@
 import numpy as np
 import tensorflow as tf
 import tensorflow.python.platform
-
+from tensorflow.contrib.layers.python.layers.layers import batch_norm
 
 class PrimaryCNN:
     def __init__(self):
         self.image_size = 227
         self.num_classes = 3
 
-    def inference(self, images_placeholder, keep_prob):
+    def inference(self, images_placeholder, keep_prob, is_training):
         with tf.variable_scope('Primary') as scope:
-            return base_architecture(self, images_placeholder, keep_prob)
+            return base_architecture(self, images_placeholder, keep_prob, is_training)
 
 
 class SecondaryCNN:
@@ -20,14 +20,14 @@ class SecondaryCNN:
         self.image_size = 227
         self.num_classes = 10
 
-    def inference(self, images_placeholderA, images_placeholderB, keep_prob):
+    def inference(self, images_placeholderA, images_placeholderB, keep_prob, is_training):
         with tf.variable_scope('Primary', reuse=True) as scope:
             imageA = tf.reshape(images_placeholderA, [-1, self.image_size, self.image_size, 3])
-            primary_conv = base_cnns(imageA)
+            primary_conv = base_cnns_with_bn(imageA, is_training)
 
         with tf.variable_scope('Secondary') as scope:
             imageB = tf.reshape(images_placeholderB, [-1, self.image_size, self.image_size, 3])
-            secondary_conv = base_cnns(imageB)
+            secondary_conv = base_cnns_with_bn(imageB, is_training)
 
             with tf.name_scope('concat') as scope:
                 h_concated = tf.concat([primary_conv, secondary_conv], 3)  # (?, x, y, z)
@@ -50,11 +50,12 @@ class SecondaryCNN:
             return y_conv
 
 
-def base_architecture(self, images_placeholder, keep_prob):
+def base_architecture(self, images_placeholder, keep_prob, is_training):
 
     x_image = tf.reshape(images_placeholder, [-1, self.image_size, self.image_size, 3])
 
-    h_conv4 = base_cnns(x_image)
+    # h_conv4 = base_cnns(x_image)
+    h_conv4 = base_cnns_with_bn(x_image, is_training)
 
     with tf.variable_scope('fc1') as scope:
         h_conv4_flat = tf.reshape(h_conv4, [-1, 6 * 6 * 128])
@@ -105,6 +106,30 @@ def base_cnns(x_image):
 
     return h_conv4
 
+def base_cnns_with_bn(x_image, is_training):
+
+    with tf.variable_scope('conv1') as scope:
+        W_conv1 = weight_variable([11, 11, 3, 64], "w")
+        b_conv1 = bias_variable([64], "b")
+        h_conv1 = tf.nn.relu(batch_norm_layer(tf.nn.conv2d(x_image, W_conv1, strides=[1, 4, 4, 1], padding="VALID") + b_conv1, is_training))
+
+    with tf.variable_scope('conv2') as scope:
+        W_conv2 = weight_variable([3, 3, 64, 64], "w")
+        b_conv2 = bias_variable([64], "b")
+        h_conv2 = tf.nn.relu(batch_norm_layer(tf.nn.conv2d(h_conv1, W_conv2, strides=[1, 2, 2, 1], padding="VALID") + b_conv2, is_training))
+
+    with tf.variable_scope('conv3') as scope:
+        W_conv3 = weight_variable([3, 3, 64, 128], "w")
+        b_conv3 = bias_variable([128], "b")
+        h_conv3 = tf.nn.relu(batch_norm_layer(tf.nn.conv2d(h_conv2, W_conv3, strides=[1, 2, 2, 1], padding="VALID") + b_conv3, is_training))
+
+    with tf.variable_scope('conv4') as scope:
+        # h_pool2 = max_pool_2x2(h_conv2)
+        W_conv4 = weight_variable([3, 3, 128, 128], "w")
+        b_conv4 = bias_variable([128], "b")
+        h_conv4 = tf.nn.relu(batch_norm_layer(tf.nn.conv2d(h_conv3, W_conv4, strides=[1, 2, 2, 1], padding="VALID") + b_conv4, is_training))
+
+    return h_conv4
 
 def weight_variable(shape, name):
     initial = tf.truncated_normal(shape, stddev=0.1)
@@ -113,6 +138,22 @@ def weight_variable(shape, name):
 def bias_variable(shape, name):
     initial = tf.constant(0.1, shape=shape)
     return tf.get_variable(name, initializer=initial, trainable=True)
+
+def batch_norm_layer(x, train_phase, scope_bn='bn'):
+    bn_train = batch_norm(x, decay=0.999, epsilon=1e-3, center=True, scale=True,
+            updates_collections=None,
+            is_training=True,
+            reuse=None, # is this right?
+            trainable=True,
+            scope=scope_bn)
+    bn_inference = batch_norm(x, decay=0.999, epsilon=1e-3, center=True, scale=True,
+            updates_collections=None,
+            is_training=False,
+            reuse=True, # is this right?
+            trainable=True,
+            scope=scope_bn)
+    z = tf.cond(train_phase, lambda: bn_train, lambda: bn_inference)
+    return z
 
 # def max_pool_2x2(x):
 #     return tf.nn.max_pool(x, ksize=[1, 3, 3, 1],
