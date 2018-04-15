@@ -34,7 +34,7 @@ def main():
     # print("n_image_per_class", n_image_per_class)
     mean = sum(n_image_per_class)/len(n_image_per_class)
     n_negative_sample = int(mean/2)
-    print("number of maked negative samples :", n_negative_sample)
+    print("number of negative samples :", n_negative_sample)
 
     # train1_list = [args.dataset + "/" + c + "/" + v + "/" + i.name + " " + str(class_dir.index(c)) for c in class_dir
     #                for v in video_dir[class_dir.index(c)] if not re.search('_cropped', v) for i in
