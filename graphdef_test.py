@@ -201,7 +201,10 @@ def train(args):
         sess.run(tf.global_variables_initializer())
 
         # summary
-        summary_writer = tf.summary.FileWriter(args.logdir + '/twostep/' + datetime.now().isoformat(), sess.graph)
+        if args.cb != None: # if running cross-valid
+            summary_writer = tf.summary.FileWriter(args.logdir + '/twostep/' + args.cb + '/' + datetime.now().isoformat(), sess.graph)
+        else:
+            summary_writer = tf.summary.FileWriter(args.logdir + '/twostep/' + datetime.now().isoformat(), sess.graph)
 
         training_op_list = [accuracy, acc_summary_train, loss_summary_train]
         val_op_list = [accuracy, acc_summary_test, loss_summary_test]
@@ -294,6 +297,8 @@ if __name__ == '__main__':
 
     parser.add_argument('--learning_rate', '-lr', type=float, default=1e-4)
     parser.add_argument('--dropout_prob', '-d', type=float, default=0.75)
+
+    parser.add_argument('--cbflag', '-cb', default=None) # usually, dont use this
 
 
     args = parser.parse_args()
