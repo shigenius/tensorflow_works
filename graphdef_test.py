@@ -104,32 +104,44 @@ def architecture(features_placeholder, images_placeholderB, keep_prob, is_traini
         with tf.variable_scope('conv1') as scope:
             W_conv1 = weight_variable([11, 11, 3, 64], "w")
             b_conv1 = bias_variable([64], "b")
-            h_conv1 = tf.nn.relu(batch_norm_layer(tf.nn.conv2d(x_image, W_conv1, strides=[1, 4, 4, 1], padding="VALID") + b_conv1, is_training))
-
-        with tf.name_scope('pool1') as scope:
-            h_pool1 = max_pool_2x2(h_conv1)
+            h_conv1 = tf.nn.relu(
+                batch_norm_layer(tf.nn.conv2d(x_image, W_conv1, strides=[1, 4, 4, 1], padding="VALID") + b_conv1,
+                                 is_training))
 
         with tf.variable_scope('conv2') as scope:
-            W_conv2 = weight_variable([3, 3, 64, 128], "w")
-            b_conv2 = bias_variable([128], "b")
-            h_conv2 = tf.nn.relu(batch_norm_layer(tf.nn.conv2d(h_pool1, W_conv2, strides=[1, 2, 2, 1], padding="VALID") + b_conv2, is_training))
+            W_conv2 = weight_variable([3, 3, 64, 64], "w")
+            b_conv2 = bias_variable([64], "b")
+            h_conv2 = tf.nn.relu(
+                batch_norm_layer(tf.nn.conv2d(h_conv1, W_conv2, strides=[1, 2, 2, 1], padding="VALID") + b_conv2,
+                                 is_training))
 
-        with tf.name_scope('pool2') as scope:
-            h_pool2 = max_pool_2x2(h_conv2)
+        with tf.variable_scope('conv3') as scope:
+            W_conv3 = weight_variable([3, 3, 64, 128], "w")
+            b_conv3 = bias_variable([128], "b")
+            h_conv3 = tf.nn.relu(
+                batch_norm_layer(tf.nn.conv2d(h_conv2, W_conv3, strides=[1, 2, 2, 1], padding="VALID") + b_conv3,
+                                 is_training))
+
+        with tf.variable_scope('conv4') as scope:
+            W_conv4 = weight_variable([3, 3, 128, 128], "w")
+            b_conv4 = bias_variable([128], "b")
+            h_conv4 = tf.nn.relu(
+                batch_norm_layer(tf.nn.conv2d(h_conv3, W_conv4, strides=[1, 2, 2, 1], padding="VALID") + b_conv4,
+                                 is_training))
 
         with tf.name_scope('concat') as scope:
-            h_pool2_flat = tf.reshape(h_pool2, [-1, 6 * 6 * 128])
+            h_conv4_flat = tf.reshape(h_conv4, [-1, 6 * 6 * 128])
             incep_pool3_features_flat = tf.reshape(features_placeholder, [-1, 2048])
-            h_concated = tf.concat([h_pool2_flat, incep_pool3_features_flat], 1)  # (?, x, y, z)
+            h_concated = tf.concat([h_conv4_flat, incep_pool3_features_flat], 1)  # (?, x, y, z)
 
         with tf.variable_scope('fc1') as scope:
-            W_fc1 = weight_variable([6 * 6 * 128 + 2048, 1024], "w")
-            b_fc1 = bias_variable([1024], "b")
+            W_fc1 = weight_variable([6 * 6 * 128 + 2048, 256], "w")
+            b_fc1 = bias_variable([256], "b")
             h_fc1 = tf.nn.relu(batch_norm_layer(tf.matmul(h_concated, W_fc1) + b_fc1, is_training))
             h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 
         with tf.variable_scope('fc2') as scope:
-            W_fc2 = weight_variable([1024, num_classes], "w")
+            W_fc2 = weight_variable([256, num_classes], "w")
             b_fc2 = bias_variable([num_classes], "b")
             h_fc2 = tf.matmul(h_fc1_drop, W_fc2) + b_fc2
 
@@ -239,7 +251,7 @@ def train(args):
                     # get features
                     incep_features_test_batch = np.zeros((len(test_dataA), 1, 1, 2048))
                     for j, image in enumerate(test_dataA):
-                        encoded_data = sess.run(encoded_op, {image_for_extractor_placeholder : image})
+                        encoded_data = sess.run(encoded_op, {image_for_extractor_placeholder: image})
                         incep_features_test_batch[j] = sess.run(get_incep_pool3_op, {'DecodeJpeg/contents:0': encoded_data})
 
                     val_result = sess.run(val_op_list,
@@ -281,7 +293,7 @@ if __name__ == '__main__':
     parser.add_argument('--logdir', '-log', default='/Users/shigetomi/workspace/tensorflow_works/log/', help='TensorBoard log')
 
     parser.add_argument('--learning_rate', '-lr', type=float, default=1e-4)
-    parser.add_argument('--dropout_prob', '-d', type=float, default=0.5)
+    parser.add_argument('--dropout_prob', '-d', type=float, default=0.75)
 
 
     args = parser.parse_args()
