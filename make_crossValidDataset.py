@@ -80,9 +80,9 @@ if __name__ == '__main__':
 
         # check absence
         for f in train_files_withClassID_crop:
-            assert os.path.exists(f.split(" ")[0]), "file:{0}".format(f.split(" ")[0])
+            assert os.path.exists(f.split(" ")[0]), "file does not exist:{0}".format(f.split(" ")[0])
         for f in train_files_withClassID_orig:
-            assert os.path.exists(f.split(" ")[0]), "file:{0}".format(f.split(" ")[0])
+            assert os.path.exists(f.split(" ")[0]), "file does not exist:{0}".format(f.split(" ")[0])
 
         # print(train_files_withClassID_crop)
         # print(train_files_withClassID_orig)

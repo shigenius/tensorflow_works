@@ -201,8 +201,8 @@ def train(args):
         sess.run(tf.global_variables_initializer())
 
         # summary
-        if args.cb != None: # if running cross-valid
-            summary_writer = tf.summary.FileWriter(args.logdir + '/twostep/' + args.cb + '/' + datetime.now().isoformat(), sess.graph)
+        if args.cbflag != None: # if running cross-valid
+            summary_writer = tf.summary.FileWriter(args.logdir + '/twostep/' + args.cbflag + '/' + datetime.now().isoformat(), sess.graph)
         else:
             summary_writer = tf.summary.FileWriter(args.logdir + '/twostep/' + datetime.now().isoformat(), sess.graph)
 
