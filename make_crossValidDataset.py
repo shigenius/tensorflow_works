@@ -12,7 +12,7 @@ def getymd(path):
     ctime_utc = time.localtime(ctime_et)[:3]
     return ctime_utc
 
-def getCreateTime(videopath='/Users/shigetomi/Desktop/dataset_roadsign/P_engi1/IMG_2043.MOV'):
+def getCreateTime(videopath):
     # dependent with ffmpeg
     proc = subprocess.Popen(['ffmpeg', '-i', videopath], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout_value = proc.communicate()[1]
