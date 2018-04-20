@@ -6,9 +6,7 @@ import random
 import sys
 import re
 
-from keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array, array_to_img
-from keras.datasets import cifar10
-
+from distortion import distort
 from Dataset import Dataset
 
 class TwoInputDataset(Dataset):
@@ -149,6 +147,8 @@ class TwoInputDataset(Dataset):
 
             imageA = cv2.imread(pathA)
             imageB = cv2.imread(pathB)
+            imageA = distort(imageA)
+            imageB = distort(imageB)
 
             imageA = cv2.resize(imageA, (self.image_size, self.image_size))
             imageB = cv2.resize(imageB, (self.image_size, self.image_size))
