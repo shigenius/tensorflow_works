@@ -3,12 +3,27 @@ import time
 from datetime import datetime
 import argparse
 import re
+import subprocess
 
 def getymd(path):
+    # Unix only
     ctime_et = os.path.getmtime(path)
     # ctime_utc = datetime(*time.localtime(ctime_et)[:6]) # convert epoch time to utc
     ctime_utc = time.localtime(ctime_et)[:3]
     return ctime_utc
+
+def getCreateTime(videopath='/Users/shigetomi/Desktop/dataset_roadsign/P_engi1/IMG_2043.MOV'):
+    # dependent with ffmpeg
+    proc = subprocess.Popen(['ffmpeg', '-i', videopath], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout_value = proc.communicate()[1]
+    #print('\tstdout:', repr(stdout_value).split("\\n"))
+
+    pattern = r"creation_time.*"
+    ctime = [text for text in repr(stdout_value).split("\\n") if re.compile(pattern).search(text)]
+    ctime = re.compile("\d+\-\d+\-\d+").search(ctime[0]).group()
+    ctime = tuple(ctime.split("-"))
+    ctime = tuple(map(lambda x: int(x), ctime))
+    return ctime
 
 def find_all_files(directory):
     for root, dirs, files in os.walk(directory):
@@ -26,7 +41,7 @@ if __name__ == '__main__':
     dataset = args.dataset_path
     #dataset = "/Users/shigetomi/Desktop/dataset_roadsign"
     videos = [file for file in find_all_files(dataset) if re.compile(".MOV|.m4v|.mov|.mp4").search(os.path.splitext(file)[1])]
-    ymd_list = [[v, getymd(v)] for v in videos]
+    ymd_list = [[v, getCreateTime(v)] for v in videos]
     takingphoto_days = list(set([pair[1] for pair in ymd_list]))
     day_and_videos = {day: tuple([ymd[0] for ymd in ymd_list if ymd[1] == day]) for day in takingphoto_days}
     #print(day_and_videos)
