@@ -18,7 +18,7 @@ def random_brightness(image, max_delta=63):
 
 def random_contrast(img, range=(1, 5)):
     a = np.random.uniform(*range)
-    newimg = (img - np.mean(src)) * a + 0
+    newimg = (img - np.mean(img)) * a + 0
     newimg = np.minimum(newimg, 255)
     newimg = np.maximum(newimg, 0)
     return newimg.astype('uint8')
