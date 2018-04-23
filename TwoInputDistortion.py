@@ -99,7 +99,7 @@ def random_erasing(image_origin, s=(0.02, 0.2), r=(0.3, 3)):
     img[top:bottom, left:right, :].fill(mask_value)
     return img
 
-def distort(images = [], flag='train', p=0.0):
+def distort(images = [], flag='train', p=0.5):
     # augmentation
     if flag == 'train':
         if np.random.rand() > p:

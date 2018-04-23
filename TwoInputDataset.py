@@ -147,16 +147,16 @@ class TwoInputDataset(Dataset):
 
             imageA = cv2.imread(pathA)
             imageB = cv2.imread(pathB)
-            imageA, imageB = distort([imageA, imageB])
+            imageA, imageB = distort([imageA, imageB], flag='train')
 
             imageA = cv2.resize(imageA, (self.image_size, self.image_size))
             imageB = cv2.resize(imageB, (self.image_size, self.image_size))
 
-            # for debugging
-            print(pathA, pathB)
-            cv2.imshow("imageA", imageA)
-            cv2.imshow("imageB", imageB)
-            cv2.waitKey(0)
+            # # for debugging
+            # print(pathA, pathB)
+            # cv2.imshow("imageA", imageA)
+            # cv2.imshow("imageB", imageB)
+            # cv2.waitKey(0)
 
             # 0-1のfloat値にする
             # batchA.append(imageA.astype(np.float32)/255.0)
