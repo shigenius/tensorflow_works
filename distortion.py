@@ -61,14 +61,14 @@ def random_noise(img):
     img[(pts_y, pts_x)] = (0, 0, 0)
     return img
 
-def random_erasing(image_origin, s=(0.02, 0.4), r=(0.3, 3)):
+def random_erasing(image_origin, s=(0.02, 0.2), r=(0.3, 3)):
     img = np.copy(image_origin)
 
     # マスクする画素値をランダムで決める
     mask_value = np.random.randint(0, 256)
 
     h, w, _ = img.shape
-    # マスクのサイズを元画像のs(0.02~0.4)倍の範囲からランダムに決める
+    # マスクのサイズを元画像のs(0.02~0.2)倍の範囲からランダムに決める
     mask_area = np.random.randint(h * w * s[0], h * w * s[1])
 
     # マスクのアスペクト比をr(0.3~3)の範囲からランダムに決める

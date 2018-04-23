@@ -8,7 +8,7 @@ from datetime import datetime
 
 from TwoInputDataset import TwoInputDataset
 from tensorflow.contrib.layers.python.layers.layers import batch_norm
-
+import cv2
 #MODEL_PATH = '/Users/shigetomi/Downloads/imagenet/classify_image_graph_def.pb'
 #MODEL_PATH = '/home/akalab/classify_image_graph_def.pb' # pre-trained inception v3 model
 # IMAGE_PATH = '/Users/shigetomi/Desktop/samplepictures/image_0011.jpg'
@@ -150,6 +150,59 @@ def architecture(features_placeholder, images_placeholderB, keep_prob, is_traini
 
         return y
 
+def new_arch1(features_placeholderA, features_placeholderB, keep_prob, is_training, num_classes):
+    with tf.variable_scope('new_arch1') as scope:
+        def weight_variable(shape, name):
+            initial = tf.truncated_normal(shape, stddev=0.1)
+            return tf.get_variable(name, initializer=initial, trainable=True)
+
+        def bias_variable(shape, name):
+            initial = tf.constant(0.1, shape=shape)
+            return tf.get_variable(name, initializer=initial, trainable=True)
+
+        def batch_norm_layer(x, train_phase, scope_bn='bn'):
+            bn_train = batch_norm(x, decay=0.999, epsilon=1e-3, center=True, scale=True,
+                                  updates_collections=None,
+                                  is_training=True,
+                                  reuse=None,  # is this right?
+                                  trainable=True,
+                                  scope=scope_bn)
+            bn_inference = batch_norm(x, decay=0.999, epsilon=1e-3, center=True, scale=True,
+                                      updates_collections=None,
+                                      is_training=False,
+                                      reuse=True,  # is this right?
+                                      trainable=True,
+                                      scope=scope_bn)
+            z = tf.cond(train_phase, lambda: bn_train, lambda: bn_inference)
+            return z
+
+        with tf.name_scope('concat') as scope:
+            incep_pool3_featuresA_flat = tf.reshape(features_placeholderA, [-1, 2048])
+            incep_pool3_featuresB_flat = tf.reshape(features_placeholderB, [-1, 2048])
+            h_concated = tf.concat([incep_pool3_featuresA_flat, incep_pool3_featuresB_flat], 1)  # (?, x, y, z)
+
+        with tf.variable_scope('fc1') as scope:
+            W_fc1 = weight_variable([2048 * 2, 1000], "w")
+            b_fc1 = bias_variable([1000], "b")
+            h_fc1 = tf.nn.relu(batch_norm_layer(tf.matmul(h_concated, W_fc1) + b_fc1, is_training))
+            h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
+
+        with tf.variable_scope('fc2') as scope:
+            W_fc2 = weight_variable([1000, 256], "w")
+            b_fc2 = bias_variable([256], "b")
+            h_fc2 = tf.nn.relu(batch_norm_layer(tf.matmul(h_fc1_drop, W_fc2) + b_fc2, is_training))
+            h_fc2_drop = tf.nn.dropout(h_fc2, keep_prob)
+
+        with tf.variable_scope('fc3') as scope:
+            W_fc3 = weight_variable([256, num_classes], "w")
+            b_fc3 = bias_variable([num_classes], "b")
+            h_fc3 = tf.matmul(h_fc2_drop, W_fc3) + b_fc3
+
+        with tf.name_scope('softmax') as scope:
+            y = tf.nn.softmax(h_fc3)
+
+    return y
+
 def train(args):
     image_size = 227
     num_classes = args.num_classes
@@ -165,15 +218,13 @@ def train(args):
         is_training = tf.placeholder(dtype="bool") # train flag
 
         image_for_extractor_placeholder = tf.placeholder(dtype="float32", shape=(image_size*image_size*3))
-        features_placeholder = tf.placeholder(dtype="float32", shape=(None, 1, 1, 2048))  # pool3 features. *shape & type is not confirmed yet
-
-        # operations
-        get_incep_pool3_op = sess.graph.get_tensor_by_name('pool_3:0')
-        image_tensor_op = tf.convert_to_tensor(tf.cast(tf.reshape(image_for_extractor_placeholder, [image_size, image_size, 3])[:, ::-1], dtype='uint8'))
-        encoded_op = tf.image.encode_jpeg(image_tensor_op)
+        #features_placeholder = tf.placeholder(dtype="float32", shape=(None, 1, 1, 2048))# pool3 features
+        features_placeholderA = tf.placeholder(dtype="float32", shape=(None, 1, 1, 2048))
+        features_placeholderB = tf.placeholder(dtype="float32", shape=(None, 1, 1, 2048))
 
         # define archtecture
-        y = architecture(features_placeholder, images_placeholderB, keep_prob, is_training, num_classes, image_size)
+        #y = architecture(features_placeholder, images_placeholderB, keep_prob, is_training, num_classes, image_size)
+        y = new_arch1(features_placeholderA, features_placeholderB, keep_prob, is_training, num_classes)
 
         # train & test operations
         loss = -tf.reduce_sum(labels_placeholder * tf.log(tf.clip_by_value(y, 1e-10, 1)))
@@ -209,6 +260,21 @@ def train(args):
         training_op_list = [accuracy, acc_summary_train, loss_summary_train]
         val_op_list = [accuracy, acc_summary_test, loss_summary_test]
 
+        # feature extract operations
+        npimage2tensor_op = tf.convert_to_tensor(
+            tf.cast(tf.reshape(image_for_extractor_placeholder, [image_size, image_size, 3])[:, ::-1], dtype='uint8')) # uintでいいの？
+        encode_op = tf.image.encode_jpeg(npimage2tensor_op)
+        get_incep_pool3_op = sess.graph.get_tensor_by_name('pool_3:0')
+
+        # *inner function
+        def feature_extract(batch):
+            incep_features_batch = np.zeros((len(batch), 1, 1, 2048))
+            for j, image in enumerate(batch):
+                # ndarray image -> tensor -> encoded image
+                encoded_data = sess.run(encode_op, {image_for_extractor_placeholder: image})
+                incep_features_batch[j] = sess.run(get_incep_pool3_op, {'DecodeJpeg/contents:0': encoded_data})
+            return incep_features_batch
+
         # train cycle
         for step in range(args.max_steps):
             dataset.shuffle()
@@ -218,25 +284,35 @@ def train(args):
                 batchA, batchB, labels = dataset.getTrainBatch(args.batch_size, i)
 
                 # get features from pre-trained inception-v3 model
-                incep_features_batch = np.zeros((len(batchA), 1, 1, 2048))
-                for j, image in enumerate(batchA):
-                    # ndarray image -> tensor -> encoded image
-                    encoded_data = sess.run(encoded_op, {image_for_extractor_placeholder : image})
-                    incep_features_batch[j] = sess.run(get_incep_pool3_op, {'DecodeJpeg/contents:0': encoded_data})
+                incep_features_batchA = feature_extract(batchA)
+                incep_features_batchB = feature_extract(batchB)
 
                 # batch train
-                sess.run(train_step, feed_dict={features_placeholder: incep_features_batch,
-                                                images_placeholderB: batchB,
+                # sess.run(train_step, feed_dict={features_placeholder: incep_features_batchA,
+                #                                 images_placeholderB: batchB,
+                #                                 labels_placeholder: labels,
+                #                                 keep_prob: args.dropout_prob,
+                #                                 is_training: True})
+
+                sess.run(train_step, feed_dict={features_placeholderA: incep_features_batchA,
+                                                features_placeholderB: incep_features_batchB,
                                                 labels_placeholder: labels,
                                                 keep_prob: args.dropout_prob,
                                                 is_training: True})
 
-
                 # at final batch proc (output accuracy)
                 if i >= int(len(dataset.train2_path) / args.batch_size) - 1:
+                    dataset.shuffle()
+                    # result = sess.run(training_op_list,
+                    #                   feed_dict={features_placeholder: incep_features_batchA,
+                    #                              images_placeholderB: batchB,
+                    #                              labels_placeholder: labels,
+                    #                              keep_prob: 1.0,
+                    #                              is_training: False})
+
                     result = sess.run(training_op_list,
-                                      feed_dict={features_placeholder: incep_features_batch,
-                                                 images_placeholderB: batchB,
+                                      feed_dict={features_placeholderA: incep_features_batchA,
+                                                features_placeholderB: incep_features_batchB,
                                                  labels_placeholder: labels,
                                                  keep_prob: 1.0,
                                                  is_training: False})
@@ -252,14 +328,18 @@ def train(args):
                     test_dataA, test_dataB, test_labels = dataset.getTestData() # get Full size test set
 
                     # get features
-                    incep_features_test_batch = np.zeros((len(test_dataA), 1, 1, 2048))
-                    for j, image in enumerate(test_dataA):
-                        encoded_data = sess.run(encoded_op, {image_for_extractor_placeholder: image})
-                        incep_features_test_batch[j] = sess.run(get_incep_pool3_op, {'DecodeJpeg/contents:0': encoded_data})
+                    incep_features_test_dataA = feature_extract(test_dataA)
+                    incep_features_test_dataB = feature_extract(test_dataB)
 
+                    # val_result = sess.run(val_op_list,
+                    #                       feed_dict={features_placeholder:incep_features_test_dataA,
+                    #                                  images_placeholderB: test_dataB,
+                    #                                  labels_placeholder: test_labels,
+                    #                                  keep_prob: 1.0,
+                    #                                  is_training: False})
                     val_result = sess.run(val_op_list,
-                                          feed_dict={features_placeholder:incep_features_test_batch,
-                                                     images_placeholderB: test_dataB,
+                                          feed_dict={features_placeholderA: incep_features_test_dataA,
+                                                     features_placeholderB: incep_features_test_dataB,
                                                      labels_placeholder: test_labels,
                                                      keep_prob: 1.0,
                                                      is_training: False})
@@ -269,7 +349,7 @@ def train(args):
                         summary_writer.add_summary(val_result[j], step)
 
                     # print(" ramdom test batch((size=%d)) accuracy %g" % (args.batch_size, val_result[0]))
-                    print("  Full test set accuracy %g" %  (val_result[0]))
+                    print("  Full test set accuracy %g" % (val_result[0]))
                     # print("incep_pool3 weight? :", sess.run(get_incep_pool3_op), get_incep_pool3_op.shape)
 
                     # save checkpoint model

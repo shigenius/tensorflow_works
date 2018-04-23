@@ -6,7 +6,7 @@ import random
 import sys
 import re
 
-from distortion import distort
+from TwoInputDistortion import distort
 from Dataset import Dataset
 
 class TwoInputDataset(Dataset):
@@ -143,15 +143,20 @@ class TwoInputDataset(Dataset):
         end = start + batchsize - 1
 
         for i, pathA in enumerate(pathsA[start:end]):
-            pathB = pathsB[i]
+            pathB = pathsB[start+i]
 
             imageA = cv2.imread(pathA)
             imageB = cv2.imread(pathB)
-            imageA = distort(imageA)
-            imageB = distort(imageB)
+            imageA, imageB = distort([imageA, imageB])
 
             imageA = cv2.resize(imageA, (self.image_size, self.image_size))
             imageB = cv2.resize(imageB, (self.image_size, self.image_size))
+
+            # for debugging
+            print(pathA, pathB)
+            cv2.imshow("imageA", imageA)
+            cv2.imshow("imageB", imageB)
+            cv2.waitKey(0)
 
             # 0-1のfloat値にする
             # batchA.append(imageA.astype(np.float32)/255.0)

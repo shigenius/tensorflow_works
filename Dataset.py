@@ -6,6 +6,7 @@ import random
 
 from keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array, array_to_img
 from keras.datasets import cifar10
+from distortion import distort
 
 class Dataset:
     """
@@ -105,7 +106,7 @@ class Dataset:
             image = cv2.imread(path)
             if image is None:
                 continue
-
+            image = distort(image)
             image = cv2.resize(image, (self.image_size, self.image_size))
 
             # 0-1のfloat値にする
