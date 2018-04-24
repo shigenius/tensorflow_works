@@ -1,12 +1,9 @@
 # tensorflow_works
 メモ
  * AtomでMarkdown+数式 $\Delta{x}$ (ctrl+shift+X)
-
-## Table of Contents
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [tensorflow_works](#tensorflowworks)
-	- [Table of Contents](#table-of-contents)
 	- [環境](#環境)
 	- [実験手順の再現](#実験手順再現)
 		- [環境構築](#環境構築)
@@ -28,11 +25,10 @@
 	- [makeDataset_forSpecificObjRecog.py](#makedatasetforspecificobjrecogpy)
 	- [graphdef_test.py](#graphdeftestpy)
 	- [classify_images.py](#classifyimagespy)
+	- [make_crossValidDataset.py](#makecrossvaliddatasetpy)
+	- [crossValidation.py](#crossvalidationpy)
 
 <!-- /TOC -->
-
-下に書いてあるコードが新しいやつ
-
 ## 環境
 * tensorflow 1.4.0
 * python 3.5.x
@@ -199,7 +195,7 @@ linuxの場合screenコマンドを用いれば，sshを切ってもプロセス
 * train1とtrain2，またtest1とtest2は元ファイルの行番号によって対応する．
   * そのためそれぞれ行数が一致していなければならない
 
-##  makeDataset_forSpecificObjRecog.py
+## makeDataset_forSpecificObjRecog.py
 
 * `SpecificObjectRecognition.py` のデータセットを作成する．
 * testセットもランダムにサンプリングする．
@@ -244,4 +240,23 @@ dataset/
 実行例
 ~~~
 % python classify_images.py --model_dir /Users/shigetomi/Downloads/imagenet/ --images_file /Users/shigetomi/Desktop/dataset_walls/train2.txt --log_path /Users/shigetomi/workspace/tensorflow_works/log/log_walls0218.csv
+~~~
+
+## make_crossValidDataset.py
+* 同じ日付の動画をvalid setとしてtrain.txtとtest.txtをそれぞれ作成する．(交差検証用)
+* ffmpegに依存
+  - st_birthtimeがlinuxに対応していなかったため
+
+実行例
+~~~
+% python make_crossValidDataset.py ~/Desktop/dataset_roadsign
+~~~
+## crossValidation.py
+* `graphdef_test.py`を交差検証する．
+* 中身を弄ることで`graphdef_test.py`以外でも実行可能
+* 実行前に[make_crossValidDataset.py](#make_crossValidDatasetpy)でデータセットを作成する必要がある．
+
+実行例
+~~~
+% python crossValidation.py ~/Desktop/dataset_roadsign --log_name 0418_roadsign
 ~~~
