@@ -9,52 +9,68 @@ import tensorflow as tf
 
 def random_brightness(imgs = [], max_delta=63):
     delta = np.random.uniform(-max_delta, max_delta)
-    newimgA = imgs[0] + delta
-    newimgB = imgs[1] + delta
 
-    newimgA = np.minimum(newimgA, 255)
-    newimgA = np.maximum(newimgA, 0)
-    newimgB = np.minimum(newimgB, 255)
-    newimgB = np.maximum(newimgB, 0)
-    return [newimgA.astype('uint8'), newimgB.astype('uint8')]
+    dsts = []
+    for img in imgs:
+        dst = img + delta
+        dst = np.minimum(dst, 255)
+        dst = np.maximum(dst, 0)
+
+        dsts.append(dst.astype('uint8'))
+
+    return dsts
     # return tf.image.random_brightness(image, max_delta=63, seed=None)
 
 def random_contrast(imgs = [], range=(1, 5)):
     a = np.random.uniform(*range)
-    newimgA = (imgs[0] - np.mean(imgs[0])) * a + 0
-    newimgA = np.minimum(newimgA, 255)
-    newimgA = np.maximum(newimgA, 0)
 
-    newimgB = (imgs[1] - np.mean(imgs[1])) * a + 0
-    newimgB = np.minimum(newimgB, 255)
-    newimgB = np.maximum(newimgB, 0)
-    return [newimgA.astype('uint8'), newimgB.astype('uint8')]
+    dsts = []
+    for img in imgs:
+        dst = (img - np.mean(img)) * a + 0
+        dst = np.minimum(dst, 255)
+        dst = np.maximum(dst, 0)
 
-def gamma(image, gamma=2):
+        dsts.append(dst.astype('uint8'))
+
+    return dsts
+
+def gamma(imgs = [], gamma=2):
+    # create LUT
     lookUpTable = np.zeros((256, 1), dtype='uint8')
     for i in range(256):
         lookUpTable[i][0] = 255 * pow(float(i) / 255, 1.0 / gamma)
-    return cv2.LUT(image, lookUpTable)
+
+    dsts = []
+    for img in imgs:
+        dst = cv2.LUT(img, lookUpTable)
+        dsts.append(dst)
+
+    return dsts
 
 def normalize(img):
     return (img - np.mean(src)) / np.std(src) * 1 + 0
 
 def random_resize(imgs = [], range=(2, 8)):
     a = int(np.random.uniform(*range))
-    dstA = cv2.resize(imgs[0], None, fx=1/(2*a), fy=1/(2*a))
-    dstB = cv2.resize(imgs[1], None, fx=1 / (2 * a), fy=1 / (2 * a))
-    return [dstA.astype('uint8'), dstB.astype('uint8')]
+
+    dsts = []
+    for img in imgs:
+        dst = cv2.resize(img, None, fx=1/(2*a), fy=1/(2*a))
+        dsts.append(dst.astype('uint8'))
+
+    return dsts
 
 def random_rotate(imgs = [], angle_range=(-10, 10)):
     angle = np.random.randint(*angle_range)
-    hA, wA, _ = imgs[0].shape
-    imgA = rotate(imgs[0], angle)
-    imgA = cv2.resize(imgA, (wA, hA))
 
-    hB, wB, _ = imgs[1].shape
-    imgB = rotate(imgs[1], angle)
-    imgB = cv2.resize(imgB, (wB, hB))
-    return [imgA, imgB]
+    dsts = []
+    for img in imgs:
+        h, w, _ = img.shape
+        dst = rotate(img, angle)
+        dst = cv2.resize(dst, (w, h))
+        dsts.append(dst)
+
+    return dsts
 
 def random_noise(img, num_noise = 1000):
     row, col, ch = img.shape
@@ -119,8 +135,7 @@ def distort(images = [], flag='train', p=0.5):
             images = random_rotate(images)
 
     # filtering
-    images[0] = gamma(images[0], gamma=2.0) # gamma=2 暗部が持ち上がる
-    images[1] = gamma(images[1], gamma=2.0)  # gamma=2 暗部が持ち上がる
+    images = gamma(images, gamma=2.0) # gamma=2 暗部が持ち上がる
     #image = normalize(image) #dst image is float64
 
     return images[0], images[1]
@@ -136,7 +151,7 @@ if __name__ == '__main__':
     cv2.imshow('srcA', srcA)
     cv2.imshow('srcB', srcB)
 
-    dstA, dstB = distort([srcA, srcB])
+    dstA, dstB = distort([srcA, srcB], p=0.5)
     cv2.imshow('dstA', dstA)
     cv2.imshow('dstB', dstB)
     #cv2.imwrite("/Users/shigetomi/Desktop/1.png", dst)

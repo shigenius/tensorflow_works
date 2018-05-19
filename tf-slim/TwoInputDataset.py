@@ -1,11 +1,10 @@
 import cv2
 import numpy as np
-import tensorflow as tf
-import tensorflow.python.platform
 import random
 import sys
-import re
 
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from TwoInputDistortion import distort
 from Dataset import Dataset
 
@@ -159,10 +158,10 @@ class TwoInputDataset(Dataset):
             # cv2.waitKey(0)
 
             # 0-1のfloat値にする
-            # batchA.append(imageA.astype(np.float32)/255.0)
-            batchA.append(imageA.flatten().astype(np.float32) / 255.0)
-            # batchB.append(imageB.astype(np.float32)/255.0)
-            batchB.append(imageB.flatten().astype(np.float32) / 255.0)
+            batchA.append(imageA)
+            # batchA.append(imageA.flatten().astype(np.float32) / 255.0)
+            batchB.append(imageB)
+            # batchB.append(imageB.flatten().astype(np.float32) / 255.0)
 
         batchA = np.asarray(batchA)
         batchB = np.asarray(batchB)
@@ -230,8 +229,8 @@ class TwoInputDataset(Dataset):
             # cv2.imshow("imageB", imageB)
             # cv2.waitKey(0)
 
-            testA_images.append(imageA.flatten().astype(np.float32)/255.0)
-            testB_images.append(imageB.flatten().astype(np.float32)/255.0)
+            testA_images.append(imageA)
+            testB_images.append(imageB)
  
         testA_images = np.asarray(testA_images)
         testB_images = np.asarray(testB_images)
