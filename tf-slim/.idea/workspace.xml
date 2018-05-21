@@ -11,35 +11,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="slim_test.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/slim_test.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="21" column="0" lean-forward="false" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#23#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="train_image_classifier.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../models/research/slim/train_image_classifier.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4857">
-              <caret line="344" column="43" lean-forward="false" selection-start-line="344" selection-start-column="43" selection-end-line="344" selection-end-column="43" />
-              <folding>
-                <element signature="e#759#797#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="transfer_learning.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="transfer_learning.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/transfer_learning.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="383">
-              <caret line="148" column="58" lean-forward="false" selection-start-line="148" selection-start-column="58" selection-end-line="148" selection-end-column="58" />
+            <state relative-caret-position="-793">
+              <caret line="116" column="67" lean-forward="false" selection-start-line="116" selection-start-column="56" selection-end-line="116" selection-end-column="67" />
               <folding>
                 <element signature="e#69#92#0" expanded="true" />
               </folding>
@@ -47,25 +23,23 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TwoInputDataset.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/TwoInputDataset.py">
+      <file leaf-file-name="crossValidation.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/crossValidation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="144">
-              <caret line="161" column="71" lean-forward="false" selection-start-line="161" selection-start-column="71" selection-end-line="161" selection-end-column="71" />
-              <folding>
-                <element signature="e#0#10#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="524">
+              <caret line="47" column="60" lean-forward="true" selection-start-line="47" selection-start-column="60" selection-end-line="47" selection-end-column="60" />
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="inception_v4.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../models/research/slim/nets/inception_v4.py">
+      <file leaf-file-name="TwoInputDataset.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/TwoInputDataset.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="145">
-              <caret line="264" column="64" lean-forward="false" selection-start-line="264" selection-start-column="14" selection-end-line="264" selection-end-column="64" />
+            <state relative-caret-position="-628">
+              <caret line="161" column="71" lean-forward="false" selection-start-line="161" selection-start-column="71" selection-end-line="161" selection-end-column="71" />
               <folding>
-                <element signature="e#954#992#0" expanded="true" />
+                <element signature="e#0#10#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -82,14 +56,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>network_fn</find>
-      <find>train_tensor</find>
-      <find>loss</find>
-      <find>check</find>
-      <find>aux</find>
-      <find>slim = tf.contrib.slimbias</find>
-      <find>bias</find>
-      <find>ince</find>
       <find>16</find>
       <find>scope</find>
       <find>def</find>
@@ -107,10 +73,18 @@
       <find>slim.batch_norm</find>
       <find>pre</find>
       <find>image_size</find>
-      <find>restore</find>
       <find>print</find>
       <find>crpped_batch</find>
       <find>drop</find>
+      <find>loss_summary_test</find>
+      <find>sts</find>
+      <find>nega</find>
+      <find>save_path</find>
+      <find>restore</find>
+      <find>args.restore</find>
+      <find>summa</find>
+      <find>logdir</find>
+      <find>summary_dir</find>
       <find>self.test1_label</find>
     </findStrings>
   </component>
@@ -125,10 +99,11 @@
         <option value="$PROJECT_DIR$/../TwoInputDataset.py" />
         <option value="$PROJECT_DIR$/TwoInputDataset.py" />
         <option value="$PROJECT_DIR$/transfer_learning.py" />
+        <option value="$PROJECT_DIR$/crossValidation.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="1">
+  <component name="ProjectFrameBounds">
     <option name="x" value="46" />
     <option name="y" value="23" />
     <option name="width" value="1178" />
@@ -261,7 +236,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="46" y="23" width="1178" height="777" extended-state="1" />
+    <frame x="46" y="23" width="1178" height="777" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.033955857" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -300,7 +275,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#0#23#0" expanded="true" />
+            <element signature="e#0#23#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -417,26 +392,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/slim_test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="21" column="0" lean-forward="false" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../models/research/slim/train_image_classifier.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4857">
-          <caret line="344" column="43" lean-forward="false" selection-start-line="344" selection-start-column="43" selection-end-line="344" selection-end-column="43" />
-          <folding>
-            <element signature="e#759#797#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../TwoInputDataset.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="329">
@@ -450,14 +405,60 @@
         <state relative-caret-position="145">
           <caret line="264" column="64" lean-forward="false" selection-start-line="264" selection-start-column="14" selection-end-line="264" selection-end-column="64" />
           <folding>
-            <element signature="e#954#992#0" expanded="true" />
+            <element signature="e#954#992#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/slim_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="21" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="23" selection-end-column="15" />
+          <folding>
+            <element signature="e#0#23#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../models/research/slim/train_image_classifier.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5160">
+          <caret line="344" column="43" lean-forward="false" selection-start-line="344" selection-start-column="43" selection-end-line="344" selection-end-column="43" />
+          <folding>
+            <element signature="e#759#797#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../make_crossValidDataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="29">
+          <caret line="86" column="12" lean-forward="false" selection-start-line="86" selection-start-column="8" selection-end-line="86" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../makeDataset_forSpecificObjRecog.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-361">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/transfer_learning.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-793">
+          <caret line="116" column="67" lean-forward="false" selection-start-line="116" selection-start-column="56" selection-end-line="116" selection-end-column="67" />
+          <folding>
+            <element signature="e#69#92#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/TwoInputDataset.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
+        <state relative-caret-position="-628">
           <caret line="161" column="71" lean-forward="false" selection-start-line="161" selection-start-column="71" selection-end-line="161" selection-end-column="71" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
@@ -465,13 +466,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/transfer_learning.py">
+    <entry file="file://$PROJECT_DIR$/crossValidation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="383">
-          <caret line="148" column="58" lean-forward="false" selection-start-line="148" selection-start-column="58" selection-end-line="148" selection-end-column="58" />
-          <folding>
-            <element signature="e#69#92#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="524">
+          <caret line="47" column="60" lean-forward="true" selection-start-line="47" selection-start-column="60" selection-end-line="47" selection-end-column="60" />
+          <folding />
         </state>
       </provider>
     </entry>

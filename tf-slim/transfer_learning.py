@@ -46,7 +46,7 @@ def shigeNet_v1(cropped_images, original_images, num_classes, keep_prob=1.0, is_
         return end_points
 
 def sandbox(args):
-    MODEL_PATH = '/Users/shigetomi/Downloads/inception_v4.ckpt'
+    MODEL_PATH = args.model_path
     # print_tensors_in_checkpoint_file(file_name=MODEL_PATH, tensor_name='', all_tensors=False, all_tensor_names=True)
     # print_tensors_in_checkpoint_file(file_name=MODEL_PATH, tensor_name='', all_tensors=True, all_tensor_names=True)
 
@@ -114,10 +114,9 @@ def sandbox(args):
 
         # summary
         if args.cbflag != None:  # if running cross-valid
-            summary_writer = tf.summary.FileWriter(
-                args.logdir + '/twostep/' + args.cbflag + '/' + datetime.now().isoformat(), sess.graph)
+            summary_writer = tf.summary.FileWriter(args.summary_dir + '/twostep/' + args.cbflag + '/' + datetime.now().isoformat(), sess.graph)
         else:
-            summary_writer = tf.summary.FileWriter(args.logdir + '/twostep/' + datetime.now().isoformat(), sess.graph)
+            summary_writer = tf.summary.FileWriter(args.summary_dir + '/twostep/' + datetime.now().isoformat(), sess.graph)
 
         # Train cycle
         for step in range(args.max_steps):
@@ -176,150 +175,6 @@ def sandbox(args):
         print("all process finished　without a hitch. save the trained model at :", args.save_path)
 
 
-
-
-def train(args):
-    image_size = 227
-    num_classes = args.num_classes
-    dataset = TwoInputDataset(train1=args.train1, train2=args.train2, test1=args.test1, test2=args.test2,  num_classes=num_classes, image_size=image_size)
-
-    create_graph(pb_path=args.pb_path) # graphを作成する(restore)
-
-    with tf.Session() as sess:
-        # placeholders
-        images_placeholderB = tf.placeholder(dtype="float32", shape=(None, image_size * image_size * 3))
-        labels_placeholder = tf.placeholder(dtype="float32", shape=(None, num_classes))
-        keep_prob = tf.placeholder(dtype="float32")
-        is_training = tf.placeholder(dtype="bool") # train flag
-
-        image_for_extractor_placeholder = tf.placeholder(dtype="float32", shape=(image_size*image_size*3))
-        #features_placeholder = tf.placeholder(dtype="float32", shape=(None, 1, 1, 2048))# pool3 features
-        features_placeholderA = tf.placeholder(dtype="float32", shape=(None, 1, 1, 2048))
-        features_placeholderB = tf.placeholder(dtype="float32", shape=(None, 1, 1, 2048))
-
-        # define archtecture
-        #y = architecture(features_placeholder, images_placeholderB, keep_prob, is_training, num_classes, image_size)
-        y = new_arch1(features_placeholderA, features_placeholderB, keep_prob, is_training, num_classes)
-
-        # train & test operations
-        loss = -tf.reduce_sum(labels_placeholder * tf.log(tf.clip_by_value(y, 1e-10, 1)))
-        correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(labels_placeholder, 1))
-        accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
-
-        with tf.name_scope('train') as scope:
-            update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
-            with tf.control_dependencies(update_ops):
-                train_step = tf.train.AdamOptimizer(args.learning_rate).minimize(loss)
-            acc_summary_train = tf.summary.scalar("train_accuracy", accuracy)
-            loss_summary_train = tf.summary.scalar("train_loss", loss)
-
-        with tf.name_scope('test') as scope:
-            acc_summary_test = tf.summary.scalar("test_accuracy", accuracy)
-            loss_summary_test = tf.summary.scalar("test_loss", loss)
-
-        # restore checkpoint
-        saver = tf.train.Saver()
-        if args.restore is not None:
-            saver.restore(sess, args.restore)
-            print("Model restored from : ", args.restore)
-
-        # initialize
-        sess.run(tf.global_variables_initializer())
-
-        # summary
-        if args.cbflag != None: # if running cross-valid
-            summary_writer = tf.summary.FileWriter(args.logdir + '/twostep/' + args.cbflag + '/' + datetime.now().isoformat(), sess.graph)
-        else:
-            summary_writer = tf.summary.FileWriter(args.logdir + '/twostep/' + datetime.now().isoformat(), sess.graph)
-
-        training_op_list = [accuracy, acc_summary_train, loss_summary_train]
-        val_op_list = [accuracy, acc_summary_test, loss_summary_test]
-
-        # feature extract operations
-        npimage2tensor_op = tf.convert_to_tensor(
-            tf.cast(tf.reshape(image_for_extractor_placeholder, [image_size, image_size, 3])[:, ::-1], dtype='uint8')) # uintでいいの？
-        encode_op = tf.image.encode_jpeg(npimage2tensor_op)
-        get_incep_pool3_op = sess.graph.get_tensor_by_name('pool_3:0')
-
-        # *inner function
-        def feature_extract(batch):
-            incep_features_batch = np.zeros((len(batch), 1, 1, 2048))
-            for j, image in enumerate(batch):
-                # ndarray image -> tensor -> encoded image
-                encoded_data = sess.run(encode_op, {image_for_extractor_placeholder: image})
-                incep_features_batch[j] = sess.run(get_incep_pool3_op, {'DecodeJpeg/contents:0': encoded_data})
-            return incep_features_batch
-
-        # train cycle
-        for step in range(args.max_steps):
-            dataset.shuffle()
-            # batch proc
-            for i in range(int(len(dataset.train2_path) / args.batch_size)):  # i : batch index
-
-                batchA, batchB, labels = dataset.getTrainBatch(args.batch_size, i)
-
-                # get features from pre-trained inception-v3 model
-                incep_features_batchA = feature_extract(batchA)
-                incep_features_batchB = feature_extract(batchB)
-
-                # batch train
-                sess.run(train_step, feed_dict={features_placeholderA: incep_features_batchA,
-                                                features_placeholderB: incep_features_batchB,
-                                                labels_placeholder: labels,
-                                                keep_prob: args.dropout_prob,
-                                                is_training: True})
-
-                # at final batch proc (output accuracy)
-                if i >= int(len(dataset.train2_path) / args.batch_size) - 1:
-                    dataset.shuffle()
-                    # result = sess.run(training_op_list,
-                    #                   feed_dict={features_placeholder: incep_features_batchA,
-                    #                              images_placeholderB: batchB,
-                    #                              labels_placeholder: labels,
-                    #                              keep_prob: 1.0,
-                    #                              is_training: False})
-
-                    result = sess.run(training_op_list,
-                                      feed_dict={features_placeholderA: incep_features_batchA,
-                                                features_placeholderB: incep_features_batchB,
-                                                 labels_placeholder: labels,
-                                                 keep_prob: 1.0,
-                                                 is_training: False})
-
-                    # write summary in Tensorboard
-                    for j in range(1, len(result)):
-                        summary_writer.add_summary(result[j], step)
-
-                    print("step %d : training final-batch(size=%d) accuracy: %g" % (step, args.batch_size, result[0]))
-
-
-                    # validation proc
-                    test_dataA, test_dataB, test_labels = dataset.getTestData() # get Full size test set
-
-                    # get features
-                    incep_features_test_dataA = feature_extract(test_dataA)
-                    incep_features_test_dataB = feature_extract(test_dataB)
-
-                    val_result = sess.run(val_op_list,
-                                          feed_dict={features_placeholderA: incep_features_test_dataA,
-                                                     features_placeholderB: incep_features_test_dataB,
-                                                     labels_placeholder: test_labels,
-                                                     keep_prob: 1.0,
-                                                     is_training: False})
-
-                    # write valid summary
-                    for j in range(1, len(val_result)):
-                        summary_writer.add_summary(val_result[j], step)
-
-                    # print(" ramdom test batch((size=%d)) accuracy %g" % (args.batch_size, val_result[0]))
-                    print("  Full test set accuracy %g" % (val_result[0]))
-                    # print("incep_pool3 weight? :", sess.run(get_incep_pool3_op), get_incep_pool3_op.shape)
-
-                    # save checkpoint model
-                    saver.save(sess, args.save_path)
-
-        print("all process finished　without a hitch. save the trained model at :", args.save_path)
-
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='')
@@ -332,11 +187,10 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', '-b', type=int, default=20)
     parser.add_argument('--num_classes', '-nc', type=int, default=6)
 
-    parser.add_argument('--pb_path', '-pb', default='/Users/shigetomi/Downloads/imagenet/classify_image_graph_def.pb', help='FullPath of inception-v3 graph (protobuffer)')
-    parser.add_argument('--restore', '-r', default=None, help='FullPath of restoring model')
+    parser.add_argument('--model_path', '-model', default='/Users/shigetomi/Downloads/inception_v4.ckpt', help='FullPath of inception-v4 model(ckpt)')
     parser.add_argument('--save_path', '-save', default='/Users/shigetomi/workspace/tensorflow_works/model/twostep.ckpt', help='FullPath of saving model')
 
-    parser.add_argument('--logdir', '-log', default='/Users/shigetomi/workspace/tensorflow_works/log/', help='TensorBoard log')
+    parser.add_argument('--summary_dir', '-summary', default='/Users/shigetomi/workspace/tensorflow_works/log/', help='TensorBoard log')
 
     parser.add_argument('--learning_rate', '-lr', type=float, default=1e-4)
     parser.add_argument('--dropout_prob', '-d', type=float, default=0.8)
