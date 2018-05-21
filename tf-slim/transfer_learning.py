@@ -43,7 +43,7 @@ def shigeNet_v1(cropped_images, original_images, num_classes, keep_prob=1.0, is_
                     net = slim.fully_connected(net, num_classes, activation_fn=None, scope='fc3')
                     end_points['Logits'] = net
                     end_points['Predictions'] = tf.nn.softmax(net, name='Predictions')
-
+        print(slim.get_model_variables())
         return end_points
 
 def sandbox(args):
