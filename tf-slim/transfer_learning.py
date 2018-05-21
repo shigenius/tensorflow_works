@@ -124,7 +124,7 @@ def sandbox(args):
 
             # Train proc
             for i in range(int(len(dataset.train1_path) / args.batch_size)):  # i : batch index
-
+                print("batch:", i)
                 cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, i)
 
                 # batch train
