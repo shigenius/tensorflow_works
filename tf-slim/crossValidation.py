@@ -33,6 +33,7 @@ if __name__ == '__main__':
 
     for day in days:
         day_str = day[0] + '_' + day[1] + '_' + day[2]
+        print(day_str)
         hoge = dataset + '/' + day_str
         # subprocess.check_call(['python', 'graphdef_test.py',
         #                        '--train1', hoge + 'train_crop.txt', # cropped train
