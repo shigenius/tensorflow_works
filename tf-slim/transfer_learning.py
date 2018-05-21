@@ -21,6 +21,7 @@ def shigeNet_v1(cropped_images, original_images, num_classes, keep_prob=1.0, is_
             # Extract features
             with slim.arg_scope(inception_v4_arg_scope()):
                 logits_c, end_points_c = inception_v4(cropped_images, num_classes=1001, is_training=False, reuse=None)
+            with slim.arg_scope(inception_v4_arg_scope()):
                 # logits_o, end_points_o = inception_v4(original_images, num_classes=1001, is_training=False, reuse=tf.AUTO_REUSE)
                 logits_o, end_points_o = inception_v4(original_images, num_classes=1001, is_training=False, reuse=True)
 
