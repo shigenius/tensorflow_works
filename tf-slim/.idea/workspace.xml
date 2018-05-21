@@ -14,11 +14,21 @@
       <file leaf-file-name="transfer_learning.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/transfer_learning.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="148">
-              <caret line="24" column="108" lean-forward="false" selection-start-line="24" selection-start-column="108" selection-end-line="24" selection-end-column="108" />
+            <state relative-caret-position="223">
+              <caret line="22" column="118" lean-forward="false" selection-start-line="22" selection-start-column="118" selection-end-line="22" selection-end-column="118" />
               <folding>
                 <element signature="e#69#92#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="inception_v4.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nets/inception_v4.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="133">
+              <caret line="258" column="27" lean-forward="false" selection-start-line="258" selection-start-column="23" selection-end-line="258" selection-end-column="27" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -56,7 +66,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>16</find>
       <find>scope</find>
       <find>def</find>
       <find>arg_scope</find>
@@ -86,6 +95,7 @@
       <find>logdir</find>
       <find>self.test1_label</find>
       <find>summary_dir</find>
+      <find>reuse</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -464,10 +474,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/nets/inception_v4.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="258" column="27" lean-forward="false" selection-start-line="258" selection-start-column="23" selection-end-line="258" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/transfer_learning.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="148">
-          <caret line="24" column="108" lean-forward="false" selection-start-line="24" selection-start-column="108" selection-end-line="24" selection-end-column="108" />
+        <state relative-caret-position="223">
+          <caret line="22" column="118" lean-forward="false" selection-start-line="22" selection-start-column="118" selection-end-line="22" selection-end-column="118" />
           <folding>
             <element signature="e#69#92#0" expanded="true" />
           </folding>
