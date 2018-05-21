@@ -22,14 +22,14 @@ def shigeNet_v1(cropped_images, original_images, num_classes, keep_prob=1.0, is_
             with slim.arg_scope(inception_v4_arg_scope()):
                 logits_c, end_points_c = inception_v4(cropped_images, num_classes=1001, is_training=False, reuse=None)
                 # logits_o, end_points_o = inception_v4(original_images, num_classes=1001, is_training=False, reuse=tf.AUTO_REUSE)
-                # logits_o, end_points_o = inception_v4(original_images, num_classes=1001, is_training=False, reuse=tf.AUTO_REUSE)
+                logits_o, end_points_o = inception_v4(original_images, num_classes=1001, is_training=False, reuse=True)
 
                 feature_c = end_points_c['PreLogitsFlatten']
-                # feature_o = end_points_o['PreLogitsFlatten']
+                feature_o = end_points_o['PreLogitsFlatten']
 
             # Concat!
             with tf.variable_scope('Concat') as scope:
-                concated_feature = tf.concat([feature_c, feature_c], 1)  # (?, x, y, z)
+                concated_feature = tf.concat([feature_c, feature_o], 1)  # (?, x, y, z)
 
             with tf.variable_scope('Logits'):
                 with slim.arg_scope([slim.fully_connected],
@@ -43,7 +43,7 @@ def shigeNet_v1(cropped_images, original_images, num_classes, keep_prob=1.0, is_
                     net = slim.fully_connected(net, num_classes, activation_fn=None, scope='fc3')
                     end_points['Logits'] = net
                     end_points['Predictions'] = tf.nn.softmax(net, name='Predictions')
-        print(slim.get_variables_by_name("weights"))
+
         return end_points
 
 def sandbox(args):
@@ -127,7 +127,7 @@ def sandbox(args):
             for i in range(int(len(dataset.train1_path) / args.batch_size)):  # i : batch index
                 print("batch:", i)
                 cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, i)
-
+                print(slim.get_variables())
                 # batch train
                 sess.run(train_step, feed_dict={cropped_images_placeholder: cropped_batch,
                                                 original_images_placeholder: orig_batch,
