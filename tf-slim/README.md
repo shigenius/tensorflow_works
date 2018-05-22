@@ -15,5 +15,5 @@
 
 実行例
 ~~~
-% python transfer_learning.py --train1 ~/Desktop/minitrain2.txt --test1 ~/Desktop/dataset_roadsign/test2.txt --train2 ~/Desktop/dataset_roadsign/train1.txt --test2 ~/Desktop/dataset_roadsign/test1.txt -b 5 -s 3 -pb '/Users/shigetomi/Downloads/imagenet/classify_image_graph_def.pb' -nc 6 -save ./model/twostep.ckpt
+% python transfer_learning.py --train_c ~/dataset_roadsign/train2.txt --test_c ~/dataset_roadsign/test2.txt --train_o ~/dataset_roadsign/train1.txt --test_o ~/dataset_roadsign/test1.txt --model_path ~/inception_v4.ckpt -save /home/akalab/tensorflow_works/tf-slim/model/twostep_roadsign.ckpt --summary_dir /home/akalab/tensorflow_works/tf-slim/log -b 10 -s 1 -nc 6
 ~~~
