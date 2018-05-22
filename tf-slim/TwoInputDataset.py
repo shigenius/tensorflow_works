@@ -138,6 +138,7 @@ class TwoInputDataset(Dataset):
 
         batchA = []
         batchB = []
+        # check here
         start = batchsize * index
         end = start + batchsize - 1
 
@@ -206,8 +207,8 @@ class TwoInputDataset(Dataset):
         return self.getBatch(batchsize, index, mode='test')
     """
 
-    def getTestData(self):
-        # testdataを全部とってくる
+    def getTestData(self, batchsize=0, i=0):
+        # testdataをbatchsize分とってくる
         # チェックする
  
         testA_images = []
@@ -216,7 +217,7 @@ class TwoInputDataset(Dataset):
         # print(self.test1_path, len(self.test1_path))
         # print(self.test2_path, len(self.test2_path))
 
-        for pathA, pathB in zip(self.test1_path, self.test2_path):
+        for pathA, pathB in zip(self.test1_path[:batchsize], self.test2_path[:batchsize]):
             imageA = cv2.imread(pathA)
             imageB = cv2.imread(pathB)
             imageA, imageB = distort([imageA, imageB], flag='test')

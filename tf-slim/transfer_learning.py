@@ -125,9 +125,7 @@ def sandbox(args):
 
             # Train proc
             for i in range(int(len(dataset.train1_path) / args.batch_size)):  # i : batch index
-                print("batch:", i)
                 cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, i)
-                print(slim.get_variables())
                 # batch train
                 sess.run(train_step, feed_dict={cropped_images_placeholder: cropped_batch,
                                                 original_images_placeholder: orig_batch,
@@ -157,7 +155,7 @@ def sandbox(args):
             print("step %d : training batch(size=%d) accuracy: %g" % (step, args.batch_size, result[0]))
 
             # Validation proc
-            cropped_test_batch, orig_test_batch, test_labels = dataset.getTestData()  # get Full size test set
+            cropped_test_batch, orig_test_batch, test_labels = dataset.getTestData(args.batch_size)  # get Full size test set
             val_result = sess.run(val_op_list,
                                   feed_dict={cropped_images_placeholder: cropped_test_batch,
                                              original_images_placeholder: orig_test_batch,
@@ -168,7 +166,7 @@ def sandbox(args):
             # Write valid summary
             for j in range(1, len(val_result)):
                 summary_writer.add_summary(val_result[j], step)
-            print("  Full test set accuracy %g" % (val_result[0]))
+            print(" test batch(size=%d) accuracy %g" % (args.batch_size, val_result[0]))
 
             # Save checkpoint model
             saver.save(sess, args.save_path)
