@@ -44,7 +44,7 @@ def shigeNet_v1(cropped_images, original_images, num_classes, keep_prob=1.0, is_
 
         return end_points
 
-def sandbox(args):
+def train(args):
     MODEL_PATH = args.model_path
     # print_tensors_in_checkpoint_file(file_name=MODEL_PATH, tensor_name='', all_tensors=False, all_tensor_names=True)
     # print_tensors_in_checkpoint_file(file_name=MODEL_PATH, tensor_name='', all_tensors=True, all_tensor_names=True)
@@ -183,19 +183,15 @@ if __name__ == '__main__':
     parser.add_argument('--max_steps', '-s', type=int, default=3)
     parser.add_argument('--batch_size', '-b', type=int, default=20)
     parser.add_argument('--num_classes', '-nc', type=int, default=6)
-
-    parser.add_argument('--model_path', '-model', default='/Users/shigetomi/Downloads/inception_v4.ckpt', help='FullPath of inception-v4 model(ckpt)')
-    parser.add_argument('--save_path', '-save', default='/Users/shigetomi/workspace/tensorflow_works/model/twostep.ckpt', help='FullPath of saving model')
-
-    parser.add_argument('--summary_dir', '-summary', default='/Users/shigetomi/workspace/tensorflow_works/log/', help='TensorBoard log')
-
     parser.add_argument('--learning_rate', '-lr', type=float, default=1e-4)
     parser.add_argument('--dropout_prob', '-d', type=float, default=0.8)
 
-    parser.add_argument('--cbflag', '-cb', default=None) # usually, dont use this
+    parser.add_argument('--model_path', '-model', default='/Users/shigetomi/Downloads/inception_v4.ckpt', help='FullPath of inception-v4 model(ckpt)')
+    parser.add_argument('--save_path', '-save', default='/Users/shigetomi/workspace/tensorflow_works/model/twostep.ckpt', help='FullPath of saving model')
+    parser.add_argument('--summary_dir', '-summary', default='/Users/shigetomi/workspace/tensorflow_works/log/', help='TensorBoard log')
 
+    parser.add_argument('--cbflag', '-cb', default=None) # usually, dont use this
 
     args = parser.parse_args()
 
-    sandbox(args)
-    # train(args)
+    train(args)
