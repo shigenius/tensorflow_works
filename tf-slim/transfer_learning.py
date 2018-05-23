@@ -1,5 +1,3 @@
-# after running : models/tutorials/image/imagenet/classify_image.py
-
 import tensorflow as tf
 import numpy as np
 
