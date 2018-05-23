@@ -14,8 +14,18 @@
       <file leaf-file-name="transfer_learning.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/transfer_learning.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="353">
-              <caret line="157" column="83" lean-forward="false" selection-start-line="157" selection-start-column="83" selection-end-line="157" selection-end-column="83" />
+            <state relative-caret-position="253">
+              <caret line="137" column="38" lean-forward="true" selection-start-line="137" selection-start-column="38" selection-end-line="137" selection-end-column="38" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TwoInputDataset.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/TwoInputDataset.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="140">
+              <caret line="107" column="36" lean-forward="false" selection-start-line="107" selection-start-column="36" selection-end-line="107" selection-end-column="36" />
               <folding />
             </state>
           </provider>
@@ -32,14 +42,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>scope</find>
-      <find>def</find>
-      <find>arg_scope</find>
-      <find>arg_sco</find>
-      <find>train_ste</find>
-      <find>dataset</find>
-      <find>squeeze</find>
-      <find>num</find>
       <find>get_incep_pool3_op</find>
       <find>end_p</find>
       <find>logits</find>
@@ -62,6 +64,14 @@
       <find>self.test1_label</find>
       <find>summary_dir</find>
       <find>reuse</find>
+      <find>dataset</find>
+      <find>train1_path</find>
+      <find>train2_path</find>
+      <find>train1_label</find>
+      <find>test1_path</find>
+      <find>test2_path</find>
+      <find>test1_label</find>
+      <find>train1</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -74,9 +84,9 @@
         <option value="$PROJECT_DIR$/../../models/research/slim/nets/inception_v4.py" />
         <option value="$PROJECT_DIR$/../TwoInputDataset.py" />
         <option value="$PROJECT_DIR$/crossValidation.py" />
-        <option value="$PROJECT_DIR$/transfer_learning.py" />
-        <option value="$PROJECT_DIR$/TwoInputDataset.py" />
         <option value="$PROJECT_DIR$/exp1-3-1.py" />
+        <option value="$PROJECT_DIR$/TwoInputDataset.py" />
+        <option value="$PROJECT_DIR$/transfer_learning.py" />
       </list>
     </option>
   </component>
@@ -128,7 +138,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.exp1-3-1">
+  <component name="RunManager" selected="Python.transfer_learning">
     <configuration name="SpecificObjectRecognition" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -142,6 +152,24 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="tf-slim" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/SpecificObjectRecognition.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="TwoInputDataset" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="tf-slim" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/TwoInputDataset.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -196,23 +224,25 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="tf-slim" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/transfer_learning.py" />
-      <option name="PARAMETERS" value="--train_c $USER_HOME$/Desktop/minitrain2.txt --test_c $USER_HOME$/Desktop/dataset_roadsign/test2.txt --train_o $USER_HOME$/Desktop/dataset_roadsign/train1.txt --test_o $USER_HOME$/Desktop/dataset_roadsign/test1.txt -b 5 -s 3 -pb '$USER_HOME$/Downloads/imagenet/classify_image_graph_def.pb' -nc 6 -save $PROJECT_DIR$/../model/twostep.ckpt" />
+      <option name="PARAMETERS" value="--train_c $USER_HOME$/Desktop/minitrain2.txt --test_c $USER_HOME$/Desktop/dataset_roadsign/test2.txt --train_o $USER_HOME$/Desktop/dataset_roadsign/train1.txt --test_o $USER_HOME$/Desktop/dataset_roadsign/test1.txt -b 5 -s 3 -nc 6 -save $PROJECT_DIR$/../model/twostep.ckpt" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <list size="4">
+    <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Python.slim_test" />
       <item index="1" class="java.lang.String" itemvalue="Python.SpecificObjectRecognition" />
       <item index="2" class="java.lang.String" itemvalue="Python.transfer_learning" />
       <item index="3" class="java.lang.String" itemvalue="Python.exp1-3-1" />
+      <item index="4" class="java.lang.String" itemvalue="Python.TwoInputDataset" />
     </list>
     <recent_temporary>
-      <list size="4">
-        <item index="0" class="java.lang.String" itemvalue="Python.exp1-3-1" />
-        <item index="1" class="java.lang.String" itemvalue="Python.transfer_learning" />
-        <item index="2" class="java.lang.String" itemvalue="Python.SpecificObjectRecognition" />
-        <item index="3" class="java.lang.String" itemvalue="Python.slim_test" />
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="Python.transfer_learning" />
+        <item index="1" class="java.lang.String" itemvalue="Python.TwoInputDataset" />
+        <item index="2" class="java.lang.String" itemvalue="Python.exp1-3-1" />
+        <item index="3" class="java.lang.String" itemvalue="Python.SpecificObjectRecognition" />
+        <item index="4" class="java.lang.String" itemvalue="Python.slim_test" />
       </list>
     </recent_temporary>
   </component>
@@ -236,16 +266,17 @@
     <frame x="46" y="23" width="1178" height="777" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.033955857" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="R Packages" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="R Graphics" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27659574" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27659574" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.033955857" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="R Packages" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="R Graphics" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -253,7 +284,6 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -435,13 +465,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/slim_test.py" />
     <entry file="file://$PROJECT_DIR$/exp1-3-1.py" />
-    <entry file="file://$PROJECT_DIR$/TwoInputDataset.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-931">
-          <caret line="140" column="20" lean-forward="false" selection-start-line="140" selection-start-column="20" selection-end-line="140" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/crossValidation.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="239">
@@ -456,10 +479,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/TwoInputDataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="140">
+          <caret line="107" column="36" lean-forward="false" selection-start-line="107" selection-start-column="36" selection-end-line="107" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/transfer_learning.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="353">
-          <caret line="157" column="83" lean-forward="false" selection-start-line="157" selection-start-column="83" selection-end-line="157" selection-end-column="83" />
+        <state relative-caret-position="253">
+          <caret line="137" column="38" lean-forward="true" selection-start-line="137" selection-start-column="38" selection-end-line="137" selection-end-column="38" />
           <folding />
         </state>
       </provider>

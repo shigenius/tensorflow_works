@@ -105,7 +105,7 @@ def sandbox(args):
     val_op_list = [accuracy, acc_summary_test, loss_summary_test]
 
 
-    dataset = TwoInputDataset(train1=args.train_c, train2=args.train_o, test1=args.test_c, test2=args.test_o,
+    dataset = TwoInputDataset(train_c=args.train_c, train_o=args.train_o, test_c=args.test_c, test_o=args.test_o,
                               num_classes=num_classes, image_size=image_size)
 
     with tf.Session() as sess:
@@ -124,11 +124,11 @@ def sandbox(args):
             dataset.shuffle()
 
             # Train proc
-            for i in range(int(len(dataset.train1_path) / args.batch_size)):  # i : batch index
+            for i in range(int(len(dataset.train_path_c) / args.batch_size)):  # i : batch index
                 cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, i)
                 # batch train
-                sess.run(train_step, feed_dict={cropped_images_placeholder: cropped_batch,
-                                                original_images_placeholder: orig_batch,
+                sess.run(train_step, feed_dict={cropped_images_placeholder: cropped_batch['batch'],
+                                                original_images_placeholder: orig_batch['batch'],
                                                 labels_placeholder: labels,
                                                 keep_prob: args.dropout_prob,
                                                 is_training: True})
@@ -142,8 +142,8 @@ def sandbox(args):
             cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, 0)
 
             result = sess.run(training_op_list,
-                              feed_dict={cropped_images_placeholder: cropped_batch,
-                                         original_images_placeholder: orig_batch,
+                              feed_dict={cropped_images_placeholder: cropped_batch['batch'],
+                                         original_images_placeholder: orig_batch['batch'],
                                          labels_placeholder: labels,
                                          keep_prob: 1.0,
                                          is_training: False})
@@ -155,10 +155,10 @@ def sandbox(args):
             print("step %d : training batch(size=%d) accuracy: %g" % (step, args.batch_size, result[0]))
 
             # Validation proc
-            cropped_test_batch, orig_test_batch, test_labels = dataset.getTestData(args.batch_size)  # get Full size test set
+            cropped_test_batch, orig_test_batch, test_labels = dataset.getTestData(args.batch_size)
             val_result = sess.run(val_op_list,
-                                  feed_dict={cropped_images_placeholder: cropped_test_batch,
-                                             original_images_placeholder: orig_test_batch,
+                                  feed_dict={cropped_images_placeholder: cropped_test_batch['batch'],
+                                             original_images_placeholder: orig_test_batch['batch'],
                                              labels_placeholder: test_labels,
                                              keep_prob: 1.0,
                                              is_training: False})
