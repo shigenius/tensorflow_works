@@ -169,9 +169,6 @@ def train(args):
             # Save checkpoint model
             saver.save(sess, args.save_path)
 
-        print("all process finished　without a hitch. save the trained model at :", args.save_path)
-
-
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='')
@@ -195,3 +192,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     train(args)
+
+    print("all process finished　without a hitch. save the trained model at :", args.save_path)
