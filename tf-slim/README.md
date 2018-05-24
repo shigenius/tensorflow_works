@@ -9,28 +9,25 @@
 <!-- /TOC -->
 
 ## TF-slimについて
+ソース
+* https://github.com/tensorflow/models
+* https://github.com/tensorflow/models/tree/master/research/slim
+	- pre-trained checkpointファイルやそれぞれのnetworkの定義(コード)なども載っています．
 
-ソースは以下です．
+参考記事
 
-https://github.com/tensorflow/models
-https://github.com/tensorflow/models/tree/master/research/slim
-* pre-trained checkpointファイルやそれぞれのnetworkの定義(コード)なども載っています．
-
-
-以下，参考記事です．
-
-▪TensorFlow-Slim
+* TensorFlow-Slim
 https://github.com/tensorflow/tensorflow/blob/master/tensorflow/contrib/slim/README.md
 
-▪TF-Slim : TensorFlow 軽量ライブラリ Slim
+* TF-Slim : TensorFlow 軽量ライブラリ Slim
 http://tensorflow.classcat.com/2017/04/16/tensorflow-slim/
 http://tensorflow.classcat.com/2017/04/27/tensorflow-slim-2/
-* ↑の日本語訳です
+	- ↑の日本語訳です
 
-▪TensorFlow(TF-Slim)で簡単に転移学習を試す
+* TensorFlow(TF-Slim)で簡単に転移学習を試す
 http://workpiles.com/2016/12/tensorflow-slim-transfer_learning/
 
-▪TF-Slimを使ってTensorFlowを簡潔に書く
+* TF-Slimを使ってTensorFlowを簡潔に書く
 http://workpiles.com/2016/12/tensorflow-tf-slim/
 
 ## transfer_learning.py
