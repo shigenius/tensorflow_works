@@ -89,9 +89,11 @@ def train(args):
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
 
     with tf.name_scope('train') as scope:
+        # 階層を下げる
         update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
         with tf.control_dependencies(update_ops):
             train_step = tf.train.AdamOptimizer(args.learning_rate).minimize(loss)
+        #
         acc_summary_train = tf.summary.scalar("train_accuracy", accuracy)
         loss_summary_train = tf.summary.scalar("train_loss", loss)
 
