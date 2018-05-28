@@ -11,23 +11,32 @@ import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from tensorflow.contrib.layers.python.layers.layers import batch_norm
 from nets.inception_v4 import inception_v4, inception_v4_arg_scope
+from nets.vgg import vgg_16, vgg_arg_scope
 
-def shigeNet_v1(cropped_images, original_images, num_classes, keep_prob=1.0, is_training=True, scope='shigeNet_v1', reuse=None):
+archs = {
+    'inception_v4': {'fn': inception_v4, 'arg_scope': inception_v4_arg_scope, 'end_point': 'PreLogitsFlatten'},
+    'vgg_16': {'fn': vgg_16, 'arg_scope': vgg_arg_scope, 'end_point': 'shigeNet_v1/vgg_16/fc7'}
+}
+
+
+def shigeNet_v1(cropped_images, original_images, num_classes, keep_prob=1.0, is_training=True, scope='shigeNet_v1', reuse=None, extractor_name='inception_v4'):
     end_points = {}
     with tf.variable_scope(scope, 'shigeNet_v1', reuse=reuse) as scope:
         with slim.arg_scope([slim.batch_norm, slim.dropout], is_training=is_training):
             # Extract features
-            with slim.arg_scope(inception_v4_arg_scope()):
-                logits_c, end_points_c = inception_v4(cropped_images, num_classes=1001, is_training=False, reuse=None)
+            with slim.arg_scope(archs[extractor_name]['arg_scope']()):
+                logits_c, end_points_c = archs[extractor_name]['fn'](cropped_images, num_classes=1000, is_training=False, reuse=None)
+                logits_o, end_points_o = archs[extractor_name]['fn'](original_images, num_classes=1000, is_training=False, reuse=True)
+                # logits_c, end_points_c = archs[extractor_name]['fn'](cropped_images, num_classes=1000, is_training=False, reuse=None)
+                # logits_o, end_points_o = archs[extractor_name]['fn'](original_images, num_classes=1000, is_training=False, reuse=True)
                 # logits_o, end_points_o = inception_v4(original_images, num_classes=1001, is_training=False, reuse=tf.AUTO_REUSE)
-                logits_o, end_points_o = inception_v4(original_images, num_classes=1001, is_training=False, reuse=True)
 
-                feature_c = end_points_c['PreLogitsFlatten']
-                feature_o = end_points_o['PreLogitsFlatten']
+                feature_c = end_points_c[archs[extractor_name]['end_point']]
+                feature_o = end_points_o[archs[extractor_name]['end_point']]
 
             # Concat!
             with tf.variable_scope('Concat') as scope:
-                concated_feature = tf.concat([feature_c, feature_o], 1)  # (?, x, y, z)
+                concated_feature = tf.concat([feature_c, feature_o], 3)  # (?, x, y, z)
 
             with tf.variable_scope('Logits'):
                 with slim.arg_scope([slim.fully_connected],
@@ -39,17 +48,21 @@ def shigeNet_v1(cropped_images, original_images, num_classes, keep_prob=1.0, is_
                     net = slim.fully_connected(net, 256, scope='fc2')
                     net = slim.dropout(net, keep_prob, scope='dropout2')
                     net = slim.fully_connected(net, num_classes, activation_fn=None, scope='fc3')
+
                     end_points['Logits'] = net
-                    end_points['Predictions'] = tf.nn.softmax(net, name='Predictions')
+                    squeeze = tf.squeeze(net, [1, 2]) # 次元1,2の要素数が1であるならばその次元を減らす
+                    end_points['Predictions'] = tf.nn.softmax(squeeze, name='Predictions')
 
         return end_points
 
 def train(args):
+    extractor_name = 'vgg_16'
+
     MODEL_PATH = args.model_path
     # print_tensors_in_checkpoint_file(file_name=MODEL_PATH, tensor_name='', all_tensors=False, all_tensor_names=True)
     # print_tensors_in_checkpoint_file(file_name=MODEL_PATH, tensor_name='', all_tensors=True, all_tensor_names=True)
 
-    image_size = inception_v4.default_image_size
+    image_size = archs[extractor_name]['fn'].default_image_size
     num_classes = args.num_classes # road sign
 
     # Define placeholders
@@ -60,7 +73,7 @@ def train(args):
     is_training = tf.placeholder(dtype="bool")  # train flag
 
     # Build the graph
-    end_points = shigeNet_v1(cropped_images=cropped_images_placeholder, original_images=original_images_placeholder, num_classes=num_classes, is_training=is_training, keep_prob=keep_prob)
+    end_points = shigeNet_v1(cropped_images=cropped_images_placeholder, original_images=original_images_placeholder, extractor_name=extractor_name, num_classes=num_classes, is_training=is_training, keep_prob=keep_prob)
     predictions = end_points["Predictions"]
 
     # train ops
@@ -70,7 +83,6 @@ def train(args):
     # optimizer = tf.train.GradientDescentOptimizer(learning_rate=.001)
     # train_tensor = slim.learning.create_train_op(total_loss, optimizer)
 
-
     # Get restored vars name in checkpoint
     def name_in_checkpoint(var):
         if "shigeNet_v1" in var.op.name:
@@ -79,7 +91,7 @@ def train(args):
     # Get vars restored
     variables_to_restore = slim.get_variables_to_restore()
     # dict of {name in checkpoint: var.op.name}
-    variables_to_restore = {name_in_checkpoint(var): var for var in variables_to_restore if "InceptionV4" in var.op.name}
+    variables_to_restore = {name_in_checkpoint(var): var for var in variables_to_restore if extractor_name in var.op.name}
     restorer = tf.train.Saver(variables_to_restore)
     saver = tf.train.Saver()# save all vars
 
@@ -178,6 +190,7 @@ if __name__ == '__main__':
     parser.add_argument('--train_o', help='File name of train data (original)', default='/Users/shigetomi/Desktop/dataset_walls/train1.txt')
     parser.add_argument('--test_c', help='File name of test data(cropped)',     default='/Users/shigetomi/Desktop/dataset_walls/test2.txt')
     parser.add_argument('--test_o', help='File name of test data (original)',   default='/Users/shigetomi/Desktop/dataset_walls/test1.txt')
+    parser.add_argument('-extractor', help='extractor archtecture name', default='inception_v4')
 
     parser.add_argument('--max_steps', '-s', type=int, default=3)
     parser.add_argument('--batch_size', '-b', type=int, default=20)
