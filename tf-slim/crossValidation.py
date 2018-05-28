@@ -9,6 +9,7 @@ if __name__ == '__main__':
     parser.add_argument('dataset_path', type=str, help='full-path of the dataset')
     parser.add_argument('--batch_size', '-b', type=str, default='20', help='batch size')
     parser.add_argument('--train_step', '-s', type=str, default='1', help='num of train step')
+    parser.add_argument('-extractor', help='extractor archtecture name', default='inception_v4')
     parser.add_argument('--model_path', '-model', type=str, default='/Users/shigetomi/Downloads/inception_v4.ckpt', help='path of model(ckpt)')
     parser.add_argument('--num_ofclass', '-nc', type=str, default='6', help='num of class')
     parser.add_argument('--summary_dir', '-summary', default='/Users/shigetomi/workspace/tensorflow_works/tf-slim/log/', help='TensorBoard log')
@@ -46,6 +47,6 @@ if __name__ == '__main__':
         #                        '-save', './model/twostep.ckpt',
         #                        '-cb', day_str])
 
-        command = 'python transfer_learning.py --train_c ' + hoge + 'train_crop.txt ' + '--test_c ' + hoge + 'test_crop.txt ' + '--train_o '+ hoge + 'train_orig.txt ' + '--test_o '+ hoge + 'test_orig.txt ' + '-model ' + args.model_path + ' -b '+ args.batch_size+ ' -s '+ args.train_step + ' -nc ' + args.num_ofclass + ' -save '+ './model/twostep.ckpt ' + '--summary_dir ' + args.summary_dir + ' -cb '+ day_str + ' > '+ 'log/'+args.log_name+day_str+'_log.txt'
+        command = 'python transfer_learning.py --train_c ' + hoge + 'train_crop.txt ' + '--test_c ' + hoge + 'test_crop.txt ' + '--train_o '+ hoge + 'train_orig.txt ' + '--test_o '+ hoge + 'test_orig.txt ' + '-model ' + args.model_path + ' -extractor ' + args.extractor + ' -b '+ args.batch_size+ ' -s '+ args.train_step + ' -nc ' + args.num_ofclass + ' -save '+ './model/twostep.ckpt ' + '--summary_dir ' + args.summary_dir + ' -cb '+ day_str + ' > '+ 'log/'+args.log_name+day_str+'_log.txt'
         print(command)
         subprocess.call(command, shell=True)
