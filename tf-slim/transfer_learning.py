@@ -98,7 +98,6 @@ def train(args):
     # Build the graph
     end_points = shigeNet_v1(cropped_images=cropped_images_placeholder, original_images=original_images_placeholder, extractor_name=extractor_name, num_classes=num_classes, is_training=is_training, keep_prob=keep_prob)
     # logits = tf.squeeze(end_points["Logits"], [1, 2])
-    print(end_points["Logits"])
     logits = end_points["Logits"]
     predictions = end_points["Predictions"]
 
@@ -179,9 +178,9 @@ def train(args):
                                                               options=run_options,
                                                               run_metadata=run_metadata)
             # Write summary
-            train_summary_writer.add_run_metadata(run_metadata, 'step%03d' % i)
-            train_summary_writer.add_summary(summary, i)
-            print('step %d: training accuracy %g,¥t loss %g' % (i, train_accuracy, train_loss))
+            train_summary_writer.add_run_metadata(run_metadata, 'step%03d' % step)
+            train_summary_writer.add_summary(summary, step)
+            print('step %d: training accuracy %g,¥t loss %g' % (step, train_accuracy, train_loss))
 
             # Validation proc
             if step % val_fre == 0:
@@ -195,7 +194,7 @@ def train(args):
                 # Write valid summary
                 test_summary_writer.add_summary(summary, i)
 
-                print('\t step %d: test accuracy %g,\t loss %g' % (i, test_accuracy, test_loss))
+                print('\t step %d: test accuracy %g,\t loss %g' % (step, test_accuracy, test_loss))
 
                 # Save checkpoint model
                 saver.save(sess, args.save_path)
