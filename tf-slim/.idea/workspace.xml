@@ -11,7 +11,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="transfer_learning.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="transfer_learning.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/transfer_learning.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="262">
@@ -23,11 +23,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TwoInputDataset.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="TwoInputDataset.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/TwoInputDataset.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-242">
-              <caret line="95" column="25" lean-forward="false" selection-start-line="95" selection-start-column="25" selection-end-line="95" selection-end-column="25" />
+            <state relative-caret-position="268">
+              <caret line="126" column="32" lean-forward="false" selection-start-line="126" selection-start-column="32" selection-end-line="126" selection-end-column="32" />
               <folding />
             </state>
           </provider>
@@ -84,7 +84,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>args.restore</find>
       <find>summa</find>
       <find>logdir</find>
       <find>self.test1_label</find>
@@ -114,6 +113,7 @@
       <find>label</find>
       <find>¥</find>
       <find>¥t</find>
+      <find>train_acc</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -127,10 +127,10 @@
         <option value="$PROJECT_DIR$/../TwoInputDataset.py" />
         <option value="$PROJECT_DIR$/exp1-3-1.py" />
         <option value="$PROJECT_DIR$/nets/vgg.py" />
-        <option value="$PROJECT_DIR$/TwoInputDataset.py" />
         <option value="$PROJECT_DIR$/crossValidation.py" />
         <option value="$PROJECT_DIR$/../TwoInputDistortion.py" />
         <option value="$PROJECT_DIR$/transfer_learning.py" />
+        <option value="$PROJECT_DIR$/TwoInputDataset.py" />
       </list>
     </option>
   </component>
@@ -676,14 +676,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/TwoInputDataset.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-242">
-          <caret line="95" column="25" lean-forward="false" selection-start-line="95" selection-start-column="25" selection-end-line="95" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/transfer_learning.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="262">
@@ -691,6 +683,14 @@
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/TwoInputDataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="268">
+          <caret line="126" column="32" lean-forward="false" selection-start-line="126" selection-start-column="32" selection-end-line="126" selection-end-column="32" />
+          <folding />
         </state>
       </provider>
     </entry>
