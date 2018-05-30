@@ -15,8 +15,10 @@ from nets.vgg import vgg_16, vgg_arg_scope
 
 archs = {
     'inception_v4': {'fn': inception_v4, 'arg_scope': inception_v4_arg_scope, 'extract_point': 'PreLogitsFlatten'},
-    'vgg_16': {'fn': vgg_16, 'arg_scope': vgg_arg_scope, 'extract_point': 'shigeNet_v1/vgg_16/conv5/conv5_3'}# shape=(?, 14, 14, 512) dtype=float32
+    'vgg_16': {'fn': vgg_16, 'arg_scope': vgg_arg_scope, 'extract_point': 'shigeNet_v1/vgg_16/fc7'}# shape=(?, 14, 14, 512) dtype=float32
 }
+# shigeNet_v1/vgg_16/fc7
+# 'shigeNet_v1/vgg_16/conv5/conv5_3' # shape=(?, 14, 14, 512) dtype=float32
 
 
 def shigeNet_v1(cropped_images, original_images, num_classes, keep_prob=1.0, is_training=True, scope='shigeNet_v1', reuse=None, extractor_name='inception_v4'):
