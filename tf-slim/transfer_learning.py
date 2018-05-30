@@ -30,6 +30,7 @@ def shigeNet_v1(cropped_images, original_images, num_classes, keep_prob=1.0, is_
 
                 feature_c = end_points_c[archs[extractor_name]['extract_point']]
                 feature_o = end_points_o[archs[extractor_name]['extract_point']]
+
                 # feature map summary
                 # Tensorを[-1,7,7,ch]から[-1,ch,7,7]と順列変換し、[-1]と[ch]をマージしてimage出力
                 tf.summary.image('feature_c', tf.reshape(tf.transpose(feature_c, perm=[0, 3, 1, 2]), [-1, 7, 7, 1]), 10)
@@ -144,7 +145,7 @@ def train(args):
 
         run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
         run_metadata = tf.RunMetadata()
-        merged = tf.summary.merge_all
+        merged = tf.summary.merge_all()
 
         num_batch = int(len(dataset.train_path_c) / args.batch_size)
 
@@ -154,8 +155,9 @@ def train(args):
 
             # Train proc
             for i in range(num_batch-1):  # i : batch index
-
+                print('step%g, batch%g' % (step, i))
                 cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, i)
+                print('got batch')
                 sess.run(train_step,
                          feed_dict={cropped_images_placeholder: cropped_batch['batch'],
                                     original_images_placeholder: orig_batch['batch'],
