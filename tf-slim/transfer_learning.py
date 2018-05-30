@@ -96,8 +96,8 @@ def train(args):
         keep_prob = tf.placeholder(dtype="float32")
         is_training = tf.placeholder(dtype="bool")  # train flag
 
-        tf.summary.image('cropped_images', tf.reshape(cropped_images_placeholder, [-1, 32, 32, 3]), max_outputs=args.batch_size)
-        tf.summary.image('original_images', tf.reshape(original_images_placeholder, [-1, 32, 32, 3]), max_outputs=args.batch_size)
+        tf.summary.image('cropped_images', tf.reshape(cropped_images_placeholder, [-1, image_size, image_size, 3]), max_outputs=args.batch_size)
+        tf.summary.image('original_images', tf.reshape(original_images_placeholder, [-1, image_size, image_size, 3]), max_outputs=args.batch_size)
 
     # Build the graph
     end_points = shigeNet_v1(cropped_images=cropped_images_placeholder, original_images=original_images_placeholder, extractor_name=extractor_name, num_classes=num_classes, is_training=is_training, keep_prob=keep_prob)
@@ -131,7 +131,7 @@ def train(args):
     with tf.name_scope('accuracy'):
         correct_prediction = tf.equal(tf.argmax(predictions, 1), tf.argmax(labels_placeholder, 1))
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
-        tf.summary.scalar("train_accuracy", accuracy)
+        tf.summary.scalar("accuracy", accuracy)
 
     dataset = TwoInputDataset(train_c=args.train_c, train_o=args.train_o, test_c=args.test_c, test_o=args.test_o,
                               num_classes=num_classes, image_size=image_size)
