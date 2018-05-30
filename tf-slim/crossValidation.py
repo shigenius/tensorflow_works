@@ -45,8 +45,8 @@ if __name__ == '__main__':
         #                        '-pb', args.protobuffer,
         #                        '-nc', args.num_ofclass,
         #                        '-save', './model/twostep.ckpt',
-        #                        '-cb', day_str])
+        #                        '-cv', day_str])
 
-        command = 'python transfer_learning.py --train_c ' + hoge + 'train_crop.txt ' + '--test_c ' + hoge + 'test_crop.txt ' + '--train_o '+ hoge + 'train_orig.txt ' + '--test_o '+ hoge + 'test_orig.txt ' + '-model ' + args.model_path + ' -extractor ' + args.extractor + ' -b '+ args.batch_size+ ' -s '+ args.train_step + ' -nc ' + args.num_ofclass + ' -save '+ './model/twostep.ckpt ' + '--summary_dir ' + args.summary_dir + ' -cb '+ day_str + ' > '+ 'log/'+args.log_name+day_str+'_log.txt'
+        command = 'python transfer_learning.py --train_c ' + hoge + 'train_crop.txt ' + '--test_c ' + hoge + 'test_crop.txt ' + '--train_o '+ hoge + 'train_orig.txt ' + '--test_o '+ hoge + 'test_orig.txt ' + '-model ' + args.model_path + ' -extractor ' + args.extractor + ' -b '+ args.batch_size+ ' -s '+ args.train_step + ' -nc ' + args.num_ofclass + ' -save '+ './model/twostep.ckpt ' + '--summary_dir ' + args.summary_dir + ' -cv '+ day_str + ' > '+ 'log/'+args.log_name+day_str+'_log.txt'
         print(command)
         subprocess.call(command, shell=True)

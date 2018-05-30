@@ -123,8 +123,8 @@ def distort(images = [], flag='train', p=0.5):
         if np.random.rand() > p:
             images = random_brightness(images)
         if np.random.rand() > p:
-            images[0] = random_noise(images[0], num_noise = 50)
-            images[1] = random_noise(images[1], num_noise = 1000)
+            images[0] = random_noise(images[0], num_noise=50)
+            images[1] = random_noise(images[1], num_noise=1000)
         # if np.random.rand() > p:
         #     images = random_erasing(images)
 

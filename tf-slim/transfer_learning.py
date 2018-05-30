@@ -14,8 +14,8 @@ from nets.inception_v4 import inception_v4, inception_v4_arg_scope
 from nets.vgg import vgg_16, vgg_arg_scope
 
 archs = {
-    'inception_v4': {'fn': inception_v4, 'arg_scope': inception_v4_arg_scope, 'end_point': 'PreLogitsFlatten'},
-    'vgg_16': {'fn': vgg_16, 'arg_scope': vgg_arg_scope, 'end_point': 'shigeNet_v1/vgg_16/fc7'}
+    'inception_v4': {'fn': inception_v4, 'arg_scope': inception_v4_arg_scope, 'extract_point': 'PreLogitsFlatten'},
+    'vgg_16': {'fn': vgg_16, 'arg_scope': vgg_arg_scope, 'extract_point': 'shigeNet_v1/vgg_16/fc7'}
 }
 
 
@@ -25,14 +25,15 @@ def shigeNet_v1(cropped_images, original_images, num_classes, keep_prob=1.0, is_
         with slim.arg_scope([slim.batch_norm, slim.dropout], is_training=is_training):
             # Extract features
             with slim.arg_scope(archs[extractor_name]['arg_scope']()):
-                logits_c, end_points_c = archs[extractor_name]['fn'](cropped_images, num_classes=1000, is_training=False, reuse=None)
-                logits_o, end_points_o = archs[extractor_name]['fn'](original_images, num_classes=1000, is_training=False, reuse=True)
-                # logits_c, end_points_c = archs[extractor_name]['fn'](cropped_images, num_classes=1000, is_training=False, reuse=None)
-                # logits_o, end_points_o = archs[extractor_name]['fn'](original_images, num_classes=1000, is_training=False, reuse=True)
-                # logits_o, end_points_o = inception_v4(original_images, num_classes=1001, is_training=False, reuse=tf.AUTO_REUSE)
+                logits_c, end_points_c = archs[extractor_name]['fn'](cropped_images, is_training=False, reuse=None)
+                logits_o, end_points_o = archs[extractor_name]['fn'](original_images, is_training=False, reuse=True)
 
-                feature_c = end_points_c[archs[extractor_name]['end_point']]
-                feature_o = end_points_o[archs[extractor_name]['end_point']]
+                feature_c = end_points_c[archs[extractor_name]['extract_point']]
+                feature_o = end_points_o[archs[extractor_name]['extract_point']]
+                # feature map summary
+                # Tensorを[-1,7,7,ch]から[-1,ch,7,7]と順列変換し、[-1]と[ch]をマージしてimage出力
+                tf.summary.image('feature_c', tf.reshape(tf.transpose(feature_c, perm=[0, 3, 1, 2]), [-1, 7, 7, 1]), 10)
+                tf.summary.image('feature_o', tf.reshape(tf.transpose(feature_o, perm=[0, 3, 1, 2]), [-1, 7, 7, 1]), 10)
 
             # Concat!
             with tf.variable_scope('Concat') as scope:
@@ -55,33 +56,47 @@ def shigeNet_v1(cropped_images, original_images, num_classes, keep_prob=1.0, is_
 
         return end_points
 
+def calc_loss(logits, labels):
+    """Calculates the loss from the logits and the labels.
+
+    Args:
+    logits: Logits tensor, float - [batch_size, NUM_CLASSES].
+    labels: Labels tensor, int32 - [batch_size].
+
+    Returns:
+    loss: Loss tensor of type float.
+    """
+    labels = tf.to_int64(labels)
+    cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(logits, labels, name='xentropy')
+    loss = tf.reduce_mean(cross_entropy, name='xentropy_mean')
+    return loss
+
 def train(args):
     extractor_name = 'vgg_16'
 
-    MODEL_PATH = args.model_path
-    # print_tensors_in_checkpoint_file(file_name=MODEL_PATH, tensor_name='', all_tensors=False, all_tensor_names=True)
-    # print_tensors_in_checkpoint_file(file_name=MODEL_PATH, tensor_name='', all_tensors=True, all_tensor_names=True)
-
+    model_path = args.model_path
     image_size = archs[extractor_name]['fn'].default_image_size
     num_classes = args.num_classes # road sign
+    val_fre = 5# Nstep毎にvalidate
 
     # Define placeholders
-    cropped_images_placeholder = tf.placeholder(dtype="float32", shape=(None, image_size,  image_size,  3))
-    original_images_placeholder = tf.placeholder(dtype="float32", shape=(None, image_size, image_size, 3))
-    labels_placeholder = tf.placeholder(dtype="float32", shape=(None, num_classes))
-    keep_prob = tf.placeholder(dtype="float32")
-    is_training = tf.placeholder(dtype="bool")  # train flag
+    with tf.name_scope('input'):
+        with tf.name_scope('cropped_images'):
+            cropped_images_placeholder = tf.placeholder(dtype="float32", shape=(None, image_size,  image_size,  3))
+        with tf.name_scope('original_images'):
+            original_images_placeholder = tf.placeholder(dtype="float32", shape=(None, image_size, image_size, 3))
+        with tf.name_scope('labels'):
+            labels_placeholder = tf.placeholder(dtype="float32", shape=(None, num_classes))
+        keep_prob = tf.placeholder(dtype="float32")
+        is_training = tf.placeholder(dtype="bool")  # train flag
+
+        tf.summary.image('cropped_images', tf.reshape(cropped_images_placeholder, [-1, image_size/2, image_size/2, 3]), max_outputs=args.batch_size)
+        tf.summary.image('original_images', tf.reshape(original_images_placeholder, [-1, image_size/2, image_size/2, 3]), max_outputs=args.batch_size)
 
     # Build the graph
     end_points = shigeNet_v1(cropped_images=cropped_images_placeholder, original_images=original_images_placeholder, extractor_name=extractor_name, num_classes=num_classes, is_training=is_training, keep_prob=keep_prob)
+    logits = tf.squeeze(end_points["Logits"], [1, 2])
     predictions = end_points["Predictions"]
-
-    # train ops
-    # slim.losses.softmax_cross_entropy(predictions, labels_placeholder)
-    # total_loss = slim.losses.get_total_loss()
-    # tf.summary.scalar('losses/total_loss', total_loss)
-    # optimizer = tf.train.GradientDescentOptimizer(learning_rate=.001)
-    # train_tensor = slim.learning.create_train_op(total_loss, optimizer)
 
     # Get restored vars name in checkpoint
     def name_in_checkpoint(var):
@@ -95,93 +110,90 @@ def train(args):
     restorer = tf.train.Saver(variables_to_restore)
     saver = tf.train.Saver()# save all vars
 
-    # Train ops もっといい書き方があるかも(slimをつかったやつとか)
-    loss = -tf.reduce_sum(labels_placeholder * tf.log(tf.clip_by_value(predictions, 1e-10, 1)))
-    correct_prediction = tf.equal(tf.argmax(predictions, 1), tf.argmax(labels_placeholder, 1))
-    accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
+    # Train ops
+    with tf.name_scope('loss'):
+        # loss = calc_loss(logits, labels_placeholder)
+        loss = slim.losses.softmax_cross_entropy(logits, labels_placeholder)
+        tf.summary.scalar("loss", loss)
 
     with tf.name_scope('train') as scope:
-        # 階層を下げる
         update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
         with tf.control_dependencies(update_ops):
-            train_step = tf.train.AdamOptimizer(args.learning_rate).minimize(loss)
-        #
-        acc_summary_train = tf.summary.scalar("train_accuracy", accuracy)
-        loss_summary_train = tf.summary.scalar("train_loss", loss)
+            train_step = slim.optimize_loss(loss, slim.get_or_create_global_step(), learning_rate=args.learning_rate, optimizer='Adam')
 
-    with tf.name_scope('test') as scope:
-        acc_summary_test = tf.summary.scalar("test_accuracy", accuracy)
-        loss_summary_test = tf.summary.scalar("test_loss", loss)
-
-    training_op_list = [accuracy, acc_summary_train, loss_summary_train]
-    val_op_list = [accuracy, acc_summary_test, loss_summary_test]
-
+    with tf.name_scope('accuracy'):
+        correct_prediction = tf.equal(tf.argmax(predictions, 1), tf.argmax(labels_placeholder, 1))
+        accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
+        tf.summary.scalar("train_accuracy", accuracy)
 
     dataset = TwoInputDataset(train_c=args.train_c, train_o=args.train_o, test_c=args.test_c, test_o=args.test_o,
                               num_classes=num_classes, image_size=image_size)
 
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
-        restorer.restore(sess, MODEL_PATH)
-        print("Model restored from:", MODEL_PATH)
+        restorer.restore(sess, model_path)
+        print("Model restored from:", model_path)
 
         # summary
-        if args.cbflag != None:  # if running cross-valid
-            summary_writer = tf.summary.FileWriter(args.summary_dir + '/twostep/' + args.cbflag + '/' + datetime.now().isoformat(), sess.graph)
+        if args.cvflag != None:  # if running cross-valid
+            train_summary_writer = tf.summary.FileWriter(args.summary_dir + '/transfer_l/' + datetime.now().isoformat() + '/recorded_at_' + args.cvflag + '/train', sess.graph)
+            test_summary_writer = tf.summary.FileWriter(args.summary_dir + '/transfer_l/' + datetime.now().isoformat() + '/recorded_at_' + args.cvflag + '/test')
         else:
-            summary_writer = tf.summary.FileWriter(args.summary_dir + '/twostep/' + datetime.now().isoformat(), sess.graph)
+            train_summary_writer = tf.summary.FileWriter(args.summary_dir + '/transfer_l/' + datetime.now().isoformat() + '/train', sess.graph)
+            test_summary_writer = tf.summary.FileWriter(args.summary_dir + '/transfer_l/' + datetime.now().isoformat() + '/test')
+
+        run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
+        run_metadata = tf.RunMetadata()
+        merged = tf.merge_all_summaries()
+
+        num_batch = int(len(dataset.train_path_c) / args.batch_size)
 
         # Train cycle
         for step in range(args.max_steps):
             dataset.shuffle()
 
             # Train proc
-            for i in range(int(len(dataset.train_path_c) / args.batch_size)):  # i : batch index
+            for i in range(num_batch-1):  # i : batch index
+
                 cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, i)
-                # batch train
-                sess.run(train_step, feed_dict={cropped_images_placeholder: cropped_batch['batch'],
-                                                original_images_placeholder: orig_batch['batch'],
-                                                labels_placeholder: labels,
-                                                keep_prob: args.dropout_prob,
-                                                is_training: True})
-                # # freezeの確認用
-                # var = slim.get_variables_by_name("shigeNet_v1/InceptionV4/Mixed_7d/Branch_3/Conv2d_0b_1x1/weights")
-                # print(var)
-                # print(sess.run(var))
+                sess.run(train_step,
+                         feed_dict={cropped_images_placeholder: cropped_batch['batch'],
+                                    original_images_placeholder: orig_batch['batch'],
+                                    labels_placeholder: labels,
+                                    keep_prob: args.dropout_prob,
+                                    is_training: True})
 
-            # Get accuracy of train
-            dataset.shuffle()
-            cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, 0)
-
-            result = sess.run(training_op_list,
-                              feed_dict={cropped_images_placeholder: cropped_batch['batch'],
-                                         original_images_placeholder: orig_batch['batch'],
-                                         labels_placeholder: labels,
-                                         keep_prob: 1.0,
-                                         is_training: False})
-
-            # Write summary in Tensorboard
-            for j in range(1, len(result)):
-                summary_writer.add_summary(result[j], step)
-
-            print("step %d : training batch(size=%d) accuracy: %g" % (step, args.batch_size, result[0]))
+            # Final batch proc: get summary and train_trace
+            cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, num_batch-1)
+            summary, train_accuracy, train_loss, _ = sess.run([merged, accuracy, loss, train_step],
+                                                              feed_dict={cropped_images_placeholder: cropped_batch['batch'],
+                                                                         original_images_placeholder: orig_batch['batch'],
+                                                                         labels_placeholder: labels,
+                                                                         keep_prob: args.dropout_prob,
+                                                                         is_training: True},
+                                                              options=run_options,
+                                                              run_metadata=run_metadata)
+            # Write summary
+            train_summary_writer.add_run_metadata(run_metadata, 'step%03d' % i)
+            train_summary_writer.add_summary(summary, i)
+            print('step %d: training accuracy %g,¥t loss %g' % (i, train_accuracy, train_loss))
 
             # Validation proc
-            cropped_test_batch, orig_test_batch, test_labels = dataset.getTestData(args.batch_size)
-            val_result = sess.run(val_op_list,
-                                  feed_dict={cropped_images_placeholder: cropped_test_batch['batch'],
-                                             original_images_placeholder: orig_test_batch['batch'],
-                                             labels_placeholder: test_labels,
-                                             keep_prob: 1.0,
-                                             is_training: False})
+            if step % val_fre == 0:
+                test_cropped_batch, test_orig_batch, test_labels = dataset.getTestData(args.batch_size)
+                summary_test, test_accuracy, test_loss = sess.run([merged, accuracy, loss],
+                                                                  feed_dict={cropped_images_placeholder: test_cropped_batch['batch'],
+                                                                             original_images_placeholder: test_orig_batch['batch'],
+                                                                             labels_placeholder: test_labels,
+                                                                             keep_prob: 1.0,
+                                                                             is_training: False})
+                # Write valid summary
+                test_summary_writer.add_summary(summary, i)
 
-            # Write valid summary
-            for j in range(1, len(val_result)):
-                summary_writer.add_summary(val_result[j], step)
-            print(" test batch(size=%d) accuracy %g" % (args.batch_size, val_result[0]))
+                print('\t step %d: test accuracy %g,\t loss %g' % (i, test_accuracy, test_loss))
 
-            # Save checkpoint model
-            saver.save(sess, args.save_path)
+                # Save checkpoint model
+                saver.save(sess, args.save_path)
 
 if __name__ == '__main__':
 
@@ -190,7 +202,7 @@ if __name__ == '__main__':
     parser.add_argument('--train_o', help='File name of train data (original)', default='/Users/shigetomi/Desktop/dataset_walls/train1.txt')
     parser.add_argument('--test_c', help='File name of test data(cropped)',     default='/Users/shigetomi/Desktop/dataset_walls/test2.txt')
     parser.add_argument('--test_o', help='File name of test data (original)',   default='/Users/shigetomi/Desktop/dataset_walls/test1.txt')
-    parser.add_argument('-extractor', help='extractor archtecture name', default='inception_v4')
+    parser.add_argument('-extractor', help='extractor architecture name', default='inception_v4')
 
     parser.add_argument('--max_steps', '-s', type=int, default=3)
     parser.add_argument('--batch_size', '-b', type=int, default=20)
@@ -202,7 +214,7 @@ if __name__ == '__main__':
     parser.add_argument('--save_path', '-save', default='/Users/shigetomi/workspace/tensorflow_works/model/twostep.ckpt', help='FullPath of saving model')
     parser.add_argument('--summary_dir', '-summary', default='/Users/shigetomi/workspace/tensorflow_works/log/', help='TensorBoard log')
 
-    parser.add_argument('--cbflag', '-cb', default=None) # usually, dont use this
+    parser.add_argument('--cvflag', '-cv', default=None) # usually, dont use this
 
     args = parser.parse_args()
 
