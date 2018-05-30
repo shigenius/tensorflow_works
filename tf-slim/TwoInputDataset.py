@@ -115,8 +115,12 @@ class TwoInputDataset():
         for i, (pathA, pathB) in enumerate(zip(pathsA[start:end], pathsB[start:end])):
             # pathB = pathsB[start+i]
 
-            imageA = cv2.imread(pathA)
-            imageB = cv2.imread(pathB)
+            # imageA = cv2.imread(pathA)
+            # imageB = cv2.imread(pathB)
+
+            imageA = cv2.cvtColor(cv2.imread(pathA), cv2.COLOR_BGR2RGB)
+            imageB = cv2.cvtColor(cv2.imread(pathB), cv2.COLOR_BGR2RGB)
+
             imageA, imageB = distort([imageA, imageB], flag=mode)
 
             imageA = cv2.resize(imageA, (self.image_size, self.image_size))
