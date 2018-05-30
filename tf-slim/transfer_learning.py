@@ -41,8 +41,6 @@ def shigeNet_v1(cropped_images, original_images, num_classes, keep_prob=1.0, is_
             # Concat!
             with tf.variable_scope('Concat') as scope:
                 concated_feature = tf.concat([tf.layers.Flatten()(feature_c), tf.layers.Flatten()(feature_o)], 1)  # (?, x, y, z)
-                print(feature_c)
-                print(concated_feature)
 
             with tf.variable_scope('Logits'):
                 with slim.arg_scope([slim.fully_connected],
@@ -173,6 +171,7 @@ def train(args):
 
             # Final batch proc: get summary and train_trace
             cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, num_batch-1)
+            print(cropped_batch)
             summary, train_accuracy, train_loss, _ = sess.run([merged, accuracy, loss, train_step],
                                                               feed_dict={cropped_images_placeholder: cropped_batch['batch'],
                                                                          original_images_placeholder: orig_batch['batch'],
