@@ -114,13 +114,13 @@ def train(args):
     # Train ops
     with tf.name_scope('loss'):
         # loss = calc_loss(logits, labels_placeholder)
-        loss = slim.losses.softmax_cross_entropy(logits, labels_placeholder)
+        loss = tf.losses.softmax_cross_entropy(labels_placeholder, logits)
         tf.summary.scalar("loss", loss)
 
     with tf.name_scope('train') as scope:
         update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
         with tf.control_dependencies(update_ops):
-            train_step = slim.optimize_loss(loss, slim.get_or_create_global_step(), learning_rate=args.learning_rate, optimizer='Adam')
+            train_step = slim.optimize_loss(loss, tf.train.get_or_create_global_step(), learning_rate=args.learning_rate, optimizer='Adam')
 
     with tf.name_scope('accuracy'):
         correct_prediction = tf.equal(tf.argmax(predictions, 1), tf.argmax(labels_placeholder, 1))
