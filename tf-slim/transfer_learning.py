@@ -196,7 +196,7 @@ def train(args):
                                                                              keep_prob: 1.0,
                                                                              is_training: False})
                 # Write valid summary
-                test_summary_writer.add_summary(summary, step)
+                test_summary_writer.add_summary(summary_test, step)
 
                 print('step %d: test accuracy %g,\t loss %g' % (step, test_accuracy, test_loss))
 
