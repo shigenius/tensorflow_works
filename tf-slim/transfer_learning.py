@@ -39,6 +39,8 @@ def shigeNet_v1(cropped_images, original_images, num_classes, keep_prob=1.0, is_
             # Concat!
             with tf.variable_scope('Concat') as scope:
                 concated_feature = tf.concat([tf.layers.Flatten()(feature_c), tf.layers.Flatten()(feature_o)], 1)  # (?, x, y, z)
+                print(feature_c)
+                print(concated_feature)
 
             with tf.variable_scope('Logits'):
                 with slim.arg_scope([slim.fully_connected],
@@ -92,8 +94,8 @@ def train(args):
         keep_prob = tf.placeholder(dtype="float32")
         is_training = tf.placeholder(dtype="bool")  # train flag
 
-        tf.summary.image('cropped_images', tf.reshape(cropped_images_placeholder, [-1, 64, 64, 3]), max_outputs=args.batch_size)
-        tf.summary.image('original_images', tf.reshape(original_images_placeholder, [-1, 64, 64, 3]), max_outputs=args.batch_size)
+        tf.summary.image('cropped_images', tf.reshape(cropped_images_placeholder, [-1, 32, 32, 3]), max_outputs=args.batch_size)
+        tf.summary.image('original_images', tf.reshape(original_images_placeholder, [-1, 32, 32, 3]), max_outputs=args.batch_size)
 
     # Build the graph
     end_points = shigeNet_v1(cropped_images=cropped_images_placeholder, original_images=original_images_placeholder, extractor_name=extractor_name, num_classes=num_classes, is_training=is_training, keep_prob=keep_prob)
@@ -180,7 +182,7 @@ def train(args):
             # Write summary
             train_summary_writer.add_run_metadata(run_metadata, 'step%03d' % step)
             train_summary_writer.add_summary(summary, step)
-            print('step %d: training accuracy %g,¥t loss %g' % (step, train_accuracy, train_loss))
+            print('step %d: training accuracy %g,\t loss %g' % (step, train_accuracy, train_loss))
 
             # Validation proc
             if step % val_fre == 0:
@@ -192,7 +194,7 @@ def train(args):
                                                                              keep_prob: 1.0,
                                                                              is_training: False})
                 # Write valid summary
-                test_summary_writer.add_summary(summary, i)
+                test_summary_writer.add_summary(summary, step)
 
                 print('\t step %d: test accuracy %g,\t loss %g' % (step, test_accuracy, test_loss))
 
