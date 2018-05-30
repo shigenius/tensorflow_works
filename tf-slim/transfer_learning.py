@@ -72,7 +72,7 @@ def calc_loss(logits, labels):
     return loss
 
 def train(args):
-    extractor_name = 'vgg_16'
+    extractor_name = args.extractor
 
     model_path = args.model_path
     image_size = archs[extractor_name]['fn'].default_image_size
@@ -90,8 +90,8 @@ def train(args):
         keep_prob = tf.placeholder(dtype="float32")
         is_training = tf.placeholder(dtype="bool")  # train flag
 
-        tf.summary.image('cropped_images', tf.reshape(cropped_images_placeholder, [-1, image_size/2, image_size/2, 3]), max_outputs=args.batch_size)
-        tf.summary.image('original_images', tf.reshape(original_images_placeholder, [-1, image_size/2, image_size/2, 3]), max_outputs=args.batch_size)
+        tf.summary.image('cropped_images', tf.reshape(cropped_images_placeholder, [-1, 64, 64, 3]), max_outputs=args.batch_size)
+        tf.summary.image('original_images', tf.reshape(original_images_placeholder, [-1, 64, 64, 3]), max_outputs=args.batch_size)
 
     # Build the graph
     end_points = shigeNet_v1(cropped_images=cropped_images_placeholder, original_images=original_images_placeholder, extractor_name=extractor_name, num_classes=num_classes, is_training=is_training, keep_prob=keep_prob)
@@ -202,7 +202,7 @@ if __name__ == '__main__':
     parser.add_argument('--train_o', help='File name of train data (original)', default='/Users/shigetomi/Desktop/dataset_walls/train1.txt')
     parser.add_argument('--test_c', help='File name of test data(cropped)',     default='/Users/shigetomi/Desktop/dataset_walls/test2.txt')
     parser.add_argument('--test_o', help='File name of test data (original)',   default='/Users/shigetomi/Desktop/dataset_walls/test1.txt')
-    parser.add_argument('-extractor', help='extractor architecture name', default='inception_v4')
+    parser.add_argument('-extractor', help='extractor architecture name', default='vgg_16')
 
     parser.add_argument('--max_steps', '-s', type=int, default=3)
     parser.add_argument('--batch_size', '-b', type=int, default=20)
@@ -210,7 +210,7 @@ if __name__ == '__main__':
     parser.add_argument('--learning_rate', '-lr', type=float, default=1e-4)
     parser.add_argument('--dropout_prob', '-d', type=float, default=0.8)
 
-    parser.add_argument('--model_path', '-model', default='/Users/shigetomi/Downloads/inception_v4.ckpt', help='FullPath of inception-v4 model(ckpt)')
+    parser.add_argument('--model_path', '-model', default='/Users/shigetomi/Downloads/vgg_16.ckpt', help='FullPath of inception-v4 model(ckpt)')
     parser.add_argument('--save_path', '-save', default='/Users/shigetomi/workspace/tensorflow_works/model/twostep.ckpt', help='FullPath of saving model')
     parser.add_argument('--summary_dir', '-summary', default='/Users/shigetomi/workspace/tensorflow_works/log/', help='TensorBoard log')
 
