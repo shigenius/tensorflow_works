@@ -144,7 +144,7 @@ def train(args):
 
         run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
         run_metadata = tf.RunMetadata()
-        merged = tf.merge_all_summaries()
+        merged = tf.summary.merge_all
 
         num_batch = int(len(dataset.train_path_c) / args.batch_size)
 
