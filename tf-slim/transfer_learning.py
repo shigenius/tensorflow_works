@@ -38,7 +38,7 @@ def shigeNet_v1(cropped_images, original_images, num_classes, keep_prob=1.0, is_
 
             # Concat!
             with tf.variable_scope('Concat') as scope:
-                concated_feature = tf.concat([feature_c, feature_o], 3)  # (?, x, y, z)
+                concated_feature = tf.concat([tf.layers.Flatten()(feature_c), tf.layers.Flatten()(feature_o)], 1)  # (?, x, y, z)
 
             with tf.variable_scope('Logits'):
                 with slim.arg_scope([slim.fully_connected],
