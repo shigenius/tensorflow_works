@@ -52,8 +52,9 @@ def shigeNet_v1(cropped_images, original_images, num_classes, keep_prob=1.0, is_
                     net = slim.fully_connected(net, num_classes, activation_fn=None, scope='fc3')
 
                     end_points['Logits'] = net
-                    squeeze = tf.squeeze(net, [1, 2]) # 次元1,2の要素数が1であるならばその次元を減らす
-                    end_points['Predictions'] = tf.nn.softmax(squeeze, name='Predictions')
+                    # squeeze = tf.squeeze(net, [1, 2]) # 次元1,2の要素数が1であるならばその次元を減らす
+                    # end_points['Predictions'] = tf.nn.softmax(squeeze, name='Predictions')
+                    end_points['Predictions'] = tf.nn.softmax(net, name='Predictions')
 
         return end_points
 
