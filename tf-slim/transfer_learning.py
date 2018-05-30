@@ -15,7 +15,7 @@ from nets.vgg import vgg_16, vgg_arg_scope
 
 archs = {
     'inception_v4': {'fn': inception_v4, 'arg_scope': inception_v4_arg_scope, 'extract_point': 'PreLogitsFlatten'},
-    'vgg_16': {'fn': vgg_16, 'arg_scope': vgg_arg_scope, 'extract_point': 'shigeNet_v1/vgg_16/fc7'}
+    'vgg_16': {'fn': vgg_16, 'arg_scope': vgg_arg_scope, 'extract_point': 'shigeNet_v1/vgg_16/conv5/conv5_3'}# shape=(?, 14, 14, 512) dtype=float32
 }
 
 
@@ -33,8 +33,8 @@ def shigeNet_v1(cropped_images, original_images, num_classes, keep_prob=1.0, is_
 
                 # feature map summary
                 # Tensorを[-1,7,7,ch]から[-1,ch,7,7]と順列変換し、[-1]と[ch]をマージしてimage出力
-                tf.summary.image('feature_c', tf.reshape(tf.transpose(feature_c, perm=[0, 3, 1, 2]), [-1, 7, 7, 1]), 10)
-                tf.summary.image('feature_o', tf.reshape(tf.transpose(feature_o, perm=[0, 3, 1, 2]), [-1, 7, 7, 1]), 10)
+                tf.summary.image('feature_c', tf.reshape(tf.transpose(feature_c, perm=[0, 3, 1, 2]), [-1, 14, 14, 1]), 10)
+                tf.summary.image('feature_o', tf.reshape(tf.transpose(feature_o, perm=[0, 3, 1, 2]), [-1, 14, 14, 1]), 10)
 
             # Concat!
             with tf.variable_scope('Concat') as scope:
