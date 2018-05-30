@@ -152,18 +152,18 @@ def train(args):
         # Train cycle
         for step in range(args.max_steps):
             dataset.shuffle()
-
-            # Train proc
-            for i in range(num_batch-1):  # i : batch index
-                print('step%g, batch%g' % (step, i))
-                cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, i)
-                print('got batch')
-                sess.run(train_step,
-                         feed_dict={cropped_images_placeholder: cropped_batch['batch'],
-                                    original_images_placeholder: orig_batch['batch'],
-                                    labels_placeholder: labels,
-                                    keep_prob: args.dropout_prob,
-                                    is_training: True})
+            #
+            # # Train proc
+            # for i in range(num_batch-1):  # i : batch index
+            #     print('step%g, batch%g' % (step, i))
+            #     cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, i)
+            #     print('got batch')
+            #     sess.run(train_step,
+            #              feed_dict={cropped_images_placeholder: cropped_batch['batch'],
+            #                         original_images_placeholder: orig_batch['batch'],
+            #                         labels_placeholder: labels,
+            #                         keep_prob: args.dropout_prob,
+            #                         is_training: True})
 
             # Final batch proc: get summary and train_trace
             cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, num_batch-1)

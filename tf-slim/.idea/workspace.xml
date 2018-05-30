@@ -14,8 +14,8 @@
       <file leaf-file-name="transfer_learning.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/transfer_learning.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="334">
-              <caret line="122" column="29" lean-forward="true" selection-start-line="122" selection-start-column="29" selection-end-line="122" selection-end-column="29" />
+            <state relative-caret-position="283">
+              <caret line="164" column="67" lean-forward="true" selection-start-line="164" selection-start-column="67" selection-end-line="164" selection-end-column="67" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -686,8 +686,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/transfer_learning.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="334">
-          <caret line="122" column="29" lean-forward="true" selection-start-line="122" selection-start-column="29" selection-end-line="122" selection-end-column="29" />
+        <state relative-caret-position="283">
+          <caret line="164" column="67" lean-forward="true" selection-start-line="164" selection-start-column="67" selection-end-line="164" selection-end-column="67" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
