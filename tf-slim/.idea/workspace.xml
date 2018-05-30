@@ -14,8 +14,8 @@
       <file leaf-file-name="transfer_learning.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/transfer_learning.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="226">
-              <caret line="173" column="31" lean-forward="false" selection-start-line="173" selection-start-column="31" selection-end-line="173" selection-end-column="31" />
+            <state relative-caret-position="-29">
+              <caret line="172" column="99" lean-forward="false" selection-start-line="172" selection-start-column="99" selection-end-line="172" selection-end-column="99" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -99,7 +99,6 @@
       <find>vari</find>
       <find>global_pool</find>
       <find>reuse</find>
-      <find>print</find>
       <find>samma</find>
       <find>MODEL</find>
       <find>model</find>
@@ -114,6 +113,7 @@
       <find>train_acc</find>
       <find>test</find>
       <find>label</find>
+      <find>print</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -686,8 +686,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/transfer_learning.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="226">
-          <caret line="173" column="31" lean-forward="false" selection-start-line="173" selection-start-column="31" selection-end-line="173" selection-end-column="31" />
+        <state relative-caret-position="-29">
+          <caret line="172" column="99" lean-forward="false" selection-start-line="172" selection-start-column="99" selection-end-line="172" selection-end-column="99" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>

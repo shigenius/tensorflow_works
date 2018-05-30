@@ -171,7 +171,6 @@ def train(args):
 
             # Final batch proc: get summary and train_trace
             cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, num_batch-1)
-            print(cropped_batch)
             summary, train_accuracy, train_loss, _ = sess.run([merged, accuracy, loss, train_step],
                                                               feed_dict={cropped_images_placeholder: cropped_batch['batch'],
                                                                          original_images_placeholder: orig_batch['batch'],
