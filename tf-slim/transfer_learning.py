@@ -60,20 +60,6 @@ def shigeNet_v1(cropped_images, original_images, num_classes, keep_prob=1.0, is_
 
         return end_points
 
-def calc_loss(logits, labels):
-    """Calculates the loss from the logits and the labels.
-
-    Args:
-    logits: Logits tensor, float - [batch_size, NUM_CLASSES].
-    labels: Labels tensor, int32 - [batch_size].
-
-    Returns:
-    loss: Loss tensor of type float.
-    """
-    labels = tf.to_int64(labels)
-    cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(logits, labels, name='xentropy')
-    loss = tf.reduce_mean(cross_entropy, name='xentropy_mean')
-    return loss
 
 def train(args):
     extractor_name = args.extractor
@@ -118,7 +104,6 @@ def train(args):
 
     # Train ops
     with tf.name_scope('loss'):
-        # loss = calc_loss(logits, labels_placeholder)
         loss = tf.losses.softmax_cross_entropy(labels_placeholder, logits)
         tf.summary.scalar("loss", loss)
 
