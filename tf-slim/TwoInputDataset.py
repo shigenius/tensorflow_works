@@ -1,11 +1,10 @@
 import cv2
 import numpy as np
 import random
-import sys
 
 import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from TwoInputDistortion import distort
+from TwoInputDistortion import Distortion
 
 class TwoInputDataset():
     """
@@ -23,6 +22,8 @@ class TwoInputDataset():
         self.test_label_c = []
         self.image_size = kwargs["image_size"]
         self.num_classes = kwargs["num_classes"]
+        self.distortion = Distortion(gamma=2)
+
 
         def getPathandLabel(path, num_classes): # パスとラベルを取得する
             with open(path, 'r') as f:
@@ -121,7 +122,7 @@ class TwoInputDataset():
             imageA = cv2.cvtColor(cv2.imread(pathA), cv2.COLOR_BGR2RGB)
             imageB = cv2.cvtColor(cv2.imread(pathB), cv2.COLOR_BGR2RGB)
 
-            imageA, imageB = distort([imageA, imageB], flag=mode)
+            imageA, imageB = self.distortion.distort(images=[imageA, imageB], flag=mode, p=1.0)
 
             imageA = cv2.resize(imageA, (self.image_size, self.image_size))
             imageB = cv2.resize(imageB, (self.image_size, self.image_size))
