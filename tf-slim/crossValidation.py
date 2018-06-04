@@ -14,6 +14,7 @@ if __name__ == '__main__':
     parser.add_argument('--num_ofclass', '-nc', type=str, default='6', help='num of class')
     parser.add_argument('--summary_dir', '-summary', default='/Users/shigetomi/workspace/tensorflow_works/tf-slim/log/', help='TensorBoard log')
     parser.add_argument('--log_name', '-ln', type=str, default='0418_roadsign', help='log name')
+    parser.add_argument('-execfile', help='exec python file name', default='transfer_learning.py')
     args = parser.parse_args()
 
     dataset = args.dataset_path
@@ -47,6 +48,6 @@ if __name__ == '__main__':
         #                        '-save', './model/twostep.ckpt',
         #                        '-cv', day_str])
 
-        command = 'python transfer_learning.py --train_c ' + hoge + 'train_crop.txt ' + '--test_c ' + hoge + 'test_crop.txt ' + '--train_o '+ hoge + 'train_orig.txt ' + '--test_o '+ hoge + 'test_orig.txt ' + '-model ' + args.model_path + ' -extractor ' + args.extractor + ' -b '+ args.batch_size+ ' -s '+ args.train_step + ' -nc ' + args.num_ofclass + ' -save '+ './model/twostep.ckpt ' + '--summary_dir ' + args.summary_dir + ' -cv '+ day_str + ' > '+ 'log/'+args.log_name+day_str+'_log.txt'
+        command = 'python ' + args.execfile + ' --train_c ' + hoge + 'train_crop.txt ' + '--test_c ' + hoge + 'test_crop.txt ' + '--train_o '+ hoge + 'train_orig.txt ' + '--test_o '+ hoge + 'test_orig.txt ' + '-model ' + args.model_path + ' -extractor ' + args.extractor + ' -b '+ args.batch_size+ ' -s '+ args.train_step + ' -nc ' + args.num_ofclass + ' -save '+ './model/twostep.ckpt ' + '--summary_dir ' + args.summary_dir + ' -cv '+ day_str + ' > '+ 'log/'+args.log_name+day_str+'_log.txt'
         print(command)
         subprocess.call(command, shell=True)
