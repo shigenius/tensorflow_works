@@ -122,7 +122,7 @@ class TwoInputDataset():
             imageA = cv2.cvtColor(cv2.imread(pathA), cv2.COLOR_BGR2RGB)
             imageB = cv2.cvtColor(cv2.imread(pathB), cv2.COLOR_BGR2RGB)
 
-            imageA, imageB = self.distortion.distort(images=[imageA, imageB], flag=mode, p=1.0)
+            # imageA, imageB = self.distortion.distort(images=[imageA, imageB], flag=mode, p=1.0)
 
             imageA = cv2.resize(imageA, (self.image_size, self.image_size))
             imageB = cv2.resize(imageB, (self.image_size, self.image_size))

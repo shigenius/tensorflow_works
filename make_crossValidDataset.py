@@ -61,7 +61,7 @@ if __name__ == '__main__':
         valid_files_crop = []
         for video in day_and_videos[day]:
             target_dir = os.path.splitext(video)[0]+'_cropped'
-            files = [os.path.join(target_dir, item.name) for item in os.scandir(path=target_dir) if item.is_file() and re.search('.jpg', item.name)]
+            files = [os.path.join(target_dir, item.name) for item in os.scandir(path=target_dir) if item.is_file() and re.search('^(?!.*\_d\d).*\.jpg$', item.name)]
             valid_files_crop.extend(files)
 
         valid_files_withClassID_crop = sorted([f+" "+str(class_dir.index(c)) for c in class_dir for f in valid_files_crop if re.search(c, f)])

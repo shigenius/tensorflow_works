@@ -171,7 +171,7 @@ class Distortion():
         img[top:bottom, left:right, :].fill(mask_value)
         return img
 
-    def distort(self, images = [], flag='train', p=0.5):
+    def distort(self, images=[], flag='train', p=0.5):
         # augmentation
         if flag == 'train':
             if np.random.rand() < p:
