@@ -29,7 +29,7 @@ if __name__ == '__main__':
             for c in os.scandir(path=dataset_path) if c.is_dir()}
     print(tree)
 
-    for r in range(rate):
+    for r in range(rate-1):
         for c in tree:
             for v in tree[c]:
                 if re.search('_cropped', v):
