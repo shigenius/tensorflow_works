@@ -100,7 +100,7 @@ def train(args):
     # dict of {name in checkpoint: var.op.name}
     variables_to_restore = {name_in_checkpoint(var): var for var in variables_to_restore if extractor_name in var.op.name}
     restorer = tf.train.Saver(variables_to_restore)
-    saver = tf.train.Saver()# save all vars
+    saver = tf.train.Saver(max_to_keep=None)# save all vars
 
     # Train ops
     with tf.name_scope('loss'):
@@ -182,9 +182,8 @@ def train(args):
                 test_summary_writer.add_summary(summary_test, step)
 
                 print('step %d: test accuracy %g,\t loss %g' % (step, test_accuracy, test_loss))
-
                 # Save checkpoint model
-                saver.save(sess, args.save_path)
+                saver.save(sess, args.save_path, global_step=step)
 
 if __name__ == '__main__':
 
@@ -202,7 +201,7 @@ if __name__ == '__main__':
     parser.add_argument('--dropout_prob', '-d', type=float, default=0.8)
 
     parser.add_argument('--model_path', '-model', default='/Users/shigetomi/Downloads/vgg_16.ckpt', help='FullPath of inception-v4 model(ckpt)')
-    parser.add_argument('--save_path', '-save', default='/Users/shigetomi/workspace/tensorflow_works/model/twostep.ckpt', help='FullPath of saving model')
+    parser.add_argument('--save_path', '-save', default='/Users/shigetomi/workspace/tensorflow_works/model/transl.ckpt', help='FullPath of saving model')
     parser.add_argument('--summary_dir', '-summary', default='/Users/shigetomi/workspace/tensorflow_works/log/', help='TensorBoard log')
 
     parser.add_argument('--cvflag', '-cv', default=None) # usually, dont use this

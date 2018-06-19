@@ -49,7 +49,7 @@ def train(args):
     # dict of {name in checkpoint: var.op.name}
     # variables_to_restore = {name_in_checkpoint(var): var for var in variables_to_restore if extractor_name in var.op.name}
     restorer = tf.train.Saver(variables_to_restore)
-    saver = tf.train.Saver()# save all vars
+    saver = tf.train.Saver(max_to_keep=None)# save all vars
 
     # Train ops
     with tf.name_scope('loss'):
@@ -135,7 +135,8 @@ def train(args):
                 print('step %d: test accuracy %g,\t loss %g' % (step, test_accuracy, test_loss))
 
                 # Save checkpoint model
-                saver.save(sess, args.save_path)
+                saver.save(sess, args.save_path, global_step=step)
+                # >global_stepパラメータを指定することでCheckpointファイルに-xxxxのようなSuffixが付加され、上書きを防止するカラクリになっています。
 
 if __name__ == '__main__':
 
@@ -153,7 +154,7 @@ if __name__ == '__main__':
     parser.add_argument('--dropout_prob', '-d', type=float, default=0.8)
 
     parser.add_argument('--model_path', '-model', default='/Users/shigetomi/Downloads/vgg_16.ckpt', help='FullPath of inception-v4 model(ckpt)')
-    parser.add_argument('--save_path', '-save', default='/Users/shigetomi/workspace/tensorflow_works/model/twostep.ckpt', help='FullPath of saving model')
+    parser.add_argument('--save_path', '-save', default='/Users/shigetomi/workspace/tensorflow_works/model/comparison.ckpt', help='FullPath of saving model')
     parser.add_argument('--summary_dir', '-summary', default='/Users/shigetomi/workspace/tensorflow_works/log/', help='TensorBoard log')
 
     parser.add_argument('--cvflag', '-cv', default=None) # usually, dont use this
