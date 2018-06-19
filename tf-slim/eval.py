@@ -13,6 +13,8 @@ from tensorflow.contrib.layers.python.layers.layers import batch_norm
 from nets.inception_v4 import inception_v4, inception_v4_arg_scope
 from nets.vgg import vgg_16, vgg_arg_scope
 
+import csv
+
 archs = {
     'inception_v4': {'fn': inception_v4, 'arg_scope': inception_v4_arg_scope, 'extract_point': 'PreLogitsFlatten'},
     'vgg_16': {'fn': vgg_16, 'arg_scope': vgg_arg_scope, 'extract_point': 'shigeNet_v1/vgg_16/fc7'}# shape=(?, 14, 14, 512) dtype=float32
@@ -133,7 +135,7 @@ def eval(args):
                                               keep_prob: 1.0,
                                               is_training: False})
 
-            print(path_c, result, np.argmax(pred), np.argmax(label))
+            print(path_c, result[0], np.argmax(pred), np.argmax(label))
 
 def eval_vgg16(args):
     restore_path = args.restore_path
@@ -177,6 +179,12 @@ def eval_vgg16(args):
 
     pathes_c, labels_c = getPathandLabel(args.c, num_classes)
 
+    # log
+    f = open(args.log, 'w')
+
+    writer = csv.writer(f, lineterminator='\n')
+    writer.writerow(['path_c', 'result', 'prediction', 'GroundTruth'])
+
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
         restorer.restore(sess, restore_path)
@@ -194,7 +202,10 @@ def eval_vgg16(args):
                                                keep_prob: 1.0,
                                                is_training: False})
 
-            print(path_c, result, np.argmax(pred), np.argmax(label))
+            print(path_c, result[0], np.argmax(pred), np.argmax(label))
+            writer.writerow([path_c, result[0], np.argmax(pred), np.argmax(label)])
+
+    f.close()
 
 if __name__ == '__main__':
 
@@ -203,6 +214,7 @@ if __name__ == '__main__':
     parser.add_argument('-o', help='File name of test data (original)', default='/Users/shigetomi/Desktop/dataset_roadsign/2018_04_11test_orig.txt')
     parser.add_argument('-extractor', help='extractor architecture name', default='vgg_16')
     parser.add_argument('-net', help='network name', default='shigeNet')
+    parser.add_argument('-log', help='log path', default='/Users/shigetomi/Desktop/log.csv')
     parser.add_argument('--num_classes', '-nc', type=int, default=6)
     parser.add_argument('--restore_path', '-r', default='/Users/shigetomi/workspace/tensorflow_works/tf-slim/model/twostep_roadsign.ckpt', help='ckpt path to restore')
 
