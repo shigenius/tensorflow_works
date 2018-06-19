@@ -86,6 +86,7 @@ def eval(args):
                              num_classes=num_classes, is_training=is_training, keep_prob=keep_prob)
     predictions = end_points["Predictions"]
 
+
     variables_to_restore = slim.get_variables_to_restore()
     restorer = tf.train.Saver(variables_to_restore)
 
@@ -134,7 +135,66 @@ def eval(args):
 
             print(path_c, result, np.argmax(pred), np.argmax(label))
 
+def eval_vgg16(args):
+    restore_path = args.restore_path
+    image_size = archs['vgg_16']['fn'].default_image_size
+    num_classes = args.num_classes # road sign
 
+    # Define placeholders
+    with tf.name_scope('input'):
+        with tf.name_scope('cropped_images'):
+            cropped_images_placeholder = tf.placeholder(dtype="float32", shape=(None, image_size,  image_size,  3))
+        with tf.name_scope('labels'):
+            labels_placeholder = tf.placeholder(dtype="float32", shape=(None, num_classes))
+        keep_prob = tf.placeholder(dtype="float32")
+        is_training = tf.placeholder(dtype="bool")  # train flag
+
+    # Build the graph
+    with slim.arg_scope(vgg_arg_scope()):
+        logits, _ = vgg_16(cropped_images_placeholder, num_classes=args.num_classes, is_training=True, reuse=None)
+
+    predictions = tf.nn.softmax(logits, name='Predictions')
+
+    variables_to_restore = slim.get_variables_to_restore()
+    restorer = tf.train.Saver(variables_to_restore)
+
+    with tf.name_scope('accuracy'):
+        correct_prediction = tf.equal(tf.argmax(predictions, 1), tf.argmax(labels_placeholder, 1))
+        accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
+
+    def getPathandLabel(path, num_classes):
+        with open(path, 'r') as f:
+            f_ = [line.rstrip().split() for line in f]
+            image_paths = [l[0] for l in f_]
+
+            labels = []  # 1-of-kで用意する
+            for l in f_:
+                tmp = [0] * num_classes
+                tmp[int(l[1])] = 1
+                labels.append(tmp)
+
+            return image_paths, labels
+
+    pathes_c, labels_c = getPathandLabel(args.c, num_classes)
+
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
+        restorer.restore(sess, restore_path)
+        print("Model restored from:", restore_path)
+
+        for path_c, label in zip(pathes_c, labels_c):
+
+            c = cv2.cvtColor(cv2.imread(path_c), cv2.COLOR_BGR2RGB)
+            c = np.asarray([cv2.resize(c, (image_size, image_size))])
+            label = [label]
+
+            result, pred = sess.run([correct_prediction, predictions],
+                                    feed_dict={cropped_images_placeholder: c,
+                                               labels_placeholder: label,
+                                               keep_prob: 1.0,
+                                               is_training: False})
+
+            print(path_c, result, np.argmax(pred), np.argmax(label))
 
 if __name__ == '__main__':
 
@@ -142,10 +202,14 @@ if __name__ == '__main__':
     parser.add_argument('-c', help='File name of test data(cropped)', default='/Users/shigetomi/Desktop/dataset_roadsign/2018_04_11test_crop.txt')
     parser.add_argument('-o', help='File name of test data (original)', default='/Users/shigetomi/Desktop/dataset_roadsign/2018_04_11test_orig.txt')
     parser.add_argument('-extractor', help='extractor architecture name', default='vgg_16')
-
+    parser.add_argument('-net', help='network name', default='shigeNet')
     parser.add_argument('--num_classes', '-nc', type=int, default=6)
     parser.add_argument('--restore_path', '-r', default='/Users/shigetomi/workspace/tensorflow_works/tf-slim/model/twostep_roadsign.ckpt', help='ckpt path to restore')
 
     args = parser.parse_args()
-
-    eval(args)
+    if args.net == 'shigeNet':
+        eval(args)
+    elif args.net == 'vgg_16':
+        eval_vgg16(args)
+    else:
+        pass
