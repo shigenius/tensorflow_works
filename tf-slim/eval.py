@@ -115,6 +115,12 @@ def eval(args):
     pathes_c, labels_c = getPathandLabel(args.c, num_classes)
     pathes_o, labels_o = getPathandLabel(args.o, num_classes)
 
+    # log
+    f = open(args.log, 'w')
+
+    writer = csv.writer(f, lineterminator='\n')
+    writer.writerow(['path_c', 'result', 'prediction', 'GroundTruth'])
+
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
         restorer.restore(sess, restore_path)
@@ -136,6 +142,10 @@ def eval(args):
                                               is_training: False})
 
             print(path_c, result[0], np.argmax(pred), np.argmax(label))
+            writer.writerow([path_c, result[0], np.argmax(pred), np.argmax(label)])
+
+    f.close()
+    print('finished')
 
 def eval_vgg16(args):
     restore_path = args.restore_path
@@ -206,6 +216,7 @@ def eval_vgg16(args):
             writer.writerow([path_c, result[0], np.argmax(pred), np.argmax(label)])
 
     f.close()
+    print('finished')
 
 if __name__ == '__main__':
 
