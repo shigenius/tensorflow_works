@@ -60,6 +60,45 @@ def shigeNet_v1(cropped_images, original_images, num_classes, keep_prob=1.0, is_
 
         return end_points
 
+def shigeNet_v2(cropped_images, original_images, num_classes, keep_prob=1.0, is_training=True, scope='shigeNet_v2', reuse=None, extractor_name='inception_v4'):
+    end_points = {}
+    with tf.variable_scope(scope, 'shigeNet_v2', reuse=reuse) as scope:
+        with slim.arg_scope([slim.batch_norm, slim.dropout], is_training=is_training):
+            # Extract features
+            with slim.arg_scope(archs[extractor_name]['arg_scope']()):
+                logits_c, end_points_c = archs[extractor_name]['fn'](cropped_images, is_training=False, reuse=None)
+                logits_o, end_points_o = archs[extractor_name]['fn'](original_images, is_training=True, reuse=None) # no freeze param
+
+                feature_c = end_points_c[archs[extractor_name]['extract_point']]
+                feature_o = end_points_o[archs[extractor_name]['extract_point']]
+
+                # feature map summary
+                # Tensorを[-1,7,7,ch]から[-1,ch,7,7]と順列変換し、[-1]と[ch]をマージしてimage出力
+                tf.summary.image('shigeNet_v1/vgg_16/conv5/conv5_3_c', tf.reshape(tf.transpose(end_points_c['shigeNet_v1/vgg_16/conv5/conv5_3'], perm=[0, 3, 1, 2]), [-1, 14, 14, 1]), 10)
+                tf.summary.image('shigeNet_v1/vgg_16/conv5/conv5_3_o', tf.reshape(tf.transpose(end_points_o['shigeNet_v1/vgg_16/conv5/conv5_3'], perm=[0, 3, 1, 2]), [-1, 14, 14, 1]), 10)
+
+            # Concat!
+            with tf.variable_scope('Concat') as scope:
+                concated_feature = tf.concat([tf.layers.Flatten()(feature_c), tf.layers.Flatten()(feature_o)], 1)  # (?, x, y, z)
+
+            with tf.variable_scope('Logits'):
+                with slim.arg_scope([slim.fully_connected],
+                                    activation_fn=tf.nn.relu,
+                                    weights_initializer=tf.truncated_normal_initializer(0.0, 0.01),
+                                    weights_regularizer=slim.l2_regularizer(0.0005)):
+                    net = slim.fully_connected(concated_feature, 1000, scope='fc1')
+                    net = slim.dropout(net, keep_prob, scope='dropout1')
+                    net = slim.fully_connected(net, 256, scope='fc2')
+                    net = slim.dropout(net, keep_prob, scope='dropout2')
+                    net = slim.fully_connected(net, num_classes, activation_fn=None, scope='fc3')
+
+                    end_points['Logits'] = net
+                    # squeeze = tf.squeeze(net, [1, 2]) # 次元1,2の要素数が1であるならばその次元を減らす
+                    # end_points['Predictions'] = tf.nn.softmax(squeeze, name='Predictions')
+                    end_points['Predictions'] = tf.nn.softmax(net, name='Predictions')
+
+        return end_points
+
 
 def train(args):
     extractor_name = args.extractor
@@ -85,15 +124,15 @@ def train(args):
         tf.summary.image('original_images', tf.reshape(original_images_placeholder, [-1, image_size, image_size, 3]), max_outputs=args.batch_size)
 
     # Build the graph
-    end_points = shigeNet_v1(cropped_images=cropped_images_placeholder, original_images=original_images_placeholder, extractor_name=extractor_name, num_classes=num_classes, is_training=is_training, keep_prob=keep_prob)
+    end_points = shigeNet_v2(cropped_images=cropped_images_placeholder, original_images=original_images_placeholder, extractor_name=extractor_name, num_classes=num_classes, is_training=is_training, keep_prob=keep_prob)
     # logits = tf.squeeze(end_points["Logits"], [1, 2])
     logits = end_points["Logits"]
     predictions = end_points["Predictions"]
 
     # Get restored vars name in checkpoint
     def name_in_checkpoint(var):
-        if "shigeNet_v1" in var.op.name:
-            return var.op.name.replace("shigeNet_v1/", "")
+        if "shigeNet_v2" in var.op.name:
+            return var.op.name.replace("shigeNet_v2/", "")
 
     # Get vars restored
     variables_to_restore = slim.get_variables_to_restore()

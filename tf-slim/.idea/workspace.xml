@@ -11,11 +11,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="transfer_learning.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="transfer_learning.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/transfer_learning.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1928">
-              <caret line="143" column="29" lean-forward="false" selection-start-line="143" selection-start-column="12" selection-end-line="143" selection-end-column="29" />
+            <state relative-caret-position="-309">
+              <caret line="130" column="0" lean-forward="true" selection-start-line="130" selection-start-column="0" selection-end-line="130" selection-end-column="0" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -26,8 +26,8 @@
       <file leaf-file-name="comparison_learning.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/comparison_learning.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1899">
-              <caret line="127" column="21" lean-forward="false" selection-start-line="127" selection-start-column="21" selection-end-line="127" selection-end-column="21" />
+            <state relative-caret-position="-230">
+              <caret line="69" column="10" lean-forward="false" selection-start-line="69" selection-start-column="4" selection-end-line="69" selection-end-column="10" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -38,7 +38,7 @@
       <file leaf-file-name="TwoInputDataset.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/TwoInputDataset.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="313">
+            <state relative-caret-position="499">
               <caret line="147" column="44" lean-forward="false" selection-start-line="147" selection-start-column="37" selection-end-line="147" selection-end-column="44" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
@@ -50,8 +50,8 @@
       <file leaf-file-name="eval.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/eval.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="509">
-              <caret line="220" column="30" lean-forward="false" selection-start-line="220" selection-start-column="4" selection-end-line="220" selection-end-column="30" />
+            <state relative-caret-position="674">
+              <caret line="231" column="30" lean-forward="false" selection-start-line="231" selection-start-column="30" selection-end-line="231" selection-end-column="30" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -59,7 +59,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="cp_failed_image.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="cp_failed_image.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/script/cp_failed_image.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="390">
@@ -74,7 +74,7 @@
       <file leaf-file-name="vgg.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/nets/vgg.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3045">
+            <state relative-caret-position="15">
               <caret line="207" column="39" lean-forward="false" selection-start-line="207" selection-start-column="8" selection-end-line="207" selection-end-column="39" />
               <folding />
             </state>
@@ -92,8 +92,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>end_points</find>
-      <find>vari</find>
       <find>global_pool</find>
       <find>reuse</find>
       <find>samma</find>
@@ -122,6 +120,8 @@
       <find>save</find>
       <find>saver</find>
       <find>summary_test</find>
+      <find>datase</find>
+      <find>dataset</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -144,10 +144,10 @@
         <option value="$USER_HOME$/Downloads/denchu2/program.py" />
         <option value="$PROJECT_DIR$/data_augmentation.py" />
         <option value="$PROJECT_DIR$/../eval.py" />
-        <option value="$PROJECT_DIR$/transfer_learning.py" />
         <option value="$PROJECT_DIR$/comparison_learning.py" />
         <option value="$PROJECT_DIR$/eval.py" />
         <option value="$PROJECT_DIR$/script/cp_failed_image.py" />
+        <option value="$PROJECT_DIR$/transfer_learning.py" />
       </list>
     </option>
   </component>
@@ -618,34 +618,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../eval.py" />
-    <entry file="file://$PROJECT_DIR$/nets/vgg.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3045">
-          <caret line="207" column="39" lean-forward="false" selection-start-line="207" selection-start-column="8" selection-end-line="207" selection-end-column="39" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/eval.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="509">
-          <caret line="220" column="30" lean-forward="false" selection-start-line="220" selection-start-column="4" selection-end-line="220" selection-end-column="30" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/TwoInputDataset.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="313">
-          <caret line="147" column="44" lean-forward="false" selection-start-line="147" selection-start-column="37" selection-end-line="147" selection-end-column="44" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/crossValidation.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
@@ -656,21 +628,39 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/comparison_learning.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1899">
-          <caret line="127" column="21" lean-forward="false" selection-start-line="127" selection-start-column="21" selection-end-line="127" selection-end-column="21" />
+        <state relative-caret-position="-230">
+          <caret line="69" column="10" lean-forward="false" selection-start-line="69" selection-start-column="4" selection-end-line="69" selection-end-column="10" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/transfer_learning.py">
+    <entry file="file://$PROJECT_DIR$/TwoInputDataset.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1928">
-          <caret line="143" column="29" lean-forward="false" selection-start-line="143" selection-start-column="12" selection-end-line="143" selection-end-column="29" />
+        <state relative-caret-position="499">
+          <caret line="147" column="44" lean-forward="false" selection-start-line="147" selection-start-column="37" selection-end-line="147" selection-end-column="44" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/eval.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="674">
+          <caret line="231" column="30" lean-forward="false" selection-start-line="231" selection-start-column="30" selection-end-line="231" selection-end-column="30" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nets/vgg.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="207" column="39" lean-forward="false" selection-start-line="207" selection-start-column="8" selection-end-line="207" selection-end-column="39" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -680,6 +670,16 @@
           <caret line="26" column="42" lean-forward="false" selection-start-line="26" selection-start-column="42" selection-end-line="26" selection-end-column="42" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/transfer_learning.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-309">
+          <caret line="130" column="0" lean-forward="true" selection-start-line="130" selection-start-column="0" selection-end-line="130" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
           </folding>
         </state>
       </provider>
