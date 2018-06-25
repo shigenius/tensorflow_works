@@ -124,15 +124,15 @@ def train(args):
         tf.summary.image('original_images', tf.reshape(original_images_placeholder, [-1, image_size, image_size, 3]), max_outputs=args.batch_size)
 
     # Build the graph
-    end_points = shigeNet_v2(cropped_images=cropped_images_placeholder, original_images=original_images_placeholder, extractor_name=extractor_name, num_classes=num_classes, is_training=is_training, keep_prob=keep_prob)
+    end_points = shigeNet_v1(cropped_images=cropped_images_placeholder, original_images=original_images_placeholder, extractor_name=extractor_name, num_classes=num_classes, is_training=is_training, keep_prob=keep_prob)
     # logits = tf.squeeze(end_points["Logits"], [1, 2])
     logits = end_points["Logits"]
     predictions = end_points["Predictions"]
 
     # Get restored vars name in checkpoint
     def name_in_checkpoint(var):
-        if "shigeNet_v2" in var.op.name:
-            return var.op.name.replace("shigeNet_v2/", "")
+        if "shigeNet_v1" in var.op.name:
+            return var.op.name.replace("shigeNet_v1/", "")
 
     # Get vars restored
     variables_to_restore = slim.get_variables_to_restore()
