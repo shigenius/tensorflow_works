@@ -22,9 +22,10 @@ def getCreateTime(videopath):
     ctime = [text for text in repr(stdout_value).split("\\n") if re.compile(pattern).search(text)]
     ctime = re.compile("\d+\-\d+\-\d+.*[^\.]+").search(ctime[0]).group()
     ctime = tuple(re.split('[.]', ctime))[0]
+    ctime = re.sub(r'[a-z]+', " ", ctime)
     # ctime = tuple(map(lambda x: int(x), ctime))
     # print(ctime)
-    tdatetime = datetime.strptime(ctime, '%Y-%m-%dT%H:%M:%S')
+    tdatetime = datetime.strptime(ctime, '%Y-%m-%d %H:%M:%S')
     # print(tdatetime)
     # print(tdatetime.timestamp())
     return tdatetime
