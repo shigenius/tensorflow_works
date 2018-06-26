@@ -22,9 +22,10 @@ def getCreateTime(videopath):
     ctime = [text for text in repr(stdout_value).split("\\n") if re.compile(pattern).search(text)]
     ctime = re.compile("\d+\-\d+\-\d+.*[^\.]+").search(ctime[0]).group()
     ctime = tuple(re.split('[.]', ctime))[0]
+    ctime = re.sub(r'[a-zA-Z]+', " ", ctime)
     # ctime = tuple(map(lambda x: int(x), ctime))
     # print(ctime)
-    tdatetime = datetime.strptime(ctime, '%Y-%m-%dT%H:%M:%S')
+    tdatetime = datetime.strptime(ctime, '%Y-%m-%d %H:%M:%S')
     # print(tdatetime)
     # print(tdatetime.timestamp())
     return tdatetime
@@ -70,6 +71,10 @@ if __name__ == '__main__':
                 if previous.timestamp() < l[item].timestamp() < following.timestamp():
                     luminous_cluster[i].update({key: video_date[key]})
                     break
+            else: # loopの中でbreakされなかった場合
+                continue
+            break # loopの中でbreakされた場合break
+
 
         if key not in [item for sublist in luminous_cluster for item in sublist]:# flatten
             # print("append!")
@@ -77,7 +82,7 @@ if __name__ == '__main__':
 
         # print("luminous_cluster:", luminous_cluster)
 
-    print("complete luminous_cluster: ", len(luminous_cluster), luminous_cluster)
+    # print("complete luminous_cluster: ", len(luminous_cluster), luminous_cluster)
 
     for i, item in enumerate(luminous_cluster):
         print(i, item.values())
