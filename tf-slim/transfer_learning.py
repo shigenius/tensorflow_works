@@ -237,7 +237,7 @@ def train(args):
                     tf.Summary.Value(tag="Valid/loss", simple_value=mean_loss)
                 ]), step)
 
-                print('step %d: test accuracy %g,\t loss %g' % (step, test_accuracy, test_loss))
+                print('step %d: test mean accuracy %g,\t mean loss %g' % (step, mean_acc, mean_loss))
                 # Save checkpoint model
                 saver.save(sess, args.save_path, global_step=step)
 
