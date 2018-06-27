@@ -36,25 +36,8 @@ def find_all_files(directory):
         for file in files:
             yield os.path.join(root, file)
 
-if __name__ == '__main__':
-    # args parser
-    parser = argparse.ArgumentParser(description='')
-    parser.add_argument('dataset_path', type=str, help='full-path of the dataset')
-    # parser.add_argument('--list', '-l', action='store_const', const=True, default=False)
-    args = parser.parse_args()
-
-    # get dict that shape is {day: video_paths}
-    dataset = args.dataset_path
-
-    # create label.txt
-    class_dir = [f.name for f in os.scandir(path=args.dataset_path) if f.is_dir()]
-    print("dataset:", args.dataset_path)
-    print("classes:", class_dir)
-    with open(args.dataset_path + "/label.txt", 'w') as f:
-        for n, c in enumerate(class_dir):
-            f.writelines(str(n) + ' ' + c + '\n')
-
-    videos = [file for file in find_all_files(dataset) if re.compile(".MOV|.m4v|.mov|.mp4").search(os.path.splitext(file)[1])]
+def get_luminous_condition_cluster(dataset_path):
+    videos = [file for file in find_all_files(dataset_path) if re.compile(".MOV|.m4v|.mov|.mp4").search(os.path.splitext(file)[1])]
     video_date = {v: getCreateTime(v) for v in videos}
     # print(video_date)
     luminous_cluster = []
@@ -80,12 +63,32 @@ if __name__ == '__main__':
             # print("append!")
             luminous_cluster.append({key: video_date[key]})
 
-        # print("luminous_cluster:", luminous_cluster)
+    return luminous_cluster
 
-    # print("complete luminous_cluster: ", len(luminous_cluster), luminous_cluster)
+if __name__ == '__main__':
+    # args parser
+    parser = argparse.ArgumentParser(description='')
+    parser.add_argument('dataset_path', type=str, help='full-path of the dataset')
+    # parser.add_argument('--list', '-l', action='store_const', const=True, default=False)
+    args = parser.parse_args()
+
+    # get dict that shape is {day: video_paths}
+    dataset_path = args.dataset_path
+
+    # create label.txt
+    class_dir = [f.name for f in os.scandir(path=args.dataset_path) if f.is_dir()]
+    print("dataset:", args.dataset_path)
+    print("classes:", class_dir)
+    with open(args.dataset_path + "/label.txt", 'w') as f:
+        for n, c in enumerate(class_dir):
+            f.writelines(str(n) + ' ' + c + '\n')
+
+    luminous_cluster = get_luminous_condition_cluster(dataset_path)
 
     for i, item in enumerate(luminous_cluster):
         print(i, item.values())
+
+
 
     trainidx = int(input('please select train\'s index>'))
 
