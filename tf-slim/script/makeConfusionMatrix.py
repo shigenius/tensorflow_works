@@ -38,19 +38,20 @@ if __name__ == '__main__':
 
     print("confision_mat:", confusion_mat)
 
-    estimation_acc = [l[i]/sum(l) for i, l in enumerate(confusion_mat)]
+    estimation_acc = [l[i]/sum(l) if l[i] != 0 else 0 for i, l in enumerate(confusion_mat)]
     print("estimation acc:", estimation_acc)
 
     mean_acc = sum([l[i] for i, l in enumerate(confusion_mat)]) / sum([sum(l) for i, l in enumerate(confusion_mat)])
     print("mean acc:", mean_acc)
 
-    confusion_mat = [[n / sum(l) for n in l] for l in confusion_mat]
+    confusion_mat = [[round(n / sum(l), 2) if n != 0 else 0 for n in l] for l in confusion_mat]
     ndarr = np.array(confusion_mat)
     print(ndarr)
 
-    plt.figure(figsize=(10, 7))
+    plt.figure(figsize=(15, 15))
     sn.heatmap(confusion_mat, annot=True, fmt='g', cmap='Blues', xticklabels=labels, yticklabels=labels)
     plt.title("Confusion Matrix")
     plt.xlabel("Predicted class")
     plt.ylabel("True class")
+    plt.savefig('figure.png')
     plt.show()
