@@ -142,6 +142,7 @@ def eval(args):
                                               is_training: False})
 
             print(path_c, result[0], np.argmax(pred), np.argmax(label))
+            print(pred, label)
             writer.writerow([path_c, result[0], np.argmax(pred), np.argmax(label)])
 
     f.close()
