@@ -123,14 +123,30 @@ def train(args):
 
             # Validation proc
             if step % val_fre == 0:
-                test_cropped_batch, test_orig_batch, test_labels = dataset.getTestData(args.batch_size)
-                summary_test, test_accuracy, test_loss = sess.run([merged, accuracy, loss],
-                                                                  feed_dict={cropped_images_placeholder: test_cropped_batch['batch'],
-                                                                             labels_placeholder: test_labels,
-                                                                             keep_prob: 1.0,
-                                                                             is_training: False})
+                num_test_batch = int(len(dataset.test_path_c) / args.batch_size)
+                acc_list = []
+                loss_list = []
+                for i in range(num_test_batch - 1):
+                    test_cropped_batch, test_orig_batch, test_labels = dataset.getTestData(args.batch_size)
+                    summary_test, test_accuracy, test_loss = sess.run([merged, accuracy, loss],
+                                                                      feed_dict={cropped_images_placeholder: test_cropped_batch['batch'],
+                                                                                 labels_placeholder: test_labels,
+                                                                                 keep_prob: 1.0,
+                                                                                 is_training: False})
+                    acc_list.append(test_accuracy)
+                    loss_list.append(test_loss)
+
+                mean_acc = sum(acc_list) / len(acc_list)
+                mean_loss = sum(loss_list) / len(loss_list)
+
                 # Write valid summary
                 test_summary_writer.add_summary(summary_test, step)
+                test_summary_writer.add_summary(tf.Summary(value=[
+                    tf.Summary.Value(tag="Valid/accuracy", simple_value=mean_acc)
+                ]), step)
+                test_summary_writer.add_summary(tf.Summary(value=[
+                    tf.Summary.Value(tag="Valid/loss", simple_value=mean_loss)
+                ]), step)
 
                 print('step %d: test accuracy %g,\t loss %g' % (step, test_accuracy, test_loss))
 
