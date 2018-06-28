@@ -41,18 +41,19 @@ if __name__ == '__main__':
 
     n_corr = {}
     num = {}
+    pattern = r'^\/[^\/]*\/[^\/]*\/'
     for row in f:
         if re.search('negative', row[0]):
             continue
-        if re.search('/home/shige/', row[0]):
-            row[0] = row[0].replace('/home/shige/', '/Users/shigetomi/Desktop/')  # replace remote path to local path
+        if re.search(pattern, row[0]):
+            row[0] = re.sub(pattern, "/Users/shigetomi/Desktop/", row[0]) # replace remote path to local path
         row[0] = re.sub('_cropped.*$', '',  row[0])
         # print(row[0])
         luminous = [[i, key, cluster[key]] for i, cluster in enumerate(luminous_cluster) for key in cluster.keys() if re.search(row[0], key)]
         flatten = lambda list: [e for inner_list in list for e in inner_list]
         luminous = flatten(luminous)
-        # print(luminous)
 
+        # print(luminous)
         if luminous[0] not in n_corr.keys():
             n_corr[luminous[0]] = 0
         if luminous[0] not in num.keys():
@@ -76,5 +77,7 @@ if __name__ == '__main__':
     result = [[acc[key], luminous_cluster[key]] for key in acc.keys()]
     for item in result:
         print("acc:", item[0], "targets:", item[1])
+
+    print("mean acc:", sum(n_corr.values())/sum(num.values()))
 
 
