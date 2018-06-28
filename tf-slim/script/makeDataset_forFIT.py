@@ -37,11 +37,11 @@ def find_all_files(directory):
             yield os.path.join(root, file)
 
 def get_luminous_condition_cluster(dataset_path):
-    videos = [file for file in find_all_files(dataset_path) if re.compile(".MOV|.m4v|.mov|.mp4").search(os.path.splitext(file)[1])]
+    videos = sorted([file for file in find_all_files(dataset_path) if re.compile(".MOV|.m4v|.mov|.mp4").search(os.path.splitext(file)[1])])
     video_date = {v: getCreateTime(v) for v in videos}
     # print(video_date)
     luminous_cluster = []
-    for key in video_date.keys():
+    for key in sorted(video_date.keys()):
         # print(key, video_date[key])
         previous = video_date[key].replace(hour=video_date[key].hour - 1)
         following = video_date[key].replace(hour=video_date[key].hour + 1)
