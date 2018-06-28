@@ -108,9 +108,9 @@ if __name__ == '__main__':
         train_files_crop.extend(files)
 
 
-    negative_sample_dir_path = args.dataset_path + "/negative/negative_cropped"
-    negative_samples = [os.path.join(negative_sample_dir_path, item.name) for item in os.scandir(path=negative_sample_dir_path) if item.is_file() and re.search('.jpg', item.name)]
-    train_files_crop.extend(negative_samples) # negative class
+    # negative_sample_dir_path = args.dataset_path + "/negative/negative_cropped"
+    # negative_samples = [os.path.join(negative_sample_dir_path, item.name) for item in os.scandir(path=negative_sample_dir_path) if item.is_file() and re.search('.jpg', item.name)]
+    # train_files_crop.extend(negative_samples) # negative class
 
     train_files_withClassID_crop = sorted([f + " " + str(class_dir.index(c)) for c in class_dir for f in train_files_crop if re.search(c, f)])
     train_files_withClassID_orig = sorted(list(map(lambda x: re.sub(r'_cropped', '', x), train_files_withClassID_crop)))
@@ -132,9 +132,9 @@ if __name__ == '__main__':
         files = [os.path.join(target_dir, item.name) for item in os.scandir(path=target_dir) if item.is_file() and re.search('^(?!.*\_d\d).*\.jpg$', item.name)]
         valid_files_crop.extend(files)
 
-    negative_sample_dir_path = args.dataset_path + "/negative/negative_cropped"
-    negative_samples = [os.path.join(negative_sample_dir_path, item.name) for item in os.scandir(path=negative_sample_dir_path) if item.is_file() and re.search('^(?!.*\_d\d).*\.jpg$', item.name)]
-    valid_files_crop.extend(negative_samples) # negative class
+    # negative_sample_dir_path = args.dataset_path + "/negative/negative_cropped"
+    # negative_samples = [os.path.join(negative_sample_dir_path, item.name) for item in os.scandir(path=negative_sample_dir_path) if item.is_file() and re.search('^(?!.*\_d\d).*\.jpg$', item.name)]
+    # valid_files_crop.extend(negative_samples) # negative class
 
     valid_files_withClassID_crop = sorted([f + " " + str(class_dir.index(c)) for c in class_dir for f in valid_files_crop if re.search(c, f)])
     valid_files_withClassID_orig = sorted(list(map(lambda x: re.sub(r'_cropped', '', x), valid_files_withClassID_crop)))
@@ -156,9 +156,9 @@ if __name__ == '__main__':
             files = [os.path.join(target_dir, item.name) for item in os.scandir(path=target_dir) if item.is_file() and re.search('^(?!.*\_d\d).*\.jpg$', item.name)]
             test_files_crop.extend(files)
 
-    negative_sample_dir_path = args.dataset_path + "/negative/negative_cropped"
-    negative_samples = [os.path.join(negative_sample_dir_path, item.name) for item in os.scandir(path=negative_sample_dir_path) if item.is_file() and re.search('^(?!.*\_d\d).*\.jpg$', item.name)]
-    test_files_crop.extend(negative_samples) # negative class
+    # negative_sample_dir_path = args.dataset_path + "/negative/negative_cropped"
+    # negative_samples = [os.path.join(negative_sample_dir_path, item.name) for item in os.scandir(path=negative_sample_dir_path) if item.is_file() and re.search('^(?!.*\_d\d).*\.jpg$', item.name)]
+    # test_files_crop.extend(negative_samples) # negative class
 
     test_files_withClassID_crop = sorted([f + " " + str(class_dir.index(c)) for c in class_dir for f in test_files_crop if re.search(c, f)])
     test_files_withClassID_orig = sorted(list(map(lambda x: re.sub(r'_cropped', '', x), test_files_withClassID_crop)))
