@@ -49,10 +49,12 @@ if __name__ == '__main__':
             row[0] = re.sub(pattern, "/Users/shigetomi/Desktop/", row[0]) # replace remote path to local path
         row[0] = re.sub('_cropped.*$', '',  row[0])
         # print(row[0])
+        row[0] = re.sub('\(|\)', '\(|\)', row[0])
         luminous = [[i, key, cluster[key]] for i, cluster in enumerate(luminous_cluster) for key in cluster.keys() if re.search(row[0], key)]
         flatten = lambda list: [e for inner_list in list for e in inner_list]
         luminous = flatten(luminous)
 
+        # print(luminous)
         # print(luminous)
         if luminous[0] not in n_corr.keys():
             n_corr[luminous[0]] = 0
