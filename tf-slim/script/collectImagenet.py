@@ -16,7 +16,7 @@ def cmd(cmd):
 
 # arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--data_dir',        type=str,   default='./images')
+parser.add_argument('data_dir',        type=str)
 parser.add_argument('--num_of_classes',  type=int,   default=1000)
 parser.add_argument('--num_of_pics',   type=int,   default=10)
 parser.add_argument('--offset',   type=int,   default=0)
