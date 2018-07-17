@@ -5,6 +5,10 @@ import argparse
 import re
 import subprocess
 
+# 動画のcreation timeを元に日照状況毎に動画のクラスターを作成する．
+# 指定したクラスターをTrainとValidに，残りをTestデータにしてtxtに保存する．
+# CreationTimeの取得はffmpegに依存しているため動画をリサイズしたり変更するとうまく動作しなくなる．
+
 def getymd(path):
     # Unix only
     ctime_et = os.path.getmtime(path)
@@ -85,12 +89,13 @@ if __name__ == '__main__':
 
     luminous_cluster = get_luminous_condition_cluster(dataset_path)
 
+    print("\n---\n luminous cluster from videos create time (UTC)")
     for i, item in enumerate(luminous_cluster):
-        print(i, item.values())
+        print(i, ":", [v.strftime('%Y/%m/%d-%H/%M/%S') for v in item.values()], "\n")
 
 
 
-    trainidx = int(input('please select train\'s index>'))
+    trainidx = int(input('Please select cluster index for Train >'))
 
     # print(luminous_cluster[trainidx])
 
@@ -120,11 +125,11 @@ if __name__ == '__main__':
     for f in train_files_withClassID_orig:
         assert os.path.exists(f.split(" ")[0]), "file:{0}".format(f.split(" ")[0])
 
-    print("train_files_withClassID_crop", train_files_withClassID_crop)
-    print("train_files_withClassID_orig", train_files_withClassID_orig)
+    # print("train_files_withClassID_crop", train_files_withClassID_crop)
+    # print("train_files_withClassID_orig", train_files_withClassID_orig)
 
 
-    valididx = int(input('please select valid\'s index>'))
+    valididx = int(input('Please select cluster index for Validation >'))
 
     # create valid set
     for video in luminous_cluster[valididx]:
@@ -144,8 +149,8 @@ if __name__ == '__main__':
     for f in valid_files_withClassID_orig:
         assert os.path.exists(f.split(" ")[0]), "file:{0}".format(f.split(" ")[0])
 
-    print("valid_files_withClassID_crop", valid_files_withClassID_crop)
-    print("valid_files_withClassID_orig", valid_files_withClassID_orig)
+    # print("valid_files_withClassID_crop", valid_files_withClassID_crop)
+    # print("valid_files_withClassID_orig", valid_files_withClassID_orig)
 
     # create test set
     dellist = lambda items, indexes: [item for index, item in enumerate(items) if index not in indexes]
@@ -168,8 +173,10 @@ if __name__ == '__main__':
     for f in test_files_withClassID_orig:
         assert os.path.exists(f.split(" ")[0]), "file:{0}".format(f.split(" ")[0])
 
-    print("test_files_withClassID_crop", test_files_withClassID_crop)
-    print("test_files_withClassID_orig", test_files_withClassID_orig)
+    # print("test_files_withClassID_crop", test_files_withClassID_crop)
+    # print("test_files_withClassID_orig", test_files_withClassID_orig)
+
+    print("All other cluster are Test set")
 
 
     with open(args.dataset_path + "/" +"train_orig.txt", 'w') as f:

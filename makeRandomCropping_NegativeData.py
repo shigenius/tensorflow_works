@@ -10,12 +10,7 @@ import cv2
 import numpy as np
 import csv
 
-def main():
-    parser = argparse.ArgumentParser(description='make dataset for specific object detection')
-    parser.add_argument('dataset', help='Dataset path')
-    parser.add_argument('-n', '--negative', type=str, default='negative', help='name of negative sample directory')
-    args = parser.parse_args()
-
+def main(args):
     class_dir = [f.name for f in os.scandir(path=args.dataset) if f.is_dir() and not re.search(args.negative, f.name)]
     print("dataset:", args.dataset)
     print("classes:", class_dir)
@@ -48,11 +43,16 @@ def main():
     MIN_CROP_SIZE = 100 # 矩形の最小サイズ
     CROPPING_PERIMAGE = 1 # 一枚の画像からn枚crop画像を生成
 
-    if not os.path.exists(args.dataset + "/" + args.negative + "/negative"):
-        os.makedirs(args.dataset + "/" + args.negative + "/negative")
-        os.makedirs(args.dataset + "/" + args.negative + "/negative_cropped")
+    if args.output == None:
+        output_path = args.dataset
+    else:
+        output_path = args.output
 
-    log = open(args.dataset + "/" + args.negative + "/negative_cropped" + "/subwindow_log.txt", 'w')
+    if not os.path.exists(output_path + "/" + args.negative + "/negative"):
+        os.makedirs(output_path + "/" + args.negative + "/negative")
+        os.makedirs(output_path + "/" + args.negative + "/negative_cropped")
+
+    log = open(output_path + "/" + args.negative + "/negative_cropped" + "/subwindow_log.txt", 'w')
     writer = csv.writer(log, lineterminator='\n')  # 改行コード（\n）を指定しておく
     writer.writerow(("frame", "center_x", "center_y", "size_x", "size_y"))
 
@@ -82,8 +82,8 @@ def main():
             padding_image =  paddingImage(I, cropsize)
             rectangle = padding_image[int(cropsize+rect_y): int(cropsize*2+rect_y), int(cropsize+rect_x): int(cropsize*2+rect_x)]
 
-            cv2.imwrite(args.dataset + "/" + args.negative + "/negative/" + "image_" + '%04d' % n + ".jpg", I)
-            cv2.imwrite(args.dataset + "/" + args.negative + "/negative_cropped/" + "image_" + '%04d' % n + ".jpg", rectangle)
+            cv2.imwrite(output_path + "/" + args.negative + "/negative/" + "image_" + '%04d' % n + ".jpg", I)
+            cv2.imwrite(output_path + "/" + args.negative + "/negative_cropped/" + "image_" + '%04d' % n + ".jpg", rectangle)
             writer.writerow((n, center_x, center_y, cropsize, cropsize))
 
             # 確認用の画像表示
@@ -147,4 +147,10 @@ def paddingImage(org, cropsize):
     return padding_image
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='make dataset for specific object detection')
+    parser.add_argument('dataset', help='Dataset path')
+    parser.add_argument('-n', '--negative', type=str, default='negative', help='name of negative sample directory')
+    parser.add_argument('-o', '--output', type=str, default=None)
+
+    args = parser.parse_args()
     main()
