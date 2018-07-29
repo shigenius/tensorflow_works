@@ -80,7 +80,7 @@ if __name__ == '__main__':
     dataset_path = args.dataset_path
 
     # create label.txt
-    class_dir = [f.name for f in os.scandir(path=args.dataset_path) if f.is_dir()]
+    class_dir = sorted([f.name for f in os.scandir(path=args.dataset_path) if f.is_dir()])
     print("dataset:", args.dataset_path)
     print("classes:", class_dir)
     with open(args.dataset_path + "/label.txt", 'w') as f:
