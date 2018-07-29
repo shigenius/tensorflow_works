@@ -6,8 +6,8 @@ def sliding_window(input, windowsize=128, stride=1):
     # output: cropped images (shape=batchsize,x,y,ch)
 
     return np.asarray([input[sy:sy+windowsize, sx:sx+windowsize, :]
-                       for sy in range(0, input.shape[0]-windowsize, stride)
-                       for sx in range(0, input.shape[1]-windowsize, stride)])
+                        for sy in range(0, input.shape[0]-windowsize, stride)
+                            for sx in range(0, input.shape[1]-windowsize, stride)])
 
 
 if __name__ == '__main__':

@@ -73,7 +73,7 @@ if __name__ == '__main__':
 
         target_dir_path = os.path.join(imagenet_dataset_path, c)
         files = [os.path.join(target_dir_path, item.name) for item in os.scandir(path=target_dir_path) if
-                 item.is_file() and re.search('.*\.jpg$', item.name)]
+                 item.is_file() and re.search('.*\.[JPG|jpg]$', item.name)]
         temp.extend(files)
 
     train_files = sorted(random.sample(temp, int(len(temp)/2))) # ランダムで2分割
