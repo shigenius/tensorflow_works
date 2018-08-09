@@ -10,74 +10,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="specific_object_detection.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/specific_object_detection.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="316">
-              <caret line="148" column="118" lean-forward="false" selection-start-line="148" selection-start-column="98" selection-end-line="148" selection-end-column="118" />
-              <folding>
-                <element signature="e#0#23#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="makeDataset_forFIT.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/script/makeDataset_forFIT.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="186">
-              <caret line="83" column="40" lean-forward="true" selection-start-line="83" selection-start-column="40" selection-end-line="83" selection-end-column="40" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="comparison_learning.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/comparison_learning.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-286">
-              <caret line="43" column="26" lean-forward="false" selection-start-line="43" selection-start-column="26" selection-end-line="43" selection-end-column="26" />
-              <folding>
-                <element signature="e#0#23#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="transfer_learning.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/transfer_learning.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="74">
-              <caret line="23" column="114" lean-forward="false" selection-start-line="23" selection-start-column="101" selection-end-line="23" selection-end-column="114" />
-              <folding>
-                <element signature="e#0#23#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TwoInputDataset.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/TwoInputDataset.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="126" column="75" lean-forward="true" selection-start-line="126" selection-start-column="12" selection-end-line="126" selection-end-column="75" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="eval.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/eval.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="765">
-              <caret line="60" column="86" lean-forward="false" selection-start-line="60" selection-start-column="20" selection-end-line="60" selection-end-column="86" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -88,18 +21,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>¥</find>
-      <find>¥t</find>
-      <find>train_acc</find>
-      <find>test</find>
-      <find>label</find>
-      <find>print</find>
-      <find>sc</find>
-      <find>gamma</find>
-      <find>dis</find>
-      <find>soft</find>
-      <find>224</find>
-      <find>data</find>
       <find>plt</find>
       <find>num_classes</find>
       <find>valid_files_withClassID_orig</find>
@@ -118,6 +39,18 @@
       <find>args.dataset</find>
       <find>jpg</find>
       <find>re</find>
+      <find>label</find>
+      <find>resize</find>
+      <find>chec</find>
+      <find>onMouse</find>
+      <find>targetname</find>
+      <find>MAX_FEATURE_NUM</find>
+      <find>refreshFeatures</find>
+      <find>self.gray_next</find>
+      <find>addFeature</find>
+      <find>idex</find>
+      <find>self.waitkeyControl</find>
+      <find>imrea</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -153,18 +86,23 @@
         <option value="$PROJECT_DIR$/script/collectImagenet.py" />
         <option value="$PROJECT_DIR$/script/makeDataset_forimagenet.py" />
         <option value="$PROJECT_DIR$/slidingwindow.py" />
-        <option value="$PROJECT_DIR$/transfer_learning.py" />
         <option value="$USER_HOME$/Downloads/denchu8_1/program.py" />
         <option value="$USER_HOME$/Downloads/denchu8_1 2/program.py" />
         <option value="$USER_HOME$/Downloads/denchu8-2/program.py" />
-        <option value="$PROJECT_DIR$/specific_object_detection.py" />
         <option value="$PROJECT_DIR$/script/makeDataset_forFIT.py" />
+        <option value="$PROJECT_DIR$/transfer_learning.py" />
+        <option value="$PROJECT_DIR$/specific_object_detection.py" />
+        <option value="$PROJECT_DIR$/script/makeDataset_fromVOC.py" />
+        <option value="$PROJECT_DIR$/script/crop_VOC.py" />
+        <option value="$PROJECT_DIR$/script/cropRect_with_FeatureTracking.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="width" value="1280" />
-    <option name="height" value="800" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="45" />
+    <option name="y" value="23" />
+    <option name="width" value="1235" />
+    <option name="height" value="777" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -197,8 +135,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -215,6 +151,8 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -232,8 +170,8 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.specific_object_detection">
-    <configuration name="getAcc_for_luminous_condition" type="PythonConfigurationType" factoryName="Python" temporary="true">
+  <component name="RunManager" selected="Python.cropRect_with_FeatureTracking">
+    <configuration name="cropRect_with_FeatureTracking" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -245,13 +183,13 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="tf-slim" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/script/getAcc_for_luminous_condition.py" />
-      <option name="PARAMETERS" value="$USER_HOME$/Desktop/dataset_fit/dataset_P_nirin/ $PROJECT_DIR$/log/transl_P_niri-195.csv  $PROJECT_DIR$/log/P_nirin_label.txt" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/script/cropRect_with_FeatureTracking.py" />
+      <option name="PARAMETERS" value="$USER_HOME$/Desktop/20180806_videos/kanban/20180806_1800_houbunbasmae $USER_HOME$/Desktop/20180806_videos/kanban/20180806_1800_houbunbasmae_crop" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration name="makeConfusionMatrix" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="crop_VOC" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -263,8 +201,8 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="tf-slim" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/script/makeConfusionMatrix.py" />
-      <option name="PARAMETERS" value="$PROJECT_DIR$/log/transl_0615TEST.csv $USER_HOME$/Desktop/dataset_parkingSign_mini/label.txt" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/script/crop_VOC.py" />
+      <option name="PARAMETERS" value="$USER_HOME$/Downloads/VOCdevkit $USER_HOME$/Desktop/test/aeroplane train" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -287,20 +225,20 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration name="slidingwindow" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="makeDataset_fromVOC" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/script" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="tf-slim" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/slidingwindow.py" />
-      <option name="PARAMETERS" value="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/script/makeDataset_fromVOC.py" />
+      <option name="PARAMETERS" value="$USER_HOME$/Downloads/VOCdevkit $USER_HOME$/Desktop/test/aeroplane aeroplane" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -324,19 +262,19 @@
       <option name="MODULE_MODE" value="false" />
     </configuration>
     <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="Python.makeConfusionMatrix" />
-      <item index="1" class="java.lang.String" itemvalue="Python.getAcc_for_luminous_condition" />
-      <item index="2" class="java.lang.String" itemvalue="Python.slidingwindow" />
-      <item index="3" class="java.lang.String" itemvalue="Python.makeDataset_forimagenet" />
-      <item index="4" class="java.lang.String" itemvalue="Python.specific_object_detection" />
+      <item index="0" class="java.lang.String" itemvalue="Python.makeDataset_forimagenet" />
+      <item index="1" class="java.lang.String" itemvalue="Python.specific_object_detection" />
+      <item index="2" class="java.lang.String" itemvalue="Python.makeDataset_fromVOC" />
+      <item index="3" class="java.lang.String" itemvalue="Python.crop_VOC" />
+      <item index="4" class="java.lang.String" itemvalue="Python.cropRect_with_FeatureTracking" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.specific_object_detection" />
-        <item index="1" class="java.lang.String" itemvalue="Python.makeDataset_forimagenet" />
-        <item index="2" class="java.lang.String" itemvalue="Python.slidingwindow" />
-        <item index="3" class="java.lang.String" itemvalue="Python.makeConfusionMatrix" />
-        <item index="4" class="java.lang.String" itemvalue="Python.getAcc_for_luminous_condition" />
+        <item index="0" class="java.lang.String" itemvalue="Python.cropRect_with_FeatureTracking" />
+        <item index="1" class="java.lang.String" itemvalue="Python.crop_VOC" />
+        <item index="2" class="java.lang.String" itemvalue="Python.makeDataset_fromVOC" />
+        <item index="3" class="java.lang.String" itemvalue="Python.specific_object_detection" />
+        <item index="4" class="java.lang.String" itemvalue="Python.makeDataset_forimagenet" />
       </list>
     </recent_temporary>
   </component>
@@ -357,21 +295,20 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1280" height="800" extended-state="0" />
-    <editor active="true" />
+    <frame x="45" y="23" width="1235" height="777" extended-state="0" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13125" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13603239" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="R Packages" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="R Graphics" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2964539" sideWeight="0.12478778" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20567375" sideWeight="0.87521225" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25733334" sideWeight="0.87521225" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.399384" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -398,22 +335,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../SpecificObjectRecognition.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="722">
-          <caret line="134" column="49" lean-forward="false" selection-start-line="134" selection-start-column="11" selection-end-line="134" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../models/research/slim/nets/inception_v4.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="145">
-          <caret line="264" column="64" lean-forward="false" selection-start-line="264" selection-start-column="14" selection-end-line="264" selection-end-column="64" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/slim_test.py" />
-    <entry file="file://$PROJECT_DIR$/exp1-3-1.py" />
     <entry file="file://$PROJECT_DIR$/../../TA/2018/exp1-3/exp1-3-2.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -575,34 +496,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/script/makeDataset_forimagenet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="280">
-          <caret line="78" column="74" lean-forward="false" selection-start-line="78" selection-start-column="4" selection-end-line="78" selection-end-column="74" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/eval.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="765">
-          <caret line="60" column="86" lean-forward="false" selection-start-line="60" selection-start-column="20" selection-end-line="60" selection-end-column="86" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/TwoInputDataset.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="126" column="75" lean-forward="true" selection-start-line="126" selection-start-column="12" selection-end-line="126" selection-end-column="75" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../evaluate.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-244">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -610,7 +507,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="942">
           <caret line="132" column="32" lean-forward="false" selection-start-line="132" selection-start-column="30" selection-end-line="132" selection-end-column="32" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -618,9 +514,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
           <caret line="7" column="66" lean-forward="false" selection-start-line="7" selection-start-column="23" selection-end-line="7" selection-end-column="66" />
-          <folding>
-            <element signature="e#0#18#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -628,7 +521,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-540">
           <caret line="127" column="75" lean-forward="true" selection-start-line="127" selection-start-column="4" selection-end-line="127" selection-end-column="75" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -636,7 +528,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2864">
           <caret line="453" column="24" lean-forward="true" selection-start-line="453" selection-start-column="24" selection-end-line="454" selection-end-column="28" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -644,7 +535,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-930">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -652,7 +542,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-570">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -660,7 +549,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="244">
           <caret line="50" column="0" lean-forward="true" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -668,7 +556,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="358">
           <caret line="49" column="0" lean-forward="false" selection-start-line="49" selection-start-column="0" selection-end-line="59" selection-end-column="11" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -676,7 +563,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="283">
           <caret line="140" column="38" lean-forward="false" selection-start-line="140" selection-start-column="38" selection-end-line="140" selection-end-column="38" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -684,44 +570,89 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1208">
           <caret line="107" column="23" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="159" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/transfer_learning.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="74">
-          <caret line="23" column="114" lean-forward="false" selection-start-line="23" selection-start-column="101" selection-end-line="23" selection-end-column="114" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/comparison_learning.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-286">
-          <caret line="43" column="26" lean-forward="false" selection-start-line="43" selection-start-column="26" selection-end-line="43" selection-end-column="26" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="540">
+          <caret line="45" column="18" lean-forward="false" selection-start-line="45" selection-start-column="18" selection-end-line="45" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/eval.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1845">
+          <caret line="132" column="38" lean-forward="false" selection-start-line="132" selection-start-column="28" selection-end-line="132" selection-end-column="38" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/specific_object_detection.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="316">
-          <caret line="148" column="118" lean-forward="false" selection-start-line="148" selection-start-column="98" selection-end-line="148" selection-end-column="118" />
+        <state relative-caret-position="2775">
+          <caret line="185" column="46" lean-forward="false" selection-start-line="185" selection-start-column="46" selection-end-line="185" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/TwoInputDataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="659">
+          <caret line="126" column="75" lean-forward="false" selection-start-line="126" selection-start-column="12" selection-end-line="126" selection-end-column="75" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/transfer_learning.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="127" column="55" lean-forward="false" selection-start-line="127" selection-start-column="55" selection-end-line="127" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/script/makeDataset_fromVOC.py" />
+    <entry file="file://$PROJECT_DIR$/script/cropRect_with_FeatureTracking.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2640">
+          <caret line="176" column="70" lean-forward="false" selection-start-line="176" selection-start-column="70" selection-end-line="176" selection-end-column="70" />
           <folding>
-            <element signature="e#0#23#0" expanded="true" />
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/script/crop_VOC.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1065">
+          <caret line="71" column="38" lean-forward="true" selection-start-line="71" selection-start-column="16" selection-end-line="71" selection-end-column="38" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../python_sources/opencv_tracking.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-847">
+          <caret line="66" column="28" lean-forward="true" selection-start-line="66" selection-start-column="18" selection-end-line="66" selection-end-column="28" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/script/makeDataset_forimagenet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1400">
+          <caret line="112" column="86" lean-forward="false" selection-start-line="111" selection-start-column="8" selection-end-line="112" selection-end-column="86" />
+          <folding>
+            <element signature="e#35#44#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/script/makeDataset_forFIT.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="186">
-          <caret line="83" column="40" lean-forward="true" selection-start-line="83" selection-start-column="40" selection-end-line="83" selection-end-column="40" />
+        <state relative-caret-position="15">
+          <caret line="70" column="0" lean-forward="false" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
           <folding />
         </state>
       </provider>

@@ -4,6 +4,8 @@ from nets.vgg import vgg_16, vgg_arg_scope
 from nets.inception_v4 import inception_v4, inception_v4_arg_scope
 import cv2
 import argparse
+import numpy as np
+import time
 
 archs = {
     'inception_v4': {'fn': inception_v4, 'arg_scope': inception_v4_arg_scope, 'extract_point': 'PreLogitsFlatten'},
@@ -49,8 +51,32 @@ def specific_object_recognition(feature_c, feature_o, num_classes, keep_prob, ex
             return end_points
 
 
-def calc_coordinate_from_index(index, image_size, stride):
-    pass
+def calc_coordinate_from_index(indices, image_shape, window_size, stride):
+    # Don't use TF module!
+    w = image_shape[1]
+    h = image_shape[0]
+    x_points = np.arange(0, w - window_size, stride)
+    y_points = np.arange(0, h - window_size, stride)
+    num_xp = x_points.shape[0]
+    # num_yp = y_points.shape[0]
+    # print("indices:", indices, "image_shape:", image_shape, "window_size:", window_size, "stride:", stride)
+    # print("w:", w, "h:",h)
+    # print(x_points)
+    # print(y_points)
+    # print("num_of_windows_in_one_row", num_xp)
+    # print("num_of_windows_in_one_col", num_yp)
+
+    coordcates = []
+    for i in indices:
+        xp = (i+1) % num_xp
+        yp = int((i+1) / num_xp)
+        x = x_points[xp]
+        y = y_points[yp]
+        # print(i, (xp, yp), (x, y))
+        coordcates.append((i, (x, y)))
+
+    return coordcates
+
 
 def sliding_window_tf(input_placeholder, window_size, stride):
     input_shape = tf.shape(input_placeholder)
@@ -70,6 +96,16 @@ def sliding_window_tf(input_placeholder, window_size, stride):
         lambda x: tf.strided_slice(input_placeholder, [x[0], x[1]], [x[0] + window_size, x[1] + window_size]),
         indices,
         dtype=tf.float32)
+
+def show_variables_in_ckpt(path):
+    prefix = path
+    saver = tf.train.import_meta_graph("{}.meta".format(prefix))
+    sess = tf.Session()
+    saver.restore(sess, prefix)
+    graph=tf.get_default_graph()
+    for op in graph.get_operations():
+        if "fc3" in op.name:
+            print(op)
 
 def eval(args):
     extractor_name = args.extractor
@@ -111,7 +147,13 @@ def eval(args):
 
     with tf.name_scope('specific'):
 
-        end_points_s = specific_object_recognition(candidate_feature, bg_feature_expand, num_of_sclass, keep_prob, extractor_name='vgg_16')
+        # end_points_s = specific_object_recognition(candidate_feature, bg_feature_expand, num_of_sclass, keep_prob, extractor_name='vgg_16')
+        end_points_s = specific_object_recognition(candidate_feature, bg_feature_expand, num_of_sclass, keep_prob,
+                                                   extractor_name='vgg_16') # test用
+        predictions_s = end_points_s["Predictions"]
+        predict_labels = tf.argmax(predictions_s, 1)
+
+
 
         def name_in_checkpoint(var):
             return "shigeNet_v1/" + var.op.name
@@ -130,10 +172,23 @@ def eval(args):
         print("Restored specific recognition model:", args.sr)
 
         input_image = cv2.cvtColor(cv2.imread(args.input), cv2.COLOR_BGR2RGB)  # BGR to RGB in oder to using TF
-        # bgf, candf = sess.run([bg_feature, candidate_feature], feed_dict={input_placeholder: input_image})
-        # print("bg_feature(run), candidate_feature(run)", bgf.shape, candf.shape)
+        # print(calc_coordinate_from_index(indices=[7, 8, 12], image_shape=input_image.shape, window_size=image_size,
+        #                                  stride=stride))
 
-        print(sess.run(end_points_s, feed_dict={input_placeholder: input_image}))
+        start_time = time.time()
+        cand_index, pred = sess.run([candidate_index, predict_labels], feed_dict={input_placeholder: input_image})
+        elapsed_time = time.time() - start_time
+        print(cand_index, pred)
+        print("specific object label:", slabel)
+        coordinates = calc_coordinate_from_index(indices=cand_index, image_shape=input_image.shape, window_size=image_size, stride=stride)
+
+        print("Result")
+        for i, item in enumerate(coordinates):
+            print("index:", item[0], "(x, y):", item[1], "predict label:", pred[i], slabel[str(pred[i])])
+
+        print("\n running time:", elapsed_time, "(sec)")
+
+
 
 if __name__ == '__main__':
 
@@ -144,12 +199,12 @@ if __name__ == '__main__':
 
     parser.add_argument('-extractor', help='extractor architecture name', default='vgg_16')
     parser.add_argument('-net', help='network name', default='shigeNet')
-    parser.add_argument('-log', help='log path', default='/Users/shigetomi/Desktop/log.csv')
     parser.add_argument('-gr', default='/Users/shigetomi/workspace/tensorflow_works/tf-slim/model/general_recog/vgg16_imagenet_0718.ckpt-75')
-    parser.add_argument('-sr', default='/Users/shigetomi/workspace/tensorflow_works/tf-slim/model/transl_shisa.ckpt-40')
+    parser.add_argument('-sr', default='/Users/shigetomi/workspace/tensorflow_works/tf-slim/model/transl_shisa.ckpt-0')
 
 
     args = parser.parse_args()
 
     if args.net == 'shigeNet':
         eval(args)
+        # show_variables_in_ckpt(args.sr)
