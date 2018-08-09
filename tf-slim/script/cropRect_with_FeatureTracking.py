@@ -40,6 +40,7 @@ class Motion:
         self.startidx = args.startidx
         self.skip_frame = args.skip
         self.interval = 1
+        self.currennt_interval = self.interval
 
         # 初期フレームをread
         self.frame = cv2.imread(self.target_files[0])
@@ -100,7 +101,7 @@ class Motion:
                 self.waitkeyControl(0)
             # 表示
             cv2.imshow("motion", self.frame)
-            self.waitkeyControl(self.interval)
+            self.waitkeyControl(self.currennt_interval)
 
         # 終了処理
         cv2.destroyAllWindows()
@@ -115,10 +116,10 @@ class Motion:
             sys.exit()
         # "s"キー押下で一時停止
         elif key == S_KEY:
-            self.interval = 0
+            self.currennt_interval = 0
         # Run
         elif key == R_KEY:
-            self.interval = self.interval
+            self.currennt_interval = self.interval
 
 
     # マウスクリックで特徴点を指定する
