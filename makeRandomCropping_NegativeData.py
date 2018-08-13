@@ -19,25 +19,28 @@ def main(args):
     print("video dir:", video_dir)
 
 
-    image_list = [[[f.name for f in os.scandir(path=args.dataset+"/"+c+"/"+v) if f.is_file() and re.search('.jpg', f.name)] for v in video_dir[class_dir.index(c)]] for c in class_dir]
+    image_list = [[[f.name for f in os.scandir(path=args.dataset+"/"+c+"/"+v) if f.is_file() and re.search('.jpg', f.name) and re.search('_cropped', v)] for v in video_dir[class_dir.index(c)] ] for c in class_dir]
     n_image_per_class = [0]*len(class_dir)
     for i in range(len(image_list)):
         for j in range(len(image_list[i])):
             n_image_per_class[i] += len(image_list[i][j])
 
-
     # print("n_image_per_class", n_image_per_class)
     mean = sum(n_image_per_class)/len(n_image_per_class)
-    n_negative_sample = int(mean/2)
+    n_negative_sample = int(mean)
     print("number of negative samples :", n_negative_sample)
+
 
     # train1_list = [args.dataset + "/" + c + "/" + v + "/" + i.name + " " + str(class_dir.index(c)) for c in class_dir
     #                for v in video_dir[class_dir.index(c)] if not re.search('_cropped', v) for i in
     #                os.scandir(path=args.dataset + "/" + c + "/" + v) if i.is_file() and re.search('.jpg', i.name)]
 
-    train2_list = [args.dataset + "/" + c + "/" + v + "/" + i.name + " " + str(class_dir.index(c)) for c in class_dir
-                   for v in video_dir[class_dir.index(c)] if re.search('_cropped', v) for i in
-                   os.scandir(path=args.dataset + "/" + c + "/" + v) if i.is_file() and re.search('.jpg', i.name)]
+    train2_list = [args.dataset + "/" + c + "/" + v + "/" + i.name + " " + str(class_dir.index(c))
+                   for c in class_dir
+                    for v in video_dir[class_dir.index(c)]
+                        if re.search('_cropped', v)
+                            for i in os.scandir(path=args.dataset + "/" + c + "/" + v)
+                                if i.is_file() and re.search('.jpg', i.name)]
 
     # params
     MIN_CROP_SIZE = 100 # 矩形の最小サイズ
@@ -142,15 +145,15 @@ def paddingImage(org, cropsize):
     xsize = org.shape[1]
     ysize = org.shape[0]
 
-    padding_image = np.zeros((int(xsize + (cropsize * 2)), int(xsize + (cropsize * 2)), 3)).astype(np.uint8)
+    padding_image = np.zeros((int(ysize + (cropsize * 2)), int(xsize + (cropsize * 2)), 3)).astype(np.uint8)
     padding_image[int(cropsize):int(cropsize + ysize), int(cropsize):int(cropsize + xsize)] = org  # 余白をつける
     return padding_image
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='make dataset for specific object detection')
+    parser = argparse.ArgumentParser(description='')
     parser.add_argument('dataset', help='Dataset path')
     parser.add_argument('-n', '--negative', type=str, default='negative', help='name of negative sample directory')
     parser.add_argument('-o', '--output', type=str, default=None)
 
     args = parser.parse_args()
-    main()
+    main(args)

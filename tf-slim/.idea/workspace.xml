@@ -11,7 +11,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="cropRect_with_FeatureTracking.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="cropRect_with_FeatureTracking.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/script/cropRect_with_FeatureTracking.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-462">
@@ -19,6 +19,16 @@
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="makeRandomCropping_NegativeData.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/../makeRandomCropping_NegativeData.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="557">
+              <caret line="147" column="51" lean-forward="true" selection-start-line="147" selection-start-column="51" selection-end-line="147" selection-end-column="51" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -46,7 +56,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>valid_files_withClassID_orig</find>
       <find>save</find>
       <find>saver</find>
       <find>summary_test</find>
@@ -76,6 +85,7 @@
       <find>imre</find>
       <find>resize</find>
       <find>write</find>
+      <find>paddingImage</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -107,7 +117,6 @@
         <option value="$USER_HOME$/Downloads/denchu4/program.py" />
         <option value="$USER_HOME$/Desktop/imagenet/collectImagenet.py" />
         <option value="$PROJECT_DIR$/../makeRandomCropping-NegativeData.py" />
-        <option value="$PROJECT_DIR$/../makeRandomCropping_NegativeData.py" />
         <option value="$PROJECT_DIR$/script/collectImagenet.py" />
         <option value="$PROJECT_DIR$/script/makeDataset_forimagenet.py" />
         <option value="$PROJECT_DIR$/slidingwindow.py" />
@@ -121,6 +130,7 @@
         <option value="$PROJECT_DIR$/script/crop_VOC.py" />
         <option value="$PROJECT_DIR$/script/cropRect_with_FeatureTracking.py" />
         <option value="$PROJECT_DIR$/script/resize_all_images_by_half.py" />
+        <option value="$PROJECT_DIR$/../makeRandomCropping_NegativeData.py" />
       </list>
     </option>
   </component>
@@ -128,7 +138,7 @@
     <option name="x" value="1284" />
     <option name="y" value="-187" />
     <option name="width" value="1235" />
-    <option name="height" value="770" />
+    <option name="height" value="987" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -196,7 +206,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.resize_all_images_by_half">
+  <component name="RunManager" selected="Python.makeRandomCropping_NegativeData">
     <configuration name="cropRect_with_FeatureTracking" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -251,6 +261,24 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
+    <configuration name="makeRandomCropping_NegativeData" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="$USER_HOME$/anaconda/envs/tf/bin/python" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/.." />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="tf-slim" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../makeRandomCropping_NegativeData.py" />
+      <option name="PARAMETERS" value="$USER_HOME$/Desktop/seesaa_kanban" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
     <configuration name="resize_all_images_by_half" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -269,38 +297,20 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration name="specific_object_detection" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="tf-slim" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/specific_object_detection.py" />
-      <option name="PARAMETERS" value="$USER_HOME$/Desktop/dataset_fit_noNegative/dataset_shisa/engi1_l/IMG_2376/image_0001.jpg $USER_HOME$/Desktop/dataset_imagenet/label.txt $USER_HOME$/Desktop/dataset_fit_noNegative/dataset_shisa/label.txt" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-    </configuration>
     <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="Python.specific_object_detection" />
-      <item index="1" class="java.lang.String" itemvalue="Python.makeDataset_fromVOC" />
-      <item index="2" class="java.lang.String" itemvalue="Python.crop_VOC" />
-      <item index="3" class="java.lang.String" itemvalue="Python.cropRect_with_FeatureTracking" />
-      <item index="4" class="java.lang.String" itemvalue="Python.resize_all_images_by_half" />
+      <item index="0" class="java.lang.String" itemvalue="Python.makeDataset_fromVOC" />
+      <item index="1" class="java.lang.String" itemvalue="Python.crop_VOC" />
+      <item index="2" class="java.lang.String" itemvalue="Python.cropRect_with_FeatureTracking" />
+      <item index="3" class="java.lang.String" itemvalue="Python.resize_all_images_by_half" />
+      <item index="4" class="java.lang.String" itemvalue="Python.makeRandomCropping_NegativeData" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.resize_all_images_by_half" />
-        <item index="1" class="java.lang.String" itemvalue="Python.cropRect_with_FeatureTracking" />
-        <item index="2" class="java.lang.String" itemvalue="Python.crop_VOC" />
-        <item index="3" class="java.lang.String" itemvalue="Python.makeDataset_fromVOC" />
-        <item index="4" class="java.lang.String" itemvalue="Python.specific_object_detection" />
+        <item index="0" class="java.lang.String" itemvalue="Python.makeRandomCropping_NegativeData" />
+        <item index="1" class="java.lang.String" itemvalue="Python.resize_all_images_by_half" />
+        <item index="2" class="java.lang.String" itemvalue="Python.cropRect_with_FeatureTracking" />
+        <item index="3" class="java.lang.String" itemvalue="Python.crop_VOC" />
+        <item index="4" class="java.lang.String" itemvalue="Python.makeDataset_fromVOC" />
       </list>
     </recent_temporary>
   </component>
@@ -321,7 +331,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1284" y="-187" width="1235" height="770" extended-state="0" />
+    <frame x="1284" y="-187" width="1235" height="987" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12388664" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -329,12 +339,12 @@
       <window_info id="R Packages" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="R Graphics" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2964539" sideWeight="0.12478778" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2034384" sideWeight="0.87521225" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15519126" sideWeight="0.87521225" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3982808" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3978142" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -357,7 +367,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="13" />
+      <option name="time" value="17" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -467,13 +477,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../makeRandomCropping-NegativeData.py" />
-    <entry file="file://$PROJECT_DIR$/../makeRandomCropping_NegativeData.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-231">
-          <caret line="103" column="38" lean-forward="true" selection-start-line="103" selection-start-column="0" selection-end-line="113" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/script/collectImagenet.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="285">
@@ -664,6 +667,14 @@
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../makeRandomCropping_NegativeData.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="557">
+          <caret line="147" column="51" lean-forward="true" selection-start-line="147" selection-start-column="51" selection-end-line="147" selection-end-column="51" />
+          <folding />
         </state>
       </provider>
     </entry>
