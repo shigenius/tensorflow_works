@@ -17,6 +17,7 @@ R_KEY = 0x72
 # 反復アルゴリズムの終了条件
 CRITERIA = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03)
 
+# オプティカルフローでtracking
 class Motion:
     def __init__(self, args):
         cv2.namedWindow("motion")
@@ -208,15 +209,106 @@ class Motion:
             i += 1
 
 
+def trackKCF(args, interval=1):
+    tracker = cv2.TrackerKCF_create()
+
+    target_dir_path = args.target
+    output_path = args.output
+    pattern = r"\.(jpg|png|jpeg)$"
+    target_files = sorted([os.path.join(target_dir_path, file.name) for file in os.scandir(path=target_dir_path) if file.is_file() and re.search(pattern, file.name)])
+
+    # init
+    current_interval = interval
+    first_frame = cv2.imread(target_files[0])
+    target_roi = cv2.selectROI(first_frame, True)
+    if not tracker.init(first_frame, target_roi):
+        print("couldn't init")
+        exit(1)
+    cv2.destroyAllWindows()
+
+    # prepare logs
+    log = open(os.path.join(output_path, "subwindow_log.txt"), 'w')
+    writer = csv.writer(log, lineterminator='\n')
+    writer.writerow(("id", "center_x", "center_y", "size_x", "size_y"))  # write header
+
+    # main loop
+    for i, path in enumerate(target_files):
+        frame = cv2.imread(path)
+
+
+        track, target_roi = tracker.update(frame) # トラッキングの成否判定と,トラッキング対象の物体のポジションを返す
+        if i % (args.skip + 1) != 0: # skip frame
+            continue
+
+        if track:
+            rect_ul_x = target_roi[0]
+            rect_ul_y = target_roi[1]
+            rect_w = target_roi[2]
+            rect_h = target_roi[3]
+            screen_w = frame.shape[1]
+            screen_h = frame.shape[0]
+
+            p1 = (int(rect_ul_x), int(rect_ul_y)) # 矩形の左上の座標
+            p2 = (int(rect_ul_x + rect_w), int(rect_ul_y + rect_h)) # 矩形の右下の座標
+
+            center = (int(rect_ul_x + (rect_w / 2)),
+                      int(rect_ul_y + (rect_h / 2)))
+
+            # 矩形がscreenからはみ出ている場合にzero-paddingを行う．
+            if (p1[0] < 0) or (p1[1] < 0) or (p2[0] > screen_w) or (p2[1] > screen_h):
+                bg = np.zeros(
+                    (screen_h + int(rect_h * 2), screen_w + int(rect_w * 2), 3))  # 元画像の(w*3, h*3)のサイズの黒画像
+                bg[int(rect_h):int(rect_h + screen_h), int(rect_w):int(rect_w + screen_w)] = frame
+                crop = bg[int(rect_h + rect_ul_y):int(rect_h * 2 + rect_ul_y),
+                          int(rect_w + rect_ul_x):int(rect_w * 2 + rect_ul_x)]
+            else:
+                crop = frame[int(rect_ul_y):int(rect_ul_y + rect_h), int(rect_ul_x):int(rect_ul_x + rect_w)]
+
+            print(i + args.startidx, path)
+            cv2.imwrite(os.path.join(output_path, "image_" + '%04d' % (i + args.startidx) + ".jpg"), crop)
+            writer.writerow((i + args.startidx, center[0], center[1], rect_w, rect_h))
+
+            tracking_frame = frame.copy()
+            cv2.circle(tracking_frame, center=center, radius=4, color=(15, 241, 255), thickness=-1)
+            cv2.rectangle(tracking_frame, p1, p2, (0, 255, 0), 2, 1)
+            # cv2.circle(frame, center=center, radius=4, color=(15, 241, 255), thickness=-1)
+            # cv2.rectangle(frame, p1, p2, (0, 255, 0), 2, 1)
+
+            cv2.imshow("tracking", tracking_frame)
+            key = cv2.waitKey(current_interval)
+
+            if key == ESC_KEY:  # "Esc"キー押下で終了
+                sys.exit()
+
+            elif key == S_KEY:  # "s"キー押下で矩形の再配置
+                cv2.destroyAllWindows()
+                del tracker
+                tracker = cv2.TrackerKCF_create()
+                target_roi = cv2.selectROI(frame, True)
+                if not tracker.init(frame, target_roi):
+                    print("couldn't init")
+                    exit(1)
+                cv2.destroyAllWindows()
+
+    cv2.destroyWindow("tracking")
+    log.close
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='feature point tracking and cropping rectangle')
     parser.add_argument('target', help='Path to images directory')
     parser.add_argument('output', help='Path to output directory')
     parser.add_argument('-W', '--width',  type=int, default=256, help='rectangle width size (default = 256)')
     parser.add_argument('-H', '--height', type=int, default=256, help='rectangle height size (default = 256)') # '-h'rだとなぜかconflictする...?
-    parser.add_argument('-s', '--skip', type=int, default=0, help='skip frame')
+    parser.add_argument('-s', '--skip', type=int, default=5, help='skip frame')
     parser.add_argument('-i', '--startidx', type=int, default=1, help='starting index')
+    parser.add_argument('-a', '--algo', type=str, default='k', help='select tracking algorithm')
 
     args = parser.parse_args()
 
-    Motion(args).run()
+    if args.algo == 'o':
+        Motion(args).run()
+    elif args.algo == 'k':
+        trackKCF(args)
+    else:
+        pass

@@ -10,13 +10,27 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="cropRect_with_FeatureTracking.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/script/cropRect_with_FeatureTracking.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="212">
-              <caret line="113" column="22" lean-forward="true" selection-start-line="113" selection-start-column="22" selection-end-line="113" selection-end-column="22" />
-              <folding />
+            <state relative-caret-position="-462">
+              <caret line="258" column="30" lean-forward="true" selection-start-line="258" selection-start-column="30" selection-end-line="258" selection-end-column="30" />
+              <folding>
+                <element signature="e#0#10#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="resize_all_images_by_half.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/script/resize_all_images_by_half.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="210">
+              <caret line="14" column="0" lean-forward="true" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#10#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -32,8 +46,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>plt</find>
-      <find>num_classes</find>
       <find>valid_files_withClassID_orig</find>
       <find>save</find>
       <find>saver</find>
@@ -51,7 +63,6 @@
       <find>jpg</find>
       <find>re</find>
       <find>label</find>
-      <find>resize</find>
       <find>chec</find>
       <find>onMouse</find>
       <find>targetname</find>
@@ -62,6 +73,9 @@
       <find>idex</find>
       <find>self.waitkeyControl</find>
       <find>imrea</find>
+      <find>imre</find>
+      <find>resize</find>
+      <find>write</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -106,14 +120,15 @@
         <option value="$PROJECT_DIR$/script/makeDataset_fromVOC.py" />
         <option value="$PROJECT_DIR$/script/crop_VOC.py" />
         <option value="$PROJECT_DIR$/script/cropRect_with_FeatureTracking.py" />
+        <option value="$PROJECT_DIR$/script/resize_all_images_by_half.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="45" />
-    <option name="y" value="23" />
+    <option name="x" value="1284" />
+    <option name="y" value="-187" />
     <option name="width" value="1235" />
-    <option name="height" value="777" />
+    <option name="height" value="770" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -181,7 +196,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.cropRect_with_FeatureTracking">
+  <component name="RunManager" selected="Python.resize_all_images_by_half">
     <configuration name="cropRect_with_FeatureTracking" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -195,7 +210,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="tf-slim" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/script/cropRect_with_FeatureTracking.py" />
-      <option name="PARAMETERS" value="$USER_HOME$/Desktop/20180806_videos/kanban/20180806_1800_houbunbasmae $USER_HOME$/Desktop/20180806_videos/kanban/20180806_1800_houbunbasmae_crop" />
+      <option name="PARAMETERS" value="$USER_HOME$/Desktop/seesaa_kanban/seesaa/20180802_1349_kozajuziro_1 $USER_HOME$/Desktop/seesaa_kanban/seesaa/20180802_1349_kozajuziro_1_cropped" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -218,24 +233,6 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration name="makeDataset_forimagenet" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/script" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="tf-slim" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/script/makeDataset_forimagenet.py" />
-      <option name="PARAMETERS" value="$USER_HOME$/Desktop/dataset_imagenet $USER_HOME$/Desktop/dataset_imagenet/specific_object_dataset_path.txt" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-    </configuration>
     <configuration name="makeDataset_fromVOC" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -250,6 +247,24 @@
       <module name="tf-slim" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/script/makeDataset_fromVOC.py" />
       <option name="PARAMETERS" value="$USER_HOME$/Downloads/VOCdevkit $USER_HOME$/Desktop/test/aeroplane aeroplane" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="resize_all_images_by_half" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/script" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="tf-slim" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/script/resize_all_images_by_half.py" />
+      <option name="PARAMETERS" value="$USER_HOME$/Desktop/seesaa_kanban/" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -273,19 +288,19 @@
       <option name="MODULE_MODE" value="false" />
     </configuration>
     <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="Python.makeDataset_forimagenet" />
-      <item index="1" class="java.lang.String" itemvalue="Python.specific_object_detection" />
-      <item index="2" class="java.lang.String" itemvalue="Python.makeDataset_fromVOC" />
-      <item index="3" class="java.lang.String" itemvalue="Python.crop_VOC" />
-      <item index="4" class="java.lang.String" itemvalue="Python.cropRect_with_FeatureTracking" />
+      <item index="0" class="java.lang.String" itemvalue="Python.specific_object_detection" />
+      <item index="1" class="java.lang.String" itemvalue="Python.makeDataset_fromVOC" />
+      <item index="2" class="java.lang.String" itemvalue="Python.crop_VOC" />
+      <item index="3" class="java.lang.String" itemvalue="Python.cropRect_with_FeatureTracking" />
+      <item index="4" class="java.lang.String" itemvalue="Python.resize_all_images_by_half" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.cropRect_with_FeatureTracking" />
-        <item index="1" class="java.lang.String" itemvalue="Python.crop_VOC" />
-        <item index="2" class="java.lang.String" itemvalue="Python.makeDataset_fromVOC" />
-        <item index="3" class="java.lang.String" itemvalue="Python.specific_object_detection" />
-        <item index="4" class="java.lang.String" itemvalue="Python.makeDataset_forimagenet" />
+        <item index="0" class="java.lang.String" itemvalue="Python.resize_all_images_by_half" />
+        <item index="1" class="java.lang.String" itemvalue="Python.cropRect_with_FeatureTracking" />
+        <item index="2" class="java.lang.String" itemvalue="Python.crop_VOC" />
+        <item index="3" class="java.lang.String" itemvalue="Python.makeDataset_fromVOC" />
+        <item index="4" class="java.lang.String" itemvalue="Python.specific_object_detection" />
       </list>
     </recent_temporary>
   </component>
@@ -306,7 +321,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="45" y="23" width="1235" height="777" extended-state="0" />
+    <frame x="1284" y="-187" width="1235" height="770" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12388664" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -314,12 +329,12 @@
       <window_info id="R Packages" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="R Graphics" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2964539" sideWeight="0.12478778" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20567375" sideWeight="0.87521225" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2034384" sideWeight="0.87521225" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.399384" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3982808" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -342,32 +357,11 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="10" />
+      <option name="time" value="13" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../../TA/2018/exp1-3/simple_test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../TA/2018/exp1-3/unit_testing.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../TA/2018/exp1-3/sub_module.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../TA/2018/exp1-3/exp1-3-1.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
@@ -635,24 +629,41 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/figure.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
+    <entry file="file://$PROJECT_DIR$/scripts/figure.png" />
+    <entry file="file://$PROJECT_DIR$/scripts/cropRect_with_FeatureTracking.py" />
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharmCE2017.3/python_stubs/-909753536/cv2/cv2/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="127731">
+          <caret line="10646" column="4" lean-forward="false" selection-start-line="10646" selection-start-column="4" selection-end-line="10646" selection-end-column="4" />
+          <folding />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/cropRect_with_FeatureTracking.py">
+    <entry file="file://$USER_HOME$/Downloads/sklearnTest.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
-          <caret line="169" column="0" lean-forward="true" selection-start-line="169" selection-start-column="0" selection-end-line="169" selection-end-column="0" />
+        <state relative-caret-position="160">
+          <caret line="23" column="105" lean-forward="true" selection-start-line="23" selection-start-column="4" selection-end-line="23" selection-end-column="105" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/script/resize_all_images_by_half.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="14" column="0" lean-forward="true" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/script/cropRect_with_FeatureTracking.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="212">
-          <caret line="113" column="22" lean-forward="true" selection-start-line="113" selection-start-column="22" selection-end-line="113" selection-end-column="22" />
-          <folding />
+        <state relative-caret-position="-462">
+          <caret line="258" column="30" lean-forward="true" selection-start-line="258" selection-start-column="30" selection-end-line="258" selection-end-column="30" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
