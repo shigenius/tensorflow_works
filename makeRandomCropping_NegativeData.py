@@ -135,7 +135,10 @@ def generateRandamParameter(org, min_crop_size):
 
 def isOverTheRectangle(target_rect, correct_rect):
     # 矩形が重なっていたらTrue, 重なっていなかったらFalse
-    if (correct_rect[0]['x'] < target_rect[0]['x'] < correct_rect[1]['x'] and correct_rect[0]['y'] < target_rect[0]['y'] < correct_rect[2]['y']) or (correct_rect[0]['x'] < target_rect[1]['x'] < correct_rect[1]['x'] and correct_rect[0]['y'] < target_rect[1]['y'] < correct_rect[2]['y']) or (correct_rect[0]['x'] < target_rect[2]['x'] < correct_rect[1]['x'] and correct_rect[0]['y'] < target_rect[2]['y'] < correct_rect[2]['y']) or (correct_rect[0]['x'] < target_rect[3]['x'] < correct_rect[1]['x'] and correct_rect[0]['y'] < target_rect[3]['y'] < correct_rect[2]['y']):
+    if(correct_rect[0]['x'] < target_rect[0]['x'] < correct_rect[1]['x'] and correct_rect[0]['y'] < target_rect[0]['y'] < correct_rect[2]['y']) or\
+      (correct_rect[0]['x'] < target_rect[1]['x'] < correct_rect[1]['x'] and correct_rect[0]['y'] < target_rect[1]['y'] < correct_rect[2]['y']) or\
+      (correct_rect[0]['x'] < target_rect[2]['x'] < correct_rect[1]['x'] and correct_rect[0]['y'] < target_rect[2]['y'] < correct_rect[2]['y']) or\
+      (correct_rect[0]['x'] < target_rect[3]['x'] < correct_rect[1]['x'] and correct_rect[0]['y'] < target_rect[3]['y'] < correct_rect[2]['y']):
         return True
     else:
         return False
