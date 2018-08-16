@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import random
+from PIL import Image
 
 import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -119,13 +119,14 @@ class TwoInputDataset():
             # imageA = cv2.imread(pathA)
             # imageB = cv2.imread(pathB)
 
-            imageA = cv2.cvtColor(cv2.imread(pathA), cv2.COLOR_BGR2RGB)
-            imageB = cv2.cvtColor(cv2.imread(pathB), cv2.COLOR_BGR2RGB)
+            # cv2.imread()はBGR
+            imageA = np.array(Image.open(pathA)) / 255
+            imageB = np.array(Image.open(pathB)) / 255
 
             # imageA, imageB = self.distortion.distort(images=[imageA, imageB], flag=mode, p=1.0)
 
-            imageA = cv2.resize(imageA, (self.image_size, self.image_size))
-            imageB = cv2.resize(imageB, (self.image_size, self.image_size))
+            imageA = cv2.resize(padding(imageA), (self.image_size, self.image_size))
+            imageB = cv2.resize(padding(imageB), (self.image_size, self.image_size))
 
             # batchA.append(imageA.astype(np.float32)/255.0)
             # batchB.append(imageB.astype(np.float32)/255.0)
@@ -148,21 +149,54 @@ class TwoInputDataset():
     def getTestData(self, batchsize, index=0):
         return self.getBatch(batchsize, index, mode='test')
 
-if __name__ == '__main__':
-    # test code
-    dataset = TwoInputDataset(train_c='/Users/shigetomi/Desktop/dataset_walls/train2.txt',
-                              train_o='/Users/shigetomi/Desktop/dataset_walls/train1.txt',
-                              test_c='/Users/shigetomi/Desktop/dataset_walls/test2.txt',
-                              test_o='/Users/shigetomi/Desktop/dataset_walls/test1.txt',
-                              num_classes=6,
-                              image_size=229)
-    dataset.shuffle()
-    cropped_batch, orig_batch, labels = dataset.getTrainBatch(batchsize=5, index=0)
-    cropped_test_batch, orig_test_batch, test_labels = dataset.getTestData(batchsize=5)
+def padding(image):
+    # アス比の違う画像をゼロパディングして正方形にする
+    w = image.shape[1]
+    h = image.shape[0]
+    if w == h:
+        return image
+    elif w > h:
+        offset = w - h
+        n = int(offset / 2)
+        if offset % 2 == 0:
+            dst = np.pad(image, [(n, n), (0, 0), (0, 0)], 'constant')
+        else:
+            dst = np.pad(image, [(n, n+1), (0, 0), (0, 0)], 'constant')
+        return dst
 
-    # check image
-    for i,(c, o, l) in enumerate(zip(cropped_batch['batch'], orig_batch['batch'], labels)):
-        print(i, cropped_batch['path'][i], '\n ', orig_batch['path'][i], '\n  class:', np.where(l == 1)[0][0])
-        cv2.imshow("c", c)
-        cv2.imshow("o", o)
-        cv2.waitKey(0)
+    else:
+        offset = h - w
+        n = int(offset / 2)
+        if offset % 2 == 0:
+            dst = np.pad(image, [(0, 0), (n, n), (0, 0)], 'constant')
+        else:
+            dst = np.pad(image, [(0, 0), (n, n+1), (0, 0)], 'constant')
+        return dst
+
+if __name__ == '__main__':
+    # # test code
+    # dataset = TwoInputDataset(train_c='/Users/shigetomi/Desktop/dataset_walls/train2.txt',
+    #                           train_o='/Users/shigetomi/Desktop/dataset_walls/train1.txt',
+    #                           test_c='/Users/shigetomi/Desktop/dataset_walls/test2.txt',
+    #                           test_o='/Users/shigetomi/Desktop/dataset_walls/test1.txt',
+    #                           num_classes=6,
+    #                           image_size=229)
+    # dataset.shuffle()
+    # cropped_batch, orig_batch, labels = dataset.getTrainBatch(batchsize=5, index=0)
+    # cropped_test_batch, orig_test_batch, test_labels = dataset.getTestData(batchsize=5)
+    #
+    # # check image
+    # for i,(c, o, l) in enumerate(zip(cropped_batch['batch'], orig_batch['batch'], labels)):
+    #     print(i, cropped_batch['path'][i], '\n ', orig_batch['path'][i], '\n  class:', np.where(l == 1)[0][0])
+    #     cv2.imshow("c", c)
+    #     cv2.imshow("o", o)
+    #     cv2.waitKey(0)
+
+    # # padding test
+    # image = np.array(Image.open("/Users/shigetomi/Desktop/dataset_GOR/cat/cat_cropped/image_0012.jpg")) / 255
+    # dst = cv2.resize(padding(image), (224, 224))
+    # print(image.shape)
+    # print(dst.shape)
+    # cv2.imshow("dst", dst)
+    # cv2.imshow("org", image)
+    # cv2.waitKey(0)
