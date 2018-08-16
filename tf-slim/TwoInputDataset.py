@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from PIL import Image
+import random
 
 import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
