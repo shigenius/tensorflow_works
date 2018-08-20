@@ -26,8 +26,8 @@
       <file leaf-file-name="comparison_learning.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/comparison_learning.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="219">
-              <caret line="53" column="97" lean-forward="true" selection-start-line="53" selection-start-column="97" selection-end-line="53" selection-end-column="97" />
+            <state relative-caret-position="189">
+              <caret line="52" column="157" lean-forward="false" selection-start-line="52" selection-start-column="157" selection-end-line="52" selection-end-column="157" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -595,7 +595,7 @@
         <state relative-caret-position="285">
           <caret line="22" column="0" lean-forward="false" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
           <folding>
-            <element signature="e#47#62#0" expanded="true" />
+            <element signature="e#47#62#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -654,7 +654,7 @@
         <state relative-caret-position="60">
           <caret line="4" column="59" lean-forward="false" selection-start-line="4" selection-start-column="59" selection-end-line="4" selection-end-column="59" />
           <folding>
-            <element signature="e#0#21#0" expanded="true" />
+            <element signature="e#0#21#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -695,8 +695,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/comparison_learning.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="219">
-          <caret line="53" column="97" lean-forward="true" selection-start-line="53" selection-start-column="97" selection-end-line="53" selection-end-column="97" />
+        <state relative-caret-position="189">
+          <caret line="52" column="157" lean-forward="false" selection-start-line="52" selection-start-column="157" selection-end-line="52" selection-end-column="157" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>

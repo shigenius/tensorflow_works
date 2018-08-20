@@ -50,8 +50,7 @@ def train(args):
     # Get vars restored
     # variables_to_restore = slim.get_variables_to_restore()
     # variables_to_restore = slim.get_variables_to_restore(exclude=["vgg_16/fc8/*"]) # "vgg_16/fc8/*"を除くweightをrestore
-    variables_to_restore = slim.get_variables_to_restore(exclude=["InceptionV4/Logits/Logits/*"])  # "vgg_16/fc8/*"を除くweightをrestore
-    variables_to_restore = [i for i in variables_to_restore if not "InceptionV4/AuxLogits" in i ]
+    variables_to_restore = slim.get_variables_to_restore(exclude=["InceptionV4/Logits/Logits/*", "InceptionV4/AuxLogits"])  # "vgg_16/fc8/*"を除くweightをrestore
     # dict of {name in checkpoint: var.op.name}
     # variables_to_restore = {name_in_checkpoint(var): var for var in variables_to_restore if extractor_name in var.op.name}
     restorer = tf.train.Saver(variables_to_restore)
