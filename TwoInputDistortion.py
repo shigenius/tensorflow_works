@@ -171,6 +171,21 @@ class Distortion():
         img[top:bottom, left:right, :].fill(mask_value)
         return img
 
+    def shift_parallel_translation(self, imgs = [], r=(-0.1, 0.1)):
+        dsts = []
+        a1 = random.uniform(*r)
+        a2 = random.uniform(*r)
+
+        for img in imgs:
+            rows, cols, ch = img.shape
+            shift_w = cols * a1
+            shift_h = rows * a2
+            M = np.float32([[1, 0, shift_w], [0, 1, shift_h]]) # [[1,0,横方向への移動量],[0,1,縦方向への移動量]]で平行移動する。
+            dst = cv2.warpAffine(img, M, (cols, rows))
+            dsts.append(dst)
+
+        return dsts
+
     def distort(self, images=[], flag='train', p=0.5):
         # augmentation
         if flag == 'train':
@@ -190,8 +205,10 @@ class Distortion():
             # spatial augmentation
             # if np.random.rand() < p:
             #     images = random_resize(images)
+            # if np.random.rand() < p:
+            #     images = self.random_rotate(images)
             if np.random.rand() < p:
-                images = self.random_rotate(images)
+                images = self.shift_parallel_translation(images, r=(-0.1, 0.1))
 
 
         # filtering
@@ -208,20 +225,24 @@ class Distortion():
 if __name__ == '__main__':
     # test code
     #path = '/Users/shigetomi/Desktop/samplepictures/image_0011.jpg'
-    pathA = '/Users/shigetomi/Desktop/dataset_shisas/shisa_engi1_l/IMG_0447_cropped/image_0002.jpg'
-    pathB = '/Users/shigetomi/Desktop/dataset_shisas/shisa_engi1_l/IMG_0447/image_0002.jpg'
+    pathA = '/Users/shigetomi/Desktop/dataset_GOR/bicycle/bicycle_cropped/image_0001.jpg'
+    pathB = '/Users/shigetomi/Desktop/dataset_GOR/bicycle/bicycle/image_0001.jpg'
     # src = cv2.imread(path).astype(np.float32)
     srcA = cv2.imread(pathA)
     srcB = cv2.imread(pathB)
-    cv2.imshow('srcA', srcA)
-    cv2.imshow('srcB', srcB)
+
     distortion = Distortion(gamma=2)
     dstA, dstB = distortion.distort(images=[srcA, srcB], flag='train', p=1.0)
-    cv2.imshow('dstA', dstA)
-    cv2.imshow('dstB', dstB)
-    #cv2.imwrite("/Users/shigetomi/Desktop/1.png", dst)
 
     print("srcA", srcA)
     print("dstA", dstA)
+    print("srcA.shape", srcA.shape)
+    print("dstA.shape", dstA.shape)
+
+    cv2.imshow('srcA', srcA)
+    cv2.imshow('srcB', srcB)
+    cv2.imshow('dstA', dstA)
+    cv2.imshow('dstB', dstB)
+    #cv2.imwrite("/Users/shigetomi/Desktop/1.png", dst)
     # cv2.imshow('dst', dst)
     cv2.waitKey(0)
