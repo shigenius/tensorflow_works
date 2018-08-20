@@ -12,10 +12,12 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from tensorflow.contrib.layers.python.layers.layers import batch_norm
 from nets.inception_v4 import inception_v4, inception_v4_arg_scope
 from nets.vgg import vgg_16, vgg_arg_scope
+from nets.inception_v4 import inception_v4, inception_v4_arg_scope
 
 def train(args):
     model_path = args.model_path
-    image_size = vgg_16.default_image_size
+    # image_size = vgg_16.default_image_size
+    image_size = inception_v4.default_image_size
     num_classes = args.num_classes # road sign
     val_fre = 1# Nstep毎にvalidate
 
@@ -35,8 +37,10 @@ def train(args):
         # tf.summary.image('original_images', tf.reshape(original_images_placeholder, [-1, image_size, image_size, 3]), max_outputs=args.batch_size)
 
     # Build the graph
-    with slim.arg_scope(vgg_arg_scope()):
-        logits, _ = vgg_16(cropped_images_placeholder, num_classes=args.num_classes, is_training=True, reuse=None)
+    # with slim.arg_scope(vgg_arg_scope()):
+    #     logits, _ = vgg_16(cropped_images_placeholder, num_classes=args.num_classes, is_training=True, reuse=None)
+    with slim.arg_scope(inception_v4_arg_scope()):
+        logits, _ = inception_v4(cropped_images_placeholder, num_classes=args.num_classes, is_training=True, reuse=None)
 
     # Get restored vars name in checkpoint
     def name_in_checkpoint(var):
@@ -94,8 +98,8 @@ def train(args):
             dataset.shuffle()
 
             # Train proc
-            # for i in range(num_batch-1):  # i : batch index
-            for i in range(1):
+            for i in range(num_batch-1):  # i : batch index
+            # for i in range(1):
                 # print('step%g, batch%g' % (step, i))
                 cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, i)
                 sess.run(train_step,
