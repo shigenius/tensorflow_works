@@ -31,7 +31,9 @@ def main():
     num_sampling = int(len(crop_images)*args.testsetrate)
 
     test_crop = sorted(random.sample(crop_images, num_sampling))
+    test_crop = [i for i in test_crop if re.search('^(?!.*\_d\d).*\.jpg$', i.split(" ")[0])]
     valid_crop = sorted(random.sample(test_crop, int(num_sampling/2)))
+    test_crop = sorted(list(set(test_crop) - set(valid_crop)))
     train_crop = sorted(list(set(crop_images) - set(test_crop) - set(valid_crop)))
 
     test_orig = sorted(list(map(lambda x: re.sub(r'_cropped','',  x), test_crop)))

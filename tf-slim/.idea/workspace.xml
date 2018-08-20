@@ -11,6 +11,28 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="makeDataset_forSpecificObjRecog.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/../makeDataset_forSpecificObjRecog.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="158">
+              <caret line="33" column="84" lean-forward="false" selection-start-line="33" selection-start-column="84" selection-end-line="33" selection-end-column="84" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="makeDataset_forFIT.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/script/makeDataset_forFIT.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="196">
+              <caret line="136" column="159" lean-forward="false" selection-start-line="136" selection-start-column="111" selection-end-line="136" selection-end-column="159" />
+              <folding>
+                <element signature="e#0#9#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="TwoInputDataset.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/TwoInputDataset.py">
           <provider selected="true" editor-type-id="text-editor">
@@ -23,7 +45,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="comparison_learning.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="comparison_learning.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/comparison_learning.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="189">
@@ -94,8 +116,8 @@
       <find>train_orig_list</find>
       <find>train_crop_list</find>
       <find>val_fre</find>
-      <find>extractor</find>
       <find>num_</find>
+      <find>extractor</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -139,18 +161,18 @@
         <option value="$PROJECT_DIR$/script/cropRect_with_FeatureTracking.py" />
         <option value="$PROJECT_DIR$/script/resize_all_images_by_half.py" />
         <option value="$PROJECT_DIR$/../makeRandomCropping_NegativeData.py" />
-        <option value="$PROJECT_DIR$/../makeDataset_forSpecificObjRecog.py" />
         <option value="$PROJECT_DIR$/PILtest.py" />
         <option value="$PROJECT_DIR$/TwoInputDataset.py" />
         <option value="$PROJECT_DIR$/comparison_learning.py" />
+        <option value="$PROJECT_DIR$/../makeDataset_forSpecificObjRecog.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="1">
     <option name="x" value="45" />
     <option name="y" value="23" />
     <option name="width" value="1235" />
-    <option name="height" value="697" />
+    <option name="height" value="776" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -343,7 +365,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="45" y="23" width="1235" height="776" extended-state="6" />
+    <frame x="45" y="23" width="1235" height="776" extended-state="1" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12388664" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -590,16 +612,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../makeDataset_forSpecificObjRecog.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="22" column="0" lean-forward="false" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
-          <folding>
-            <element signature="e#47#62#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../TwoInputDataset.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3420">
@@ -612,16 +624,6 @@
         <state relative-caret-position="128">
           <caret line="202" column="48" lean-forward="false" selection-start-line="202" selection-start-column="48" selection-end-line="202" selection-end-column="48" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/script/makeDataset_forFIT.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1050">
-          <caret line="70" column="0" lean-forward="false" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -700,6 +702,24 @@
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/script/makeDataset_forFIT.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="196">
+          <caret line="136" column="159" lean-forward="false" selection-start-line="136" selection-start-column="111" selection-end-line="136" selection-end-column="159" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../makeDataset_forSpecificObjRecog.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="158">
+          <caret line="33" column="84" lean-forward="false" selection-start-line="33" selection-start-column="84" selection-end-line="33" selection-end-column="84" />
+          <folding />
         </state>
       </provider>
     </entry>
