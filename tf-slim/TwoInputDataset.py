@@ -196,8 +196,8 @@ if __name__ == '__main__':
     # padding test
     image = np.array(Image.open("/Users/shigetomi/Desktop/dataset_GOR/cat/cat_cropped/image_0012.jpg")) / 255
     dst = cv2.resize(padding(image), (224, 224))
-    print(image.shape)
-    print(dst.shape)
+    print("image:", image)
+    print("dst", dst)
     cv2.imshow("dst", dst)
     cv2.imshow("org", image)
     cv2.waitKey(0)

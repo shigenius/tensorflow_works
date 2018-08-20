@@ -17,7 +17,7 @@ def train(args):
     model_path = args.model_path
     image_size = vgg_16.default_image_size
     num_classes = args.num_classes # road sign
-    val_fre = 5# Nstep毎にvalidate
+    val_fre = 1# Nstep毎にvalidate
 
     # Define placeholders
     with tf.name_scope('input'):
@@ -45,7 +45,7 @@ def train(args):
 
     # Get vars restored
     # variables_to_restore = slim.get_variables_to_restore()
-    variables_to_restore = slim.get_variables_to_restore(exclude=["vgg_16/fc8/*"])
+    variables_to_restore = slim.get_variables_to_restore(exclude=["vgg_16/fc8/*"]) # "vgg_16/fc8/*"を除くweightをrestore
     # dict of {name in checkpoint: var.op.name}
     # variables_to_restore = {name_in_checkpoint(var): var for var in variables_to_restore if extractor_name in var.op.name}
     restorer = tf.train.Saver(variables_to_restore)
@@ -94,7 +94,8 @@ def train(args):
             dataset.shuffle()
 
             # Train proc
-            for i in range(num_batch-1):  # i : batch index
+            # for i in range(num_batch-1):  # i : batch index
+            for i in range(1):
                 # print('step%g, batch%g' % (step, i))
                 cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, i)
                 sess.run(train_step,
