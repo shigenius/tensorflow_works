@@ -28,10 +28,10 @@ def main():
     crop_images = [args.dataset+"/"+c+"/"+v+"/"+i.name+" "+str(class_dir.index(c)) for c in class_dir for v in video_dir[class_dir.index(c)] if re.search('_cropped', v) for i in os.scandir(path=args.dataset+"/"+c+"/"+v) if i.is_file() and re.search('.jpg', i.name)]
 
     # ランダムサンプリングでtest, valid, trainに分割
-    num_sampling = int(len(crop_images)*args.testsetrate)
+    crop_images_no_aug = [i for i in crop_images if re.search('^(?!.*\_d\d).*\.jpg$', i.split(" ")[0])]
+    num_sampling = int(len(crop_images_no_aug) * args.testsetrate)
 
-    test_crop = sorted(random.sample(crop_images, num_sampling))
-    test_crop = [i for i in test_crop if re.search('^(?!.*\_d\d).*\.jpg$', i.split(" ")[0])]
+    test_crop = sorted(random.sample(rop_images_no_aug, num_sampling))
     valid_crop = sorted(random.sample(test_crop, int(num_sampling/2)))
     test_crop = sorted(list(set(test_crop) - set(valid_crop)))
     train_crop = sorted(list(set(crop_images) - set(test_crop) - set(valid_crop)))
