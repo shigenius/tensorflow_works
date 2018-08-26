@@ -16,8 +16,8 @@ from nets.inception_v4 import inception_v4, inception_v4_arg_scope
 
 def train(args):
     model_path = args.model_path
-    # image_size = vgg_16.default_image_size
-    image_size = inception_v4.default_image_size
+    image_size = vgg_16.default_image_size
+    # image_size = inception_v4.default_image_size
     num_classes = args.num_classes # road sign
     val_fre = 1# Nstep毎にvalidate
 
