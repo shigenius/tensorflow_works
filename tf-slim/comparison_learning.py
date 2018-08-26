@@ -37,10 +37,10 @@ def train(args):
         # tf.summary.image('original_images', tf.reshape(original_images_placeholder, [-1, image_size, image_size, 3]), max_outputs=args.batch_size)
 
     # Build the graph
-    # with slim.arg_scope(vgg_arg_scope()):
-    #     logits, _ = vgg_16(cropped_images_placeholder, num_classes=args.num_classes, is_training=True, reuse=None)
-    with slim.arg_scope(inception_v4_arg_scope()):
-        logits, _ = inception_v4(cropped_images_placeholder, num_classes=args.num_classes, is_training=True, reuse=None)
+    with slim.arg_scope(vgg_arg_scope()):
+        logits, _ = vgg_16(cropped_images_placeholder, num_classes=args.num_classes, is_training=True, reuse=None)
+    # with slim.arg_scope(inception_v4_arg_scope()):
+    #     logits, _ = inception_v4(cropped_images_placeholder, num_classes=args.num_classes, is_training=True, reuse=None)
 
     # Get restored vars name in checkpoint
     def name_in_checkpoint(var):
@@ -49,10 +49,10 @@ def train(args):
 
     # Get vars restored
     # variables_to_restore = slim.get_variables_to_restore()
-    # variables_to_restore = slim.get_variables_to_restore(exclude=["vgg_16/fc8/*"]) # "vgg_16/fc8/*"を除くweightをrestore
-    variables_to_restore = slim.get_variables_to_restore(exclude=["InceptionV4/Logits/Logits/*", "InceptionV4/AuxLogits"])  # "vgg_16/fc8/*"を除くweightをrestore
+    variables_to_restore = slim.get_variables_to_restore(exclude=["vgg_16/fc8/*"]) # "vgg_16/fc8/*"を除くweightをrestore
+    # variables_to_restore = slim.get_variables_to_restore(exclude=["InceptionV4/Logits/Logits/*", "InceptionV4/AuxLogits"])  # "vgg_16/fc8/*"を除くweightをrestore
     # dict of {name in checkpoint: var.op.name}
-    # variables_to_restore = {name_in_checkpoint(var): var for var in variables_to_restore if extractor_name in var.op.name}
+    variables_to_restore = {name_in_checkpoint(var): var for var in variables_to_restore if extractor_name in var.op.name}
     restorer = tf.train.Saver(variables_to_restore)
     saver = tf.train.Saver(max_to_keep=None)# save all vars
 
