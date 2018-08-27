@@ -116,7 +116,7 @@ def train(args):
         with tf.name_scope('original_images'):
             original_images_placeholder = tf.placeholder(dtype="float32", shape=(None, image_size, image_size, 3))
         with tf.name_scope('labels'):
-            labels_placeholder = tf.placeholder(dtype="float32", shape=(None, num_classes))
+            labels_placeholder = tf.placeholder(dtype="float32", shape=(None, num_classes_s))
         keep_prob = tf.placeholder(dtype="float32")
         is_training = tf.placeholder(dtype="bool")  # train flag
 
@@ -158,7 +158,7 @@ def train(args):
         tf.summary.scalar("accuracy", accuracy)
 
     dataset = TwoInputDataset(train_c=args.train_c, train_o=args.train_o, test_c=args.test_c, test_o=args.test_o,
-                              num_classes=num_classes, image_size=image_size)
+                              num_classes=num_classes_s, image_size=image_size)
 
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
