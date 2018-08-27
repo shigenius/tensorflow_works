@@ -105,8 +105,8 @@ def train(args):
 
     model_path = args.model_path
     image_size = archs[extractor_name]['fn'].default_image_size
-    num_classes_s = args.num_classes
-    num_classes_g = args.num_classes
+    num_classes_s = args.num_classes_s
+    num_classes_g = args.num_classes_g
     val_fre = 5# Nstep毎にvalidate
 
     # Define placeholders
