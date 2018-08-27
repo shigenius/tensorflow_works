@@ -21,14 +21,14 @@ archs = {
 # 'shigeNet_v1/vgg_16/conv5/conv5_3' # shape=(?, 14, 14, 512) dtype=float32
 
 
-def shigeNet_v1(cropped_images, original_images, num_classes, keep_prob=1.0, is_training=True, scope='shigeNet_v1', reuse=None, extractor_name='inception_v4'):
+def shigeNet_v1(cropped_images, original_images, num_classes_s, num_classes_g, keep_prob=1.0, is_training=True, scope='shigeNet_v1', reuse=None, extractor_name='inception_v4'):
     end_points = {}
     with tf.variable_scope(scope, 'shigeNet_v1', reuse=reuse) as scope:
         with slim.arg_scope([slim.batch_norm, slim.dropout], is_training=is_training):
             # Extract features
             with slim.arg_scope(archs[extractor_name]['arg_scope']()):
-                logits_c, end_points_c = archs[extractor_name]['fn'](cropped_images, is_training=False, reuse=None)
-                logits_o, end_points_o = archs[extractor_name]['fn'](original_images, is_training=False, reuse=True)
+                logits_c, end_points_c = archs[extractor_name]['fn'](cropped_images, num_classes=num_classes_g, is_training=False, reuse=None)
+                logits_o, end_points_o = archs[extractor_name]['fn'](original_images, num_classes=num_classes_g, is_training=False, reuse=True)
 
                 feature_c = end_points_c[archs[extractor_name]['extract_point']]
                 feature_o = end_points_o[archs[extractor_name]['extract_point']]
@@ -51,7 +51,7 @@ def shigeNet_v1(cropped_images, original_images, num_classes, keep_prob=1.0, is_
                     net = slim.dropout(net, keep_prob, scope='dropout1')
                     net = slim.fully_connected(net, 256, scope='fc2')
                     net = slim.dropout(net, keep_prob, scope='dropout2')
-                    net = slim.fully_connected(net, num_classes, activation_fn=None, scope='fc3')
+                    net = slim.fully_connected(net, num_classes_s, activation_fn=None, scope='fc3')
 
                     end_points['Logits'] = net
                     # squeeze = tf.squeeze(net, [1, 2]) # 次元1,2の要素数が1であるならばその次元を減らす
@@ -105,7 +105,8 @@ def train(args):
 
     model_path = args.model_path
     image_size = archs[extractor_name]['fn'].default_image_size
-    num_classes = args.num_classes
+    num_classes_s = args.num_classes
+    num_classes_g = args.num_classes
     val_fre = 5# Nstep毎にvalidate
 
     # Define placeholders
@@ -124,7 +125,7 @@ def train(args):
         tf.summary.image('original_images', tf.reshape(original_images_placeholder, [-1, image_size, image_size, 3]), max_outputs=args.batch_size)
 
     # Build the graph
-    end_points = shigeNet_v1(cropped_images=cropped_images_placeholder, original_images=original_images_placeholder, extractor_name=extractor_name, num_classes=num_classes, is_training=is_training, keep_prob=keep_prob)
+    end_points = shigeNet_v1(cropped_images=cropped_images_placeholder, original_images=original_images_placeholder, extractor_name=extractor_name, num_classes_s=num_classes_s, num_classes_g=num_classes_g, is_training=is_training, keep_prob=keep_prob)
     # logits = tf.squeeze(end_points["Logits"], [1, 2])
     logits = end_points["Logits"]
     predictions = end_points["Predictions"]
@@ -252,7 +253,8 @@ if __name__ == '__main__':
 
     parser.add_argument('--max_steps', '-s', type=int, default=3)
     parser.add_argument('--batch_size', '-b', type=int, default=20)
-    parser.add_argument('--num_classes', '-nc', type=int, default=6)
+    parser.add_argument('--num_classes_s', '-ns', type=int, default=6)
+    parser.add_argument('--num_classes_g', '-ng', type=int, default=9)
     parser.add_argument('--learning_rate', '-lr', type=float, default=1e-4)
     parser.add_argument('--dropout_prob', '-d', type=float, default=0.8)
 
