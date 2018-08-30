@@ -19,7 +19,7 @@ if __name__ == '__main__':
     luminous_cluster = get_luminous_condition_cluster(dataset_path)
 
     for i, item in enumerate(luminous_cluster):
-        print(i, item)
+        print(i, item, "\n")
 
 
     label_file = open(args.label_path, "r", encoding="utf-8", errors="", newline="")
@@ -78,7 +78,7 @@ if __name__ == '__main__':
     print("acc", acc)
     result = [[acc[key], luminous_cluster[key]] for key in acc.keys()]
     for item in result:
-        print("acc:", item[0], "targets:", item[1])
+        print("acc:", item[0], "targets:", item[1], "\n")
 
     print("mean acc:", sum(n_corr.values())/sum(num.values()))
 

@@ -225,12 +225,12 @@ def train(args):
                     acc_list.append(test_accuracy)
                     loss_list.append(test_loss)
 
-                mean_acc = sum(acc_list)/len(acc_list)
+                mean_acc = sum(acc_list) / len(acc_list)
                 mean_loss = sum(loss_list) / len(loss_list)
 
 
                 # Write valid summary
-                test_summary_writer.add_summary(summary_test, step)
+                # test_summary_writer.add_summary(summary_test, step)
                 test_summary_writer.add_summary(tf.Summary(value=[
                     tf.Summary.Value(tag="Valid/accuracy", simple_value=mean_acc)
                 ]), step)
