@@ -39,5 +39,11 @@ if __name__ == '__main__':
                                os.path.join(save_dir, 'image_%04d.jpg')])
         # ffmpeg -i $label/$file -r 5 ./$label/$dir/image_%04d.jpg
 
-    print("finished")
+    # omake
+    p_l_cropped = [Path(i) for i in dir_cropped]
+    uncropped_list = [p for p in p_l_cropped if len([i for i in p.glob("*.jpg")]) == 0]
+    uncropped_list = [[i[0]+i[1], str(p)] for i in dir_ext_pair for p in uncropped_list if i[0] == str(p).rstrip("_cropped") ]
+    print("\nUncropped videos and dir to save:")
+    for i in uncropped_list:
+        print(i[0], i[1])
 
