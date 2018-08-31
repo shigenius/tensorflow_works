@@ -33,14 +33,24 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="video2image.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="video2image.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/script/video2image.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="568">
-              <caret line="49" column="0" lean-forward="true" selection-start-line="49" selection-start-column="0" selection-end-line="49" selection-end-column="0" />
+            <state relative-caret-position="116">
+              <caret line="14" column="37" lean-forward="true" selection-start-line="14" selection-start-column="4" selection-end-line="14" selection-end-column="37" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TwoInputDistortion.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/../TwoInputDistortion.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="145">
+              <caret line="50" column="45" lean-forward="false" selection-start-line="50" selection-start-column="39" selection-end-line="50" selection-end-column="45" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -171,7 +181,6 @@
         <option value="$PROJECT_DIR$/../makeRandomCropping_NegativeData.py" />
         <option value="$PROJECT_DIR$/PILtest.py" />
         <option value="$PROJECT_DIR$/../makeDataset_forSpecificObjRecog.py" />
-        <option value="$PROJECT_DIR$/../TwoInputDistortion.py" />
         <option value="$PROJECT_DIR$/TwoInputDataset.py" />
         <option value="$PROJECT_DIR$/comparison_learning.py" />
         <option value="$PROJECT_DIR$/transfer_learning.py" />
@@ -180,6 +189,7 @@
         <option value="$PROJECT_DIR$/script/replace_labelid.py" />
         <option value="$PROJECT_DIR$/script/__init__.py" />
         <option value="$PROJECT_DIR$/script/video2image.py" />
+        <option value="$PROJECT_DIR$/../TwoInputDistortion.py" />
       </list>
     </option>
   </component>
@@ -369,7 +379,7 @@
       <window_info id="R Packages" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="R Graphics" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2964539" sideWeight="0.12478778" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17730497" sideWeight="0.87521225" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17730497" sideWeight="0.87521225" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -665,13 +675,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../TwoInputDistortion.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="627">
-          <caret line="198" column="3" lean-forward="false" selection-start-line="198" selection-start-column="3" selection-end-line="198" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/transfer_learning.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
@@ -749,11 +752,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/script/video2image.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="568">
-          <caret line="49" column="0" lean-forward="true" selection-start-line="49" selection-start-column="0" selection-end-line="49" selection-end-column="0" />
+        <state relative-caret-position="116">
+          <caret line="14" column="37" lean-forward="true" selection-start-line="14" selection-start-column="4" selection-end-line="14" selection-end-column="37" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../TwoInputDistortion.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="145">
+          <caret line="50" column="45" lean-forward="false" selection-start-line="50" selection-start-column="39" selection-end-line="50" selection-end-column="45" />
+          <folding />
         </state>
       </provider>
     </entry>

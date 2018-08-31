@@ -205,8 +205,8 @@ class Distortion():
             # spatial augmentation
             # if np.random.rand() < p:
             #     images = random_resize(images)
-            # if np.random.rand() < p:
-            #     images = self.random_rotate(images)
+            if np.random.rand() < p:
+                images = self.random_rotate(images)
             if np.random.rand() < p:
                 images = self.shift_parallel_translation(images, r=(-0.1, 0.1))
 
