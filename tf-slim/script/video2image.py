@@ -42,8 +42,11 @@ if __name__ == '__main__':
     # omake
     p_l_cropped = [Path(i) for i in dir_cropped]
     uncropped_list = [p for p in p_l_cropped if len([i for i in p.glob("*.jpg")]) == 0]
-    uncropped_list = [[i[0]+i[1], str(p)] for i in dir_ext_pair for p in uncropped_list if i[0] == str(p).rstrip("_cropped") ]
+    uncropped = [[i[0]+i[1], str(p)] for i in dir_ext_pair for p in uncropped_list if i[0] == str(p).replace("_cropped", "") ]
+    # uncropped = [str(p).replace("_cropped", "") for p in uncropped_list]
     print("\nUncropped videos and dir to save:")
-    for i in uncropped_list:
+    for i in uncropped:
         print(i[0], i[1])
+
+    print("")
 

@@ -47,8 +47,8 @@ def get_luminous_condition_cluster(dataset_path):
     luminous_cluster = []
     for key in sorted(video_date.keys()):
         # print(key, video_date[key])
-        previous = video_date[key].replace(hour=video_date[key].hour - 1)
-        following = video_date[key].replace(hour=video_date[key].hour + 1)
+        previous = video_date[key].replace(hour=video_date[key].hour - 1) if not video_date[key].hour == 0 else video_date[key].replace(hour=video_date[key].hour) # 応急処置的な
+        following = video_date[key].replace(hour=video_date[key].hour + 1) if not video_date[key].hour == 23 else video_date[key].replace(hour=video_date[key].hour)
         # print(previous)
         # print(following)
         # print(previous.timestamp())
