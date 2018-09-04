@@ -54,8 +54,7 @@ if __name__ == '__main__':
         flatten = lambda list: [e for inner_list in list for e in inner_list]
         luminous = flatten(luminous)
 
-        # print(luminous)
-        # print(luminous)
+        # print(luminous, row)
         if luminous[0] not in n_corr.keys():
             n_corr[luminous[0]] = 0
         if luminous[0] not in num.keys():
