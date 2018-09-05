@@ -1,5 +1,6 @@
 import csv
 import argparse
+import os
 
 import numpy as np
 import seaborn as sn
@@ -55,7 +56,9 @@ if __name__ == '__main__':
     # plt.title("Confusion Matrix")
     plt.xlabel("Predicted class")
     plt.ylabel("True class")
-    plt.savefig('figure.png')
+    outbase = os.path.splitext(args.csv_path)[0]
+    outname = os.path.basename(outbase)
+    plt.savefig(outname + '.png')
     plt.gca().xaxis.tick_top()
     plt.xticks(np.arange(num_class), labels, rotation=15)
     plt.yticks(np.arange(num_class), labels[::-1], rotation=0)

@@ -19,8 +19,8 @@ if __name__ == '__main__':
 
         for row in reader:
             print(row)
-            if re.search('/home/shige/', row[0]):
-                row[0] = row[0].replace('/home/shige/', '/Users/shigetomi/Desktop/') # replace remote path to local path
+            if re.search('/home/akalab/', row[0]):
+                row[0] = row[0].replace('/home/akalab/', '/Users/shigetomi/Desktop/') # replace remote path to local path
             dirname, filename = os.path.split(row[0])
             wfilename = dirname.split('/')[-1] + '_' +filename
 
