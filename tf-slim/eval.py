@@ -1,6 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import cv2
+import time
 
 import argparse
 from datetime import datetime
@@ -126,6 +127,7 @@ def eval(args):
         restorer.restore(sess, restore_path)
         print("Model restored from:", restore_path)
 
+        time_l = []
         for path_c, path_o, label in zip(pathes_c, pathes_o, labels_c):
 
             c = cv2.cvtColor(cv2.imread(path_c), cv2.COLOR_BGR2RGB)
@@ -134,6 +136,7 @@ def eval(args):
             o = np.asarray([cv2.resize(o, (image_size, image_size))])
             label = [label]
 
+            start = time.time()
             result, pred = sess.run([correct_prediction, predictions],
                                    feed_dict={cropped_images_placeholder: c,
                                               original_images_placeholder: o,
@@ -141,11 +144,14 @@ def eval(args):
                                               keep_prob: 1.0,
                                               is_training: False})
 
-            print(path_c, result[0], np.argmax(pred), np.argmax(label))
+            elapsed_time = time.time() - start
+            time_l.append(elapsed_time)
+            print(path_c, result[0], np.argmax(pred), np.argmax(label), elapsed_time)
             writer.writerow([path_c, result[0], np.argmax(pred), np.argmax(label)])
 
     f.close()
     print('finished')
+    print("mean proc time:", sum(time_l) / len(time_l))
 
 def eval_vgg16(args):
     restore_path = args.restore_path
@@ -200,23 +206,27 @@ def eval_vgg16(args):
         restorer.restore(sess, restore_path)
         print("Model restored from:", restore_path)
 
+        time_l = []
         for path_c, label in zip(pathes_c, labels_c):
 
             c = cv2.cvtColor(cv2.imread(path_c), cv2.COLOR_BGR2RGB)
             c = np.asarray([cv2.resize(c, (image_size, image_size))])
             label = [label]
 
+            start = time.time()
             result, pred = sess.run([correct_prediction, predictions],
                                     feed_dict={cropped_images_placeholder: c,
                                                labels_placeholder: label,
                                                keep_prob: 1.0,
                                                is_training: False})
-
-            print(path_c, result[0], np.argmax(pred), np.argmax(label))
+            elapsed_time = time.time() - start
+            time_l.append(elapsed_time)
+            print(path_c, result[0], np.argmax(pred), np.argmax(label), elapsed_time)
             writer.writerow([path_c, result[0], np.argmax(pred), np.argmax(label)])
 
     f.close()
-    print('finished')
+    print("finished.")
+    print("mean proc time:", sum(time_l)/len(time_l))
 
 if __name__ == '__main__':
 
