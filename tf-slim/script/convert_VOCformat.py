@@ -132,6 +132,7 @@ def main(args):
     val_text_p = orig_p/"valid_orig.txt"
     test_text_p = orig_p /"test_orig.txt"
     train_p = voc_ch_p /"train.txt"
+    val_p = voc_ch_p / "val.txt"
     trainval_p = voc_ch_p/"trainval.txt"
     test_p = voc_ch_p /"test.txt"
 
@@ -139,6 +140,7 @@ def main(args):
     val_text_l = [f.split(' ')[0] for f in open(str(val_text_p), 'r')]
     test_text_l = [f.split(' ')[0] for f in open(str(test_text_p), 'r')]
     train_f = open(str(train_p), 'w')
+    val_f = open(str(val_p), 'w')
     trainval_f = open(str(trainval_p), 'w')
     test_f = open(str(test_p), 'w')
 
@@ -174,6 +176,7 @@ def main(args):
             trainval_f.write(index+"\n")
         if i[0] in val_text_l:
             print("in val list")
+            val_f.write(index+"\n")
             trainval_f.write(index+"\n")
         if i[0] in test_text_l:
             print("in test list")
