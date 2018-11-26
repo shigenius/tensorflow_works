@@ -58,18 +58,18 @@ def calc_coordinate_from_index(indices, image_shape, window_size, stride):
     x_points = np.arange(0, w - window_size, stride)
     y_points = np.arange(0, h - window_size, stride)
     num_xp = x_points.shape[0]
-    # num_yp = y_points.shape[0]
-    # print("indices:", indices, "image_shape:", image_shape, "window_size:", window_size, "stride:", stride)
-    # print("w:", w, "h:",h)
-    # print(x_points)
-    # print(y_points)
-    # print("num_of_windows_in_one_row", num_xp)
-    # print("num_of_windows_in_one_col", num_yp)
+    #num_yp = y_points.shape[0]
+    #print("indices:", indices, "image_shape:", image_shape, "window_size:", window_size, "stride:", stride)
+    #print("w:", w, "h:",h)
+    #print(x_points)
+    #print(y_points)
+    #print("num_of_windows_in_one_row", num_xp)
+    #print("num_of_windows_in_one_col", num_yp)
 
     coordcates = []
     for i in indices:
-        xp = (i+1) % num_xp
-        yp = int((i+1) / num_xp)
+        xp = i % num_xp
+        yp = int(i / num_xp)
         x = x_points[xp]
         y = y_points[yp]
         # print(i, (xp, yp), (x, y))
@@ -117,8 +117,8 @@ def eval(args):
     num_of_gclass = len(glabel.keys())
     num_of_sclass = len(slabel.keys())
 
-    target_category = 'shisa'
-    target_label = [i for i in glabel.items() if i[1] == target_category][0]
+    target_category = ['shisa', 'seesaa']
+    target_label = [i for i in glabel.items() if i[1] in target_category][0]
 
     with tf.name_scope('general'):
         # define placeholders
