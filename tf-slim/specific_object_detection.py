@@ -73,7 +73,7 @@ def calc_coordinate_from_index(indices, image_shape, window_size, stride):
         x = x_points[xp]
         y = y_points[yp]
         # print(i, (xp, yp), (x, y))
-        coordcates.append((i, (x, y)))
+        coordcates.append((i, (x, y), (window_size, window_size)))
 
     return coordcates
 
@@ -106,6 +106,28 @@ def show_variables_in_ckpt(path):
     for op in graph.get_operations():
         if "fc3" in op.name:
             print(op)
+
+
+def draw_result(img, coordinates, labels, slabel):
+    # coordinate : (index, (ulx, uly), (window_size, window_size))
+    # labels : [predicted_label_number, ...]
+    for i in range(len(coordinates)):
+        label_name = slabel[str(labels[i])]
+        ulx, uly = coordinates[i][1]
+        ww, wh = coordinates[i][2]
+
+        w = int(ww / 2)
+        h = int(wh / 2)
+        x = int(ulx + ww)
+        y = int(uly + wh)
+
+        cv2.rectangle(img, (x - w, y - h), (x + w, y + h), (0, 255, 0), 2)
+        cv2.rectangle(img, (x - w, y - h - 20),
+                      (x + w, y - h), (125, 125, 125), -1)
+        # cv2.putText(img, result[i][0] + ' : %.2f' % result[i][5], (x - w + 5, y - h - 7), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.CV_AA)
+        cv2.putText(img, label_name, (x - w + 5, y - h - 7), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                    (0, 0, 0), 1)
+
 
 def eval(args):
     extractor_name = args.extractor
@@ -187,6 +209,10 @@ def eval(args):
             print("index:", item[0], "(x, y):", item[1], "predict label:", pred[i], slabel[str(pred[i])])
 
         print("\n running time:", elapsed_time, "(sec)")
+
+        draw_result(input_image, coordinates, pred, slabel)
+        cv2.imshow('result', input_image)
+        cv2.waitKey(0)
 
 
 
