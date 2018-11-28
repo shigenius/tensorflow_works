@@ -75,7 +75,14 @@ def train(args):
     dataset = TwoInputDataset(train_c=args.train_c, train_o=args.train_o, test_c=args.test_c, test_o=args.test_o,
                               num_classes=num_classes, image_size=image_size)
 
-    with tf.Session() as sess:
+    # 使用するGPUメモリを80%までに制限
+    config = tf.ConfigProto(
+        gpu_options=tf.GPUOptions(
+            per_process_gpu_memory_fraction=0.8
+        )
+    )
+
+    with tf.Session(config=config) as sess:
         sess.run(tf.global_variables_initializer())
         restorer.restore(sess, model_path)
         print("Model restored from:", model_path)
