@@ -6,6 +6,7 @@ import cv2
 import argparse
 import numpy as np
 import time
+from PIL import Image
 
 archs = {
     'inception_v4': {'fn': inception_v4, 'arg_scope': inception_v4_arg_scope, 'extract_point': 'PreLogitsFlatten'},
@@ -97,6 +98,21 @@ def sliding_window_tf(input_placeholder, window_size, stride):
         indices,
         dtype=tf.float32)
 
+
+def sliding_window_tf_multiscale(input_placeholder, window_size, stride):
+    input_shape = tf.shape(input_placeholder)
+
+    xx, yy = tf.meshgrid(tf.range(0, input_shape[0] - window_size, stride),
+                         tf.range(0, input_shape[1] - window_size, stride), indexing='ij')
+    xxsq = tf.expand_dims(tf.reshape(xx, [-1]), 1)
+    yysq = tf.expand_dims(tf.reshape(yy, [-1]), 1)
+    indices = tf.concat([xxsq, yysq], -1)
+
+    return tf.map_fn(lambda x: tf.strided_slice(input_placeholder, [x[0], x[1]], [x[0] + window_size, x[1] + window_size]), indices, dtype=tf.float32)
+
+def selective_search_tf():
+    pass
+
 def show_variables_in_ckpt(path):
     prefix = path
     saver = tf.train.import_meta_graph("{}.meta".format(prefix))
@@ -118,10 +134,11 @@ def draw_result(img, coordinates, labels, slabel):
 
         w = int(ww / 2)
         h = int(wh / 2)
-        x = int(ulx + ww)
-        y = int(uly + wh)
+        x = int(ulx + w)
+        y = int(uly + h)
+        cv2.rectangle(img, (x - w, y - h), (x + w, y + h), (0, 255, 0), 2) # drow object rectangle
 
-        cv2.rectangle(img, (x - w, y - h), (x + w, y + h), (0, 255, 0), 2)
+        # drow label
         cv2.rectangle(img, (x - w, y - h - 20),
                       (x + w, y - h), (125, 125, 125), -1)
         # cv2.putText(img, result[i][0] + ' : %.2f' % result[i][5], (x - w + 5, y - h - 7), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.CV_AA)
@@ -150,6 +167,7 @@ def eval(args):
             is_training = tf.placeholder(dtype="bool")  # train flag
 
         stride = int(image_size/2)
+
 
         resized_input = tf.image.resize_images(input_placeholder, (image_size, image_size))
         cropps = sliding_window_tf(input_placeholder=input_placeholder,
@@ -193,7 +211,8 @@ def eval(args):
         restorer_s.restore(sess, args.sr)
         print("Restored specific recognition model:", args.sr)
 
-        input_image = cv2.cvtColor(cv2.imread(args.input), cv2.COLOR_BGR2RGB)  # BGR to RGB in oder to using TF
+        input_image = np.array(Image.open(args.input)) / 255
+        # image = cv2.cvtColor(cv2.imread(args.input), cv2.COLOR_BGR2RGB)  # BGR to RGB in order to using TF
         # print(calc_coordinate_from_index(indices=[7, 8, 12], image_shape=input_image.shape, window_size=image_size,
         #                                  stride=stride))
 
@@ -210,8 +229,10 @@ def eval(args):
 
         print("\n running time:", elapsed_time, "(sec)")
 
-        draw_result(input_image, coordinates, pred, slabel)
-        cv2.imshow('result', input_image)
+        image = cv2.imread(args.input)
+        # input_image_bgr = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        draw_result(image, coordinates, pred, slabel)
+        cv2.imshow('result', image)
         cv2.waitKey(0)
 
 
