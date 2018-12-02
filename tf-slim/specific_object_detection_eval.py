@@ -6,7 +6,11 @@ import cv2
 import argparse
 import numpy as np
 import time
+
 from PIL import Image
+import csv
+from pathlib import Path
+import math
 
 archs = {
     'inception_v4': {'fn': inception_v4, 'arg_scope': inception_v4_arg_scope, 'extract_point': 'PreLogitsFlatten'},
@@ -99,17 +103,6 @@ def sliding_window_tf(input_placeholder, window_size, stride):
         dtype=tf.float32)
 
 
-def sliding_window_tf_multiscale(input_placeholder, window_size, stride):
-    input_shape = tf.shape(input_placeholder)
-
-    xx, yy = tf.meshgrid(tf.range(0, input_shape[0] - window_size, stride),
-                         tf.range(0, input_shape[1] - window_size, stride), indexing='ij')
-    xxsq = tf.expand_dims(tf.reshape(xx, [-1]), 1)
-    yysq = tf.expand_dims(tf.reshape(yy, [-1]), 1)
-    indices = tf.concat([xxsq, yysq], -1)
-
-    return tf.map_fn(lambda x: tf.strided_slice(input_placeholder, [x[0], x[1]], [x[0] + window_size, x[1] + window_size]), indices, dtype=tf.float32)
-
 def selective_search_tf():
     pass
 
@@ -144,6 +137,55 @@ def draw_result(img, coordinates, labels, slabel):
         # cv2.putText(img, result[i][0] + ' : %.2f' % result[i][5], (x - w + 5, y - h - 7), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.CV_AA)
         cv2.putText(img, label_name, (x - w + 5, y - h - 7), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
                     (0, 0, 0), 1)
+
+def get_annotation(image_path, txtname="subwindow_log.txt"):
+    img_p = Path(image_path)
+    img_obj_name = img_p.parents[1].name
+    cropped_dir_p = Path(str(img_p.parent)+'_cropped')
+    log_p = cropped_dir_p/txtname
+    assert log_p.exists(), 'Does not exist :{0}'.format(str(log_p))
+
+    img_id = int(img_p.stem.split('_')[1])# フレーム番号
+
+    anno = None
+    with open(str(log_p), 'r') as f:
+        reader = csv.reader(f)
+        header = next(reader)
+        for row in reader:
+            if int(row[0]) == img_id:
+                anno = row
+                break
+
+    return anno.split(',') # [frame, center_x, center_y, size_x, size_y]
+
+def get_distance(x1, y1, x2, y2):
+    d = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+    return d
+
+def calc_iou(predict_box, gt_box):
+    # box define: [lu_x, lu_y, rd_x, rd_y]
+    # determine the (x, y)-coordinates of the intersection rectangle
+    xA = max(predict_box[0], gt_box[0])
+    yA = max(predict_box[1], gt_box[1])
+    xB = min(predict_box[2], gt_box[2])
+    yB = min(predict_box[3], gt_box[3])
+
+    # compute the area of intersection rectangle
+    interArea = max(0, xB - xA + 1) * max(0, yB - yA + 1)
+
+    # compute the area of both the prediction and ground-truth
+    # rectangles
+    boxAArea = (predict_box[2] - predict_box[0] + 1) * (predict_box[3] - predict_box[1] + 1)
+    boxBArea = (gt_box[2] - gt_box[0] + 1) * (gt_box[3] - gt_box[1] + 1)
+
+    # compute the intersection over union by taking the intersection
+    # area and dividing it by the sum of prediction + ground-truth
+    # areas - the interesection area
+    iou = interArea / float(boxAArea + boxBArea - interArea)
+    precision = interArea / boxAArea
+
+    # return the intersection over union value
+    return iou, precision
 
 
 def eval(args):
@@ -212,42 +254,104 @@ def eval(args):
     )
 
     with tf.Session(config=config) as sess:
+
+        # initialize and restore model
         sess.run(tf.global_variables_initializer())
         restorer_g.restore(sess, args.gr)
         print("Restored general recognition model:", args.gr)
         restorer_s.restore(sess, args.sr)
         print("Restored specific recognition model:", args.sr)
 
-        input_image = np.array(Image.open(args.input)) / 255
-        # image = cv2.cvtColor(cv2.imread(args.input), cv2.COLOR_BGR2RGB)  # BGR to RGB in order to using TF
-        # print(calc_coordinate_from_index(indices=[7, 8, 12], image_shape=input_image.shape, window_size=image_size,
-        #                                  stride=stride))
+        # prepare test set
+        with open(args.test_txt, 'r') as f:
+            f_ = [line.rstrip().split() for line in f]
 
-        start_time = time.time()
-        cand_index, pred = sess.run([candidate_index, predict_labels], feed_dict={input_placeholder: input_image})
-        elapsed_time = time.time() - start_time
-        print(cand_index, pred)
-        print("specific object label:", slabel)
-        coordinates = calc_coordinate_from_index(indices=cand_index, image_shape=input_image.shape, window_size=image_size, stride=stride)
+        data = [[l, get_annotation(l[0])] for l in f_] # data: [[(path_str, label), [frame, center_x, center_y, size_x, size_y]],...]
 
-        print("Result")
-        for i, item in enumerate(coordinates):
-            print("index:", item[0], "(x, y):", item[1], "predict label:", pred[i], slabel[str(pred[i])])
+        # log
+        # f = open(args.log, 'w')
+        # writer = csv.writer(f, lineterminator='\n')
+        # writer.writerow(['path', 'gt_label', 'predict_label', 'nega/posi', 'Central_point_distance'])
 
-        print("\n running time:", elapsed_time, "(sec)")
+        # iterative run
+        for gt in data:# a: [(path_str, label), [frame, center_x, center_y, size_x, size_y]
+            input_image = np.array(Image.open(gt[0][0])) / 255
 
-        image = cv2.imread(args.input)
-        # input_image_bgr = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-        draw_result(image, coordinates, pred, slabel)
-        cv2.imshow('result', image)
-        cv2.waitKey(0)
+            start_time = time.time()
+            cand_index, pred = sess.run([candidate_index, predict_labels], feed_dict={input_placeholder: input_image})
+            elapsed_time = time.time() - start_time
+
+            coordinates = calc_coordinate_from_index(indices=cand_index, image_shape=input_image.shape, window_size=image_size, stride=stride)
+
+
+            ious = []
+            ap = []
+            gt_box = (gt[1][1] - gt[1][3], gt[1][2] - gt[1][4], gt[1][1] + gt[1][3], gt[1][2] + gt[1][4])  # one box in one image :[lu_x, lu_y, rd_x, rd_y]
+            hoge = np.zeros(shape=input_image.shape[0:2])
+            hoge[gt_box[1]:gt_box[3], gt_box[0]:gt_box[2]] = 1 # gtの範囲を1にする
+
+            for i, item in enumerate(coordinates):  # item: (i, (x, y), (window_size, window_size))
+                p_label = pred[i]
+                g_label = gt[0][1]
+                if p_label == g_label:
+                    pred_box = (item[1][0], item[1][1], item[1][0]+item[2][0], item[1][1]+item[2][1])
+                    iou, precision = calc_iou(pred_box, gt_box)
+                    ious.append(iou)
+                    ap.append(precision)
+
+                    hoge[pred_box[1]:pred_box[3], pred_box[0]:pred_box[2]] = 0 # recallの計算に用いる
+                else:
+                    ious.append(0)
+                    ap.append(0)
+
+            hit_gtArea = hoge[gt_box[1]:gt_box[3], gt_box[0]:gt_box[2]]
+            recall = np.sum(hit_gtArea == 0) / hit_gtArea.size
+
+            print("ious:", sum(ious)/len(ious), ious)
+            print("Average precision:", sum(ap)/len(ap), ap)
+            print("recall", recall)
+            print(elapsed_time, "(s)")
+
+
+            # # 中心点からの距離による評価書きかけ
+            # TP_score = []
+            # for i, item in enumerate(coordinates): # item: (i, (x, y), (window_size, window_size))
+            #     # print("index:", item[0], "(x, y):", item[1], "predict label:", pred[i], slabel[str(pred[i])])
+            #     p_label = pred[i]
+            #     g_label = a[0][1]
+            #     if p_label == g_label: # if prediction is TP
+            #         # with normalize
+            #         p_center_x = (item[1][0] - (item[2][0] / 2)) / input_image.shape[1]
+            #         p_center_y = (item[1][1] - (item[2][1] / 2)) / input_image.shape[0]
+            #         g_center_x = a[1][1] / input_image.shape[1]
+            #         g_center_y = a[1][2] / input_image.shape[0]
+            #         distance = get_distance(g_center_x, g_center_y, p_center_x, p_center_y)
+            #         TP_score.append(distance)
+            #
+            # # calc mean score
+            # for i in TP_score:
+            #
+            #
+            # FP = len(coordinates) - TP_score
+
+
+
+
+
+            # print("\n running time:", elapsed_time, "(sec)")
+
+            # image = cv2.imread(args.input)
+            # input_image_bgr = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+            # draw_result(image, coordinates, pred, slabel)
+            # cv2.imshow('result', image)
+            # cv2.waitKey(0)
 
 
 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='')
-    parser.add_argument('input', help='File path of input image')
+    parser.add_argument('test_txt', help='File path of test_set.txt', default='/Users/shigetomi/Desktop/dataset_fit_noNegative/dataset_shisa/test_orig_IDreplaced.txt')
     parser.add_argument('glabel', help='File name of general recog label txt')
     parser.add_argument('slabel', help='File name of specific recog label txt')
 
