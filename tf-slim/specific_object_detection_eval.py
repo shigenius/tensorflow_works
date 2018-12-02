@@ -156,7 +156,7 @@ def get_annotation(image_path, txtname="subwindow_log.txt"):
                 anno = row
                 break
 
-    return anno.split(',') # [frame, center_x, center_y, size_x, size_y]
+    return anno # [frame, center_x, center_y, size_x, size_y]
 
 def get_distance(x1, y1, x2, y2):
     d = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
