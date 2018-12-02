@@ -60,8 +60,8 @@
       <file leaf-file-name="specific_object_detection_eval.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/specific_object_detection_eval.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="200">
-              <caret line="288" column="144" lean-forward="false" selection-start-line="288" selection-start-column="144" selection-end-line="288" selection-end-column="144" />
+            <state relative-caret-position="246">
+              <caret line="288" column="150" lean-forward="false" selection-start-line="288" selection-start-column="150" selection-end-line="288" selection-end-column="150" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -222,7 +222,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="76" />
+    <option name="x" value="57" />
     <option name="y" value="23" />
     <option name="width" value="1235" />
     <option name="height" value="777" />
@@ -418,7 +418,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="76" y="23" width="1235" height="777" extended-state="0" />
+    <frame x="57" y="23" width="1235" height="777" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16194332" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -784,8 +784,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/specific_object_detection_eval.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="288" column="144" lean-forward="false" selection-start-line="288" selection-start-column="144" selection-end-line="288" selection-end-column="144" />
+        <state relative-caret-position="246">
+          <caret line="288" column="150" lean-forward="false" selection-start-line="288" selection-start-column="150" selection-end-line="288" selection-end-column="150" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
