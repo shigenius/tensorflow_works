@@ -60,8 +60,8 @@
       <file leaf-file-name="specific_object_detection_eval.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/specific_object_detection_eval.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="182">
-              <caret line="289" column="28" lean-forward="false" selection-start-line="289" selection-start-column="28" selection-end-line="289" selection-end-column="28" />
+            <state relative-caret-position="168">
+              <caret line="278" column="43" lean-forward="false" selection-start-line="278" selection-start-column="43" selection-end-line="278" selection-end-column="43" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -132,7 +132,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>test2</find>
       <find>test1</find>
       <find>train_orig_list</find>
       <find>train_crop_list</find>
@@ -162,6 +161,7 @@
       <find>get_image_and_annotation</find>
       <find>calc</find>
       <find>get</find>
+      <find>reshape</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
@@ -221,8 +221,8 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="57" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="60" />
     <option name="y" value="23" />
     <option name="width" value="1235" />
     <option name="height" value="777" />
@@ -418,7 +418,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="57" y="23" width="1235" height="777" extended-state="0" />
+    <frame x="46" y="23" width="1235" height="777" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16194332" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -784,8 +784,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/specific_object_detection_eval.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="289" column="28" lean-forward="false" selection-start-line="289" selection-start-column="28" selection-end-line="289" selection-end-column="28" />
+        <state relative-caret-position="168">
+          <caret line="278" column="43" lean-forward="false" selection-start-line="278" selection-start-column="43" selection-end-line="278" selection-end-column="43" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
