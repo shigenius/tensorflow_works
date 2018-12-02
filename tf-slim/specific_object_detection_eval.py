@@ -286,7 +286,7 @@ def eval(args):
 
             ious = []
             ap = []
-            gt_box = (gt[1][1] - gt[1][3], gt[1][2] - gt[1][4], gt[1][1] + gt[1][3], gt[1][2] + gt[1][4])  # one box in one image :[lu_x, lu_y, rd_x, rd_y]
+            gt_box = (int(gt[1][1]) - int(gt[1][3]), int(gt[1][2]) - int(gt[1][4]), int(gt[1][1]) + int(gt[1][3]), int(gt[1][2]) + int(gt[1][4]))  # one box in one image :[lu_x, lu_y, rd_x, rd_y]
             hoge = np.zeros(shape=input_image.shape[0:2])
             hoge[gt_box[1]:gt_box[3], gt_box[0]:gt_box[2]] = 1 # gtの範囲を1にする
 
