@@ -234,7 +234,7 @@ def eval(args):
                                                    extractor_name='vgg_16') # test用
         predictions_s = end_points_s["Predictions"]
         predict_labels = tf.argmax(predictions_s, 1)
-        y = tf.cond(candidate_index !=, predict_labels, 0)
+        y = tf.cond(len(candidate_index) != 0, predict_labels, None)
 
         variables_to_restore_s = set(slim.get_variables_to_restore()) - set(variables_to_restore_g)
         # variables_to_restore_s = {name_in_checkpoint(var): var for var in variables_to_restore_s}
