@@ -219,6 +219,7 @@ def eval(args):
         # general object detection
         predictions, feature = general_object_recognition(cropps, num_of_gclass, extractor_name)
         candidate_index = tf.reshape(tf.where(tf.equal(tf.argmax(predictions, 1), int(target_label[0]))), [-1]) #targetlabelと同じ値なpredのindexを返す
+        print(candidate_index)
         candidate_feature = tf.reshape(tf.gather(feature, candidate_index, axis=0), archs[extractor_name]['extract_shape']) # 指定したindicesで抜き出す
 
         _, bg_feature = general_object_recognition(resized_input[tf.newaxis, :, :, :], num_of_gclass, extractor_name)
