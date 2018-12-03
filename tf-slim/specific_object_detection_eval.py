@@ -234,13 +234,14 @@ def eval(args):
                                                    extractor_name='vgg_16') # test用
         predictions_s = end_points_s["Predictions"]
         predict_labels = tf.argmax(predictions_s, 1)
-        y = tf.cond(candidate_index != tf.constant([]), predict_labels, tf.constant([]))
 
         variables_to_restore_s = set(slim.get_variables_to_restore()) - set(variables_to_restore_g)
         # variables_to_restore_s = {name_in_checkpoint(var): var for var in variables_to_restore_s}
         print(variables_to_restore_s)
 
         restorer_s = tf.train.Saver(variables_to_restore_s)
+
+    y = tf.cond(candidate_index != tf.constant([]), lambda: predict_labels, lambda: tf.constant([]))
 
     # 使用するGPUメモリを80%までに制限
     config = tf.ConfigProto(
