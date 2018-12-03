@@ -273,9 +273,9 @@ def eval(args):
         data = [[l, get_annotation(l[0])] for l in f_] # data: [[(path_str, label), [frame, center_x, center_y, size_x, size_y]],...]
 
         # log
-        # f = open(args.log, 'w')
-        # writer = csv.writer(f, lineterminator='\n')
-        # writer.writerow(['path', 'gt_label', 'predict_label', 'nega/posi', 'Central_point_distance'])
+        f = open(args.log, 'w')
+        writer = csv.writer(f, lineterminator='\n')
+        writer.writerow(['path', 'gt_label', 'IoU', 'AveragePrecision', 'Recall'])
 
         # iterative run
         for gt in data:# gt: [(path_str, label), [frame, center_x, center_y, size_x, size_y]
@@ -295,7 +295,6 @@ def eval(args):
             if len(cand_index) != 0: # 候補領域があれば
                 # instance recognition
                 pred = sess.run(predict_labels, feed_dict={candfeat_placeholder: cand_feat, bgfeat_placeholder: bg_feat, keep_prob: 1.0})
-                # cand_index, pred = sess.run([candidate_index, y], feed_dict={input_placeholder: input_image})
                 elapsed_time = time.time() - start_time
 
                 coordinates = calc_coordinate_from_index(indices=cand_index, image_shape=input_image.shape, window_size=image_size, stride=stride)
@@ -316,18 +315,24 @@ def eval(args):
 
                 hit_gtArea = hoge[gt_box[1]:gt_box[3], gt_box[0]:gt_box[2]]
                 recall = np.sum(hit_gtArea == 0) / hit_gtArea.size
+                average_iou = sum(ious) / len(ious)
+                average_prec = sum(ap) / len(ap)
 
-                print("ious:", sum(ious) / len(ious), ious)
-                print("Average precision:", sum(ap) / len(ap), ap)
-                print("recall", recall)
 
             else: # 候補領域がない場合
                 elapsed_time = time.time() - start_time
-                print("ious:", [0])
-                print("Average precision:", [0])
-                print("recall", 0)
-            print(elapsed_time, "(s)")
+                average_iou = 0.0
+                average_prec = 0.0
+                recall = 0.0
 
+            print("iou:", average_iou, ious)
+            print("Average precision:", average_prec, ap)
+            print("recall", recall)
+
+            writer.writerow([gt[0][0], gt[0][1], average_iou, average_prec, recall])
+            print("running time:", elapsed_time, "(s)")
+
+        f.close()
 
             # # 中心点からの距離による評価書きかけ
             # TP_score = []
@@ -375,6 +380,7 @@ if __name__ == '__main__':
     parser.add_argument('-net', help='network name', default='shigeNet')
     parser.add_argument('-gr', default='/Users/shigetomi/workspace/tensorflow_works/tf-slim/model/general_recog/vgg16_imagenet_0718.ckpt-75')
     parser.add_argument('-sr', default='/Users/shigetomi/workspace/tensorflow_works/tf-slim/model/transl_shisa.ckpt-0')
+    parser.add_argument('-log', default='specific_object_detection_log.csv')
 
 
     args = parser.parse_args()
