@@ -198,7 +198,7 @@ def eval(args):
     num_of_gclass = len(glabel.keys())
     num_of_sclass = len(slabel.keys())
 
-    target_category = ['shisa', 'seesaa']
+    target_category = ['seesaa', 'shisa']
     target_label = [i for i in glabel.items() if i[1] in target_category][0]
 
     with tf.name_scope('general'):
@@ -219,7 +219,6 @@ def eval(args):
         # general object detection
         predictions, feature = general_object_recognition(cropps, num_of_gclass, extractor_name)
         candidate_index = tf.reshape(tf.where(tf.equal(tf.argmax(predictions, 1), int(target_label[0]))), [-1]) #targetlabelと同じ値なpredのindexを返す
-        print(candidate_index)
         candidate_feature = tf.reshape(tf.gather(feature, candidate_index, axis=0), archs[extractor_name]['extract_shape']) # 指定したindicesで抜き出す
 
         _, bg_feature = general_object_recognition(resized_input[tf.newaxis, :, :, :], num_of_gclass, extractor_name)
@@ -238,11 +237,12 @@ def eval(args):
 
         variables_to_restore_s = set(slim.get_variables_to_restore()) - set(variables_to_restore_g)
         # variables_to_restore_s = {name_in_checkpoint(var): var for var in variables_to_restore_s}
-        print(variables_to_restore_s)
+        # print(variables_to_restore_s)
 
         restorer_s = tf.train.Saver(variables_to_restore_s)
 
-    y = tf.cond(tf.not_equal(candidate_index, tf.constant([])), lambda: predict_labels, lambda: tf.constant([])) # 候補領域がなければ空tensorを返す
+    comparison = tf.not_equal(tf.size(candidate_index), 0) # 候補領域がなければTrue
+    y = tf.cond(comparison, lambda: predict_labels, lambda: tf.constant([], dtype=tf.int64)) # 候補領域がなければ空tensorを返す
 
     # 使用するGPUメモリを80%までに制限
     config = tf.ConfigProto(
