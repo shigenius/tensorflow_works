@@ -205,7 +205,6 @@ def eval(args):
         # define placeholders
         with tf.name_scope('input'):
             input_placeholder = tf.placeholder(dtype="float32", shape=(None,  None,  3))
-            keep_prob = tf.placeholder(dtype="float32")
             is_training = tf.placeholder(dtype="bool")  # train flag
 
         stride = int(image_size/2)
@@ -218,8 +217,11 @@ def eval(args):
 
         # general object detection
         predictions, feature = general_object_recognition(cropps, num_of_gclass, extractor_name)
+
+
         candidate_index = tf.reshape(tf.where(tf.equal(tf.argmax(predictions, 1), int(target_label[0]))), [-1]) #targetlabelと同じ値なpredのindexを返す
         candidate_feature = tf.reshape(tf.gather(feature, candidate_index, axis=0), archs[extractor_name]['extract_shape']) # 指定したindicesで抜き出す
+        print(candidate_feature)
 
         _, bg_feature = general_object_recognition(resized_input[tf.newaxis, :, :, :], num_of_gclass, extractor_name)
         bg_feature_expand = tf.reshape(tf.tile(bg_feature, [tf.shape(candidate_feature)[0],1,1,1]), archs[extractor_name]['extract_shape'])# batch sizeをcand featureと合わせる．
@@ -228,9 +230,13 @@ def eval(args):
         restorer_g = tf.train.Saver(variables_to_restore_g)
 
     with tf.name_scope('specific'):
+        with tf.name_scope('input'):
+            candfeat_placeholder = tf.placeholder(dtype="float32", shape=(None, 1, 1, 4096))
+            bgfeat_placeholder = tf.placeholder(dtype="float32", shape=(None, 1, 1, 4096))
+            keep_prob = tf.placeholder(dtype="float32")
 
         # end_points_s = specific_object_recognition(candidate_feature, bg_feature_expand, num_of_sclass, keep_prob, extractor_name='vgg_16')
-        end_points_s = specific_object_recognition(candidate_feature, bg_feature_expand, num_of_sclass, keep_prob,
+        end_points_s = specific_object_recognition(candfeat_placeholder, bgfeat_placeholder, num_of_sclass, keep_prob,
                                                    extractor_name='vgg_16') # test用
         predictions_s = end_points_s["Predictions"]
         predict_labels = tf.argmax(predictions_s, 1)
@@ -274,37 +280,45 @@ def eval(args):
         # iterative run
         for gt in data:# gt: [(path_str, label), [frame, center_x, center_y, size_x, size_y]
             input_image = np.array(Image.open(gt[0][0])) / 255
-            print(gt[0][0])
-            start_time = time.time()
-            cand_index, pred = sess.run([candidate_index, y], feed_dict={input_placeholder: input_image})
-            elapsed_time = time.time() - start_time
-
-            coordinates = calc_coordinate_from_index(indices=cand_index, image_shape=input_image.shape, window_size=image_size, stride=stride)
-
-
             ious = []
             ap = []
-            gt_box = (float(gt[1][1]) - float(gt[1][3]), float(gt[1][2]) - float(gt[1][4]), float(gt[1][1]) + float(gt[1][3]), float(gt[1][2]) + float(gt[1][4]))  # one box in one image :[lu_x, lu_y, rd_x, rd_y]
+            gt_box = (float(gt[1][1]) - float(gt[1][3]), float(gt[1][2]) - float(gt[1][4]), float(gt[1][1]) + float(gt[1][3]),float(gt[1][2]) + float(gt[1][4]))  # one box in one image :[lu_x, lu_y, rd_x, rd_y]
             gt_box = [int(i) for i in gt_box]
             hoge = np.zeros(shape=input_image.shape[0:2])
-            hoge[gt_box[1]:gt_box[3], gt_box[0]:gt_box[2]] = 1 # gtの範囲を1にする
+            hoge[gt_box[1]:gt_box[3], gt_box[0]:gt_box[2]] = 1  # gtの範囲を1にする
 
-            for i, item in enumerate(coordinates):  # item: (i, (x, y), (window_size, window_size))
-                p_label = pred[i]
-                g_label = gt[0][1]
-                if p_label == g_label:
-                    pred_box = (item[1][0], item[1][1], item[1][0]+item[2][0], item[1][1]+item[2][1])
-                    iou, precision = calc_iou(pred_box, gt_box)
-                    ious.append(iou)
-                    ap.append(precision)
+            print(gt[0][0])
 
-                    hoge[pred_box[1]:pred_box[3], pred_box[0]:pred_box[2]] = 0 # recallの計算に用いる
-                else:
-                    ious.append(0)
-                    ap.append(0)
+            start_time = time.time()
+            # detection
+            cand_index, cand_feat, bg_feat = sess.run([candidate_index, candidate_feature, bg_feature_expand], feed_dict={input_placeholder: input_image})
+            if len(cand_index) != 0: # 候補領域があれば
+                # instance recognition
+                pred = sess.run(predict_labels, feed_dict={candfeat_placeholder: cand_feat, bgfeat_placeholder: bg_feat, keep_prob: 1.0})
+                # cand_index, pred = sess.run([candidate_index, y], feed_dict={input_placeholder: input_image})
+                elapsed_time = time.time() - start_time
 
-            hit_gtArea = hoge[gt_box[1]:gt_box[3], gt_box[0]:gt_box[2]]
-            recall = np.sum(hit_gtArea == 0) / hit_gtArea.size
+                coordinates = calc_coordinate_from_index(indices=cand_index, image_shape=input_image.shape, window_size=image_size, stride=stride)
+
+                for i, item in enumerate(coordinates):  # item: (i, (x, y), (window_size, window_size))
+                    p_label = pred[i]
+                    g_label = gt[0][1]
+                    if p_label == g_label:
+                        pred_box = (item[1][0], item[1][1], item[1][0]+item[2][0], item[1][1]+item[2][1])
+                        iou, precision = calc_iou(pred_box, gt_box)
+                        ious.append(iou)
+                        ap.append(precision)
+
+                        hoge[pred_box[1]:pred_box[3], pred_box[0]:pred_box[2]] = 0 # recallの計算に用いる
+                    else:
+                        ious.append(0)
+                        ap.append(0)
+
+                hit_gtArea = hoge[gt_box[1]:gt_box[3], gt_box[0]:gt_box[2]]
+                recall = np.sum(hit_gtArea == 0) / hit_gtArea.size
+
+            else:
+                elapsed_time = time.time() - start_time
 
             print("ious:", sum(ious)/len(ious), ious)
             print("Average precision:", sum(ap)/len(ap), ap)

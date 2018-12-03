@@ -60,8 +60,8 @@
       <file leaf-file-name="specific_object_detection_eval.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/specific_object_detection_eval.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="276" column="25" lean-forward="false" selection-start-line="276" selection-start-column="25" selection-end-line="276" selection-end-column="25" />
+            <state relative-caret-position="521">
+              <caret line="320" column="55" lean-forward="false" selection-start-line="320" selection-start-column="55" selection-end-line="320" selection-end-column="55" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -72,8 +72,8 @@
       <file leaf-file-name="eval.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../../yolo_tensorflow/eval.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="499">
-              <caret line="179" column="14" lean-forward="true" selection-start-line="156" selection-start-column="0" selection-end-line="179" selection-end-column="14" />
+            <state relative-caret-position="2505">
+              <caret line="179" column="14" lean-forward="false" selection-start-line="156" selection-start-column="0" selection-end-line="179" selection-end-column="14" />
               <folding />
             </state>
           </provider>
@@ -221,7 +221,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds">
     <option name="x" value="60" />
     <option name="y" value="23" />
     <option name="width" value="1235" />
@@ -258,8 +258,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -418,7 +418,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="46" y="23" width="1235" height="777" extended-state="6" />
+    <frame x="60" y="23" width="1235" height="777" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16194332" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -718,16 +718,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/TwoInputDataset.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1725">
-          <caret line="120" column="2" lean-forward="false" selection-start-line="120" selection-start-column="2" selection-end-line="120" selection-end-column="2" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/comparison_learning.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1020">
@@ -776,16 +766,26 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../../yolo_tensorflow/eval.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="499">
-          <caret line="179" column="14" lean-forward="true" selection-start-line="156" selection-start-column="0" selection-end-line="179" selection-end-column="14" />
+        <state relative-caret-position="2505">
+          <caret line="179" column="14" lean-forward="false" selection-start-line="156" selection-start-column="0" selection-end-line="179" selection-end-column="14" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/TwoInputDataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1725">
+          <caret line="120" column="2" lean-forward="false" selection-start-line="120" selection-start-column="2" selection-end-line="120" selection-end-column="2" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/specific_object_detection_eval.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="276" column="25" lean-forward="false" selection-start-line="276" selection-start-column="25" selection-end-line="276" selection-end-column="25" />
+        <state relative-caret-position="521">
+          <caret line="320" column="55" lean-forward="false" selection-start-line="320" selection-start-column="55" selection-end-line="320" selection-end-column="55" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
