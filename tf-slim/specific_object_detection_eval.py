@@ -275,7 +275,7 @@ def eval(args):
         # log
         f = open(args.log, 'w')
         writer = csv.writer(f, lineterminator='\n')
-        writer.writerow(['path', 'gt_label', 'IoU', 'AveragePrecision', 'Recall', 'no_RoI', 'running_time'])
+        writer.writerow(['path', 'gt_label', 'IoU', 'AveragePrecision', 'Recall', 'detect_succeed', 'running_time'])
 
         # iterative run
         for gt in data:# gt: [(path_str, label), [frame, center_x, center_y, size_x, size_y]
@@ -329,7 +329,7 @@ def eval(args):
             print("Average precision:", average_prec, ap)
             print("recall", recall)
 
-            writer.writerow([gt[0][0], gt[0][1], average_iou, average_prec, recall, len(cand_index) == 0, elapsed_time])
+            writer.writerow([gt[0][0], gt[0][1], average_iou, average_prec, recall, len(cand_index) != 0, elapsed_time])
             print("running time:", elapsed_time, "(s)")
 
         f.close()
