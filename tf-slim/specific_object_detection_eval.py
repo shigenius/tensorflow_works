@@ -317,12 +317,15 @@ def eval(args):
                 hit_gtArea = hoge[gt_box[1]:gt_box[3], gt_box[0]:gt_box[2]]
                 recall = np.sum(hit_gtArea == 0) / hit_gtArea.size
 
-            else:
-                elapsed_time = time.time() - start_time
+                print("ious:", sum(ious) / len(ious), ious)
+                print("Average precision:", sum(ap) / len(ap), ap)
+                print("recall", recall)
 
-            print("ious:", sum(ious)/len(ious), ious)
-            print("Average precision:", sum(ap)/len(ap), ap)
-            print("recall", recall)
+            else: # 候補領域がない場合
+                elapsed_time = time.time() - start_time
+                print("ious:", [0])
+                print("Average precision:", [0])
+                print("recall", 0)
             print(elapsed_time, "(s)")
 
 
