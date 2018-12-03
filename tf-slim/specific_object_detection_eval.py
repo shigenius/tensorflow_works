@@ -241,7 +241,7 @@ def eval(args):
 
         restorer_s = tf.train.Saver(variables_to_restore_s)
 
-    comparison = tf.not_equal(tf.size(candidate_index), 0) # 候補領域がなければTrue
+    comparison = tf.not_equal(tf.size(candidate_index), 0) # 候補領域がなければFalse
     y = tf.cond(comparison, lambda: predict_labels, lambda: tf.constant([], dtype=tf.int64)) # 候補領域がなければ空tensorを返す
 
     # 使用するGPUメモリを80%までに制限
@@ -274,44 +274,42 @@ def eval(args):
         # iterative run
         for gt in data:# gt: [(path_str, label), [frame, center_x, center_y, size_x, size_y]
             input_image = np.array(Image.open(gt[0][0])) / 255
-
+            print(gt[0][0])
             start_time = time.time()
-            # cand_index, pred = sess.run([candidate_index, y], feed_dict={input_placeholder: input_image})
-            print(sess.run(comparison, feed_dict={input_placeholder: input_image}))
+            cand_index, pred = sess.run([candidate_index, y], feed_dict={input_placeholder: input_image})
             elapsed_time = time.time() - start_time
 
-            #
-            # coordinates = calc_coordinate_from_index(indices=cand_index, image_shape=input_image.shape, window_size=image_size, stride=stride)
-            #
-            #
-            # ious = []
-            # ap = []
-            # gt_box = (float(gt[1][1]) - float(gt[1][3]), float(gt[1][2]) - float(gt[1][4]), float(gt[1][1]) + float(gt[1][3]), float(gt[1][2]) + float(gt[1][4]))  # one box in one image :[lu_x, lu_y, rd_x, rd_y]
-            # gt_box = [int(i) for i in gt_box]
-            # hoge = np.zeros(shape=input_image.shape[0:2])
-            # hoge[gt_box[1]:gt_box[3], gt_box[0]:gt_box[2]] = 1 # gtの範囲を1にする
-            #
-            # for i, item in enumerate(coordinates):  # item: (i, (x, y), (window_size, window_size))
-            #     p_label = pred[i]
-            #     g_label = gt[0][1]
-            #     if p_label == g_label:
-            #         pred_box = (item[1][0], item[1][1], item[1][0]+item[2][0], item[1][1]+item[2][1])
-            #         iou, precision = calc_iou(pred_box, gt_box)
-            #         ious.append(iou)
-            #         ap.append(precision)
-            #
-            #         hoge[pred_box[1]:pred_box[3], pred_box[0]:pred_box[2]] = 0 # recallの計算に用いる
-            #     else:
-            #         ious.append(0)
-            #         ap.append(0)
-            #
-            # hit_gtArea = hoge[gt_box[1]:gt_box[3], gt_box[0]:gt_box[2]]
-            # recall = np.sum(hit_gtArea == 0) / hit_gtArea.size
-            #
-            # print("ious:", sum(ious)/len(ious), ious)
-            # print("Average precision:", sum(ap)/len(ap), ap)
-            # print("recall", recall)
-            # print(elapsed_time, "(s)")
+            coordinates = calc_coordinate_from_index(indices=cand_index, image_shape=input_image.shape, window_size=image_size, stride=stride)
+
+
+            ious = []
+            ap = []
+            gt_box = (float(gt[1][1]) - float(gt[1][3]), float(gt[1][2]) - float(gt[1][4]), float(gt[1][1]) + float(gt[1][3]), float(gt[1][2]) + float(gt[1][4]))  # one box in one image :[lu_x, lu_y, rd_x, rd_y]
+            gt_box = [int(i) for i in gt_box]
+            hoge = np.zeros(shape=input_image.shape[0:2])
+            hoge[gt_box[1]:gt_box[3], gt_box[0]:gt_box[2]] = 1 # gtの範囲を1にする
+
+            for i, item in enumerate(coordinates):  # item: (i, (x, y), (window_size, window_size))
+                p_label = pred[i]
+                g_label = gt[0][1]
+                if p_label == g_label:
+                    pred_box = (item[1][0], item[1][1], item[1][0]+item[2][0], item[1][1]+item[2][1])
+                    iou, precision = calc_iou(pred_box, gt_box)
+                    ious.append(iou)
+                    ap.append(precision)
+
+                    hoge[pred_box[1]:pred_box[3], pred_box[0]:pred_box[2]] = 0 # recallの計算に用いる
+                else:
+                    ious.append(0)
+                    ap.append(0)
+
+            hit_gtArea = hoge[gt_box[1]:gt_box[3], gt_box[0]:gt_box[2]]
+            recall = np.sum(hit_gtArea == 0) / hit_gtArea.size
+
+            print("ious:", sum(ious)/len(ious), ious)
+            print("Average precision:", sum(ap)/len(ap), ap)
+            print("recall", recall)
+            print(elapsed_time, "(s)")
 
 
             # # 中心点からの距離による評価書きかけ
