@@ -241,7 +241,7 @@ def eval(args):
 
         restorer_s = tf.train.Saver(variables_to_restore_s)
 
-    y = tf.cond(candidate_index != tf.constant([]), lambda: predict_labels, lambda: tf.constant([]))
+    y = tf.cond(tf.not_equal(candidate_index, tf.constant([])), lambda: predict_labels, lambda: tf.constant([])) # 候補領域がなければ空tensorを返す
 
     # 使用するGPUメモリを80%までに制限
     config = tf.ConfigProto(
