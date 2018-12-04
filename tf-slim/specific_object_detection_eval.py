@@ -271,6 +271,7 @@ def eval(args):
             f_ = [line.rstrip().split() for line in f]
 
         data = [[l, get_annotation(l[0])] for l in f_] # data: [[(path_str, label), [frame, center_x, center_y, size_x, size_y]],...]
+        data = [l for l in data if l[1] != None] # annotationを取得できなかった画像は飛ばす
 
         # log
         f = open(args.log, 'w')
