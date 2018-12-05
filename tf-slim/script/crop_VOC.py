@@ -58,12 +58,12 @@ if __name__ == '__main__':
     class_list = ['aeroplane','bicycle', 'bird', 'boat', 'bottle', 'bus', 'car', 'cat', 'chair', 'cow', 'diningtable',
                   'dog', 'horse', 'motorbike', 'person', 'pottedplant', 'sheep', 'sofa', 'train', 'tvmonitor']
     for class_name in class_list:
-        target_infos = [get_anno_info(xml, args.class_name) for xml in xmls if is_target_class(xml, args.class_name)]
+        target_infos = [get_anno_info(xml, class_name) for xml in xmls if is_target_class(xml, class_name)]
         print(target_infos)
 
         # prepare output dir
-        org_save_dir = os.path.join(args.output_dir_path, args.class_name)
-        crp_save_dir = os.path.join(args.output_dir_path, args.class_name+'_cropped')
+        org_save_dir = os.path.join(args.output_dir_path, class_name)
+        crp_save_dir = os.path.join(args.output_dir_path, class_name+'_cropped')
         os.makedirs(org_save_dir, exist_ok=True)
         os.makedirs(crp_save_dir, exist_ok=True)
 
@@ -91,7 +91,7 @@ if __name__ == '__main__':
                 w = bb['xmax'] - bb['xmin']
                 h = bb['ymax'] - bb['ymin']
                 writer.writerow((count, bb['xmin'] + w/2, bb['ymin'] + h/2, w, h))
-    
+
                 count += 1
 
 
