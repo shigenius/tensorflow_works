@@ -34,7 +34,7 @@ if __name__ == '__main__':
     imagenet_dataset_path = args.imagenet_dataset_path
 
     class_dir = [f.name for f in os.scandir(path=args.imagenet_dataset_path) if f.is_dir()]
-    print("imagent_dataset:", imagenet_dataset_path)
+    print("imagenet_dataset:", imagenet_dataset_path)
     print("specific_object_dataset:", target_list)
 
     # <specific_object_dataset>/negativeをcpする．(存在しない場合は作成)

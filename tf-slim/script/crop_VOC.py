@@ -3,6 +3,7 @@ import argparse
 import xml.etree.ElementTree as ET
 import cv2
 import shutil
+import csv
 
 def get_anno_info(xml_path, target_class):
     # 入力のxmlと対応するimage pathとsizeとobjectのBoundaryBoxのサイズを返す．
@@ -63,7 +64,12 @@ if __name__ == '__main__':
     os.makedirs(org_save_dir, exist_ok=True)
     os.makedirs(crp_save_dir, exist_ok=True)
 
-    count = 0
+    # prepare logs
+    log = open(os.path.join(crp_save_dir, "subwindow_log.txt"), 'w')
+    writer = csv.writer(log, lineterminator='\n')
+    writer.writerow(("id", "center_x", "center_y", "size_x", "size_y"))  # write header
+
+    count = 1
     # crop boundary box
     for i in target_infos:
         image_path = os.path.join(os.path.join(os.path.split(os.path.split(i['xmlpath'])[0])[0], 'JPEGImages'), i['filename']) # もうちょっといい書き方を
@@ -78,16 +84,14 @@ if __name__ == '__main__':
             crop = image[bb['ymin']:bb['ymax'], bb['xmin']:bb['xmax'], :]
             shutil.copyfile(image_path, os.path.join(org_save_dir, 'image_'+idx+'.jpg'))
             cv2.imwrite(os.path.join(crp_save_dir, 'image_'+idx+'.jpg'), crop)
+
+            w = bb['xmax'] - bb['xmin']
+            h = bb['ymin'] - bb['ymax']
+            writer.writerow((count, bb['xmin'] + w/2, bb['ymin'] + h/2, w, h))
+
             count += 1
+
+
 
             # cv2.imshow("hoge", crop)
             # cv2.waitKey(0)
-
-
-
-
-
-
-
-
-
