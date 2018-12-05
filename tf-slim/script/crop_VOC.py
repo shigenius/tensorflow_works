@@ -86,7 +86,7 @@ if __name__ == '__main__':
             cv2.imwrite(os.path.join(crp_save_dir, 'image_'+idx+'.jpg'), crop)
 
             w = bb['xmax'] - bb['xmin']
-            h = bb['ymin'] - bb['ymax']
+            h = bb['ymax'] - bb['ymin']
             writer.writerow((count, bb['xmin'] + w/2, bb['ymin'] + h/2, w, h))
 
             count += 1
