@@ -18,10 +18,10 @@ def get_anno_info(xml_path, target_class):
                   'h': int(image_size.find('height').text),
                   'd': int(image_size.find('depth').text)}}
 
-    d['bbs'] = [{"xmin": int(obj.find('bndbox').find('xmin').text),
-                 "xmax": int(obj.find('bndbox').find('xmax').text),
-                 "ymin": int(obj.find('bndbox').find('ymin').text),
-                 "ymax": int(obj.find('bndbox').find('ymax').text)} for obj in root.findall('object') if obj.find('name').text == target_class]
+    d['bbs'] = [{"xmin": int(float(obj.find('bndbox').find('xmin').text)),
+                 "xmax": int(float(obj.find('bndbox').find('xmax').text)),
+                 "ymin": int(float(obj.find('bndbox').find('ymin').text)),
+                 "ymax": int(float(obj.find('bndbox').find('ymax').text))} for obj in root.findall('object') if obj.find('name').text == target_class]
     return d
 
 def is_target_class(xml_path, target_class):
