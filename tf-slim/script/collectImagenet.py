@@ -25,7 +25,7 @@ parser.add_argument('--offset_class',   type=int,   default=-1)
 args = parser.parse_args()
 
 dict={}
-for line in open('words.txt', 'r'):
+for line in open(os.path.join(args.data_dir, 'words.txt'), 'r'):
     line=line.split('\t')
     head = line[0]
     name = line[1].split(',')[0]
