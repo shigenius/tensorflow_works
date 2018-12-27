@@ -68,11 +68,12 @@ def shigeNet_v2(cropped_images, original_images, num_classes_s, num_classes_g, k
         with slim.arg_scope([slim.batch_norm, slim.dropout], is_training=is_training):
             # Extract features
             with slim.arg_scope(archs[extractor_name]['arg_scope']()):
-                logits_c, end_points_c = archs[extractor_name]['fn'](cropped_images, num_classes=num_classes_g, is_training=True, reuse=None)
-                logits_o, end_points_o = archs[extractor_name]['fn'](original_images, num_classes=num_classes_g, is_training=True, reuse=None)
-
-                feature_c = end_points_c[archs[extractor_name]['extract_point']]
-                feature_o = end_points_o[archs[extractor_name]['extract_point']]
+                with tf.variable_scope(scope, 'orig') as scope:
+                    logits_o, end_points_o = archs[extractor_name]['fn'](original_images, num_classes=num_classes_g, is_training=True, reuse=None)
+                    feature_o = end_points_o[archs[extractor_name]['extract_point']]
+                with tf.variable_scope(scope, 'crop') as scope:
+                    logits_c, end_points_c = archs[extractor_name]['fn'](cropped_images, num_classes=num_classes_g, is_training=True, reuse=None)
+                    feature_c = end_points_c[archs[extractor_name]['extract_point']]
 
                 # feature map summary
                 # Tensorを[-1,7,7,ch]から[-1,ch,7,7]と順列変換し、[-1]と[ch]をマージしてimage出力
