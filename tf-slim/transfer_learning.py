@@ -61,24 +61,24 @@ def shigeNet_v1(cropped_images, original_images, num_classes_s, num_classes_g, k
         return end_points
 
 
-def shigeNet_v2(cropped_images, original_images, num_classes_s, num_classes_g, keep_prob=1.0, is_training=True, scope='shigeNet_v1', reuse=None, extractor_name='inception_v4'):
+def shigeNet_v2(cropped_images, original_images, num_classes_s, num_classes_g, keep_prob=1.0, is_training=True, scope='shigeNet_v2', reuse=None, extractor_name='vgg_16'):
     # vgg16のfreezeを解く．vggもトレーニングする．
     end_points = {}
-    with tf.variable_scope(scope, 'shigeNet_v1', reuse=reuse) as scope:
+    with tf.variable_scope(scope, 'shigeNet_v2', reuse=reuse) as scope:
         with slim.arg_scope([slim.batch_norm, slim.dropout], is_training=is_training):
             # Extract features
             with slim.arg_scope(archs[extractor_name]['arg_scope']()):
-                with tf.variable_scope(scope, 'orig') as scope:
+                with tf.variable_scope('orig') as scope:
                     logits_o, end_points_o = archs[extractor_name]['fn'](original_images, num_classes=num_classes_g, is_training=True, reuse=None)
-                    feature_o = end_points_o[archs[extractor_name]['extract_point']]
-                with tf.variable_scope(scope, 'crop') as scope:
+                    feature_o = end_points_o["shigeNet_v2/orig/vgg_16/fc7"]
+                with tf.variable_scope('crop') as scope:
                     logits_c, end_points_c = archs[extractor_name]['fn'](cropped_images, num_classes=num_classes_g, is_training=True, reuse=None)
-                    feature_c = end_points_c[archs[extractor_name]['extract_point']]
+                    feature_c = end_points_c["shigeNet_v2/crop/vgg_16/fc7"]
 
                 # feature map summary
                 # Tensorを[-1,7,7,ch]から[-1,ch,7,7]と順列変換し、[-1]と[ch]をマージしてimage出力
-                tf.summary.image('shigeNet_v1/vgg_16/conv5/conv5_3_c', tf.reshape(tf.transpose(end_points_c['shigeNet_v1/vgg_16/conv5/conv5_3'], perm=[0, 3, 1, 2]), [-1, 14, 14, 1]), 10)
-                tf.summary.image('shigeNet_v1/vgg_16/conv5/conv5_3_o', tf.reshape(tf.transpose(end_points_o['shigeNet_v1/vgg_16/conv5/conv5_3'], perm=[0, 3, 1, 2]), [-1, 14, 14, 1]), 10)
+                tf.summary.image('shigeNet_v2/vgg_16/conv5/conv5_3_c', tf.reshape(tf.transpose(end_points_c['shigeNet_v2/crop/vgg_16/conv5/conv5_3'], perm=[0, 3, 1, 2]), [-1, 14, 14, 1]), 10)
+                tf.summary.image('shigeNet_v2/vgg_16/conv5/conv5_3_o', tf.reshape(tf.transpose(end_points_o['shigeNet_v2/orig/vgg_16/conv5/conv5_3'], perm=[0, 3, 1, 2]), [-1, 14, 14, 1]), 10)
 
             # Concat!
             with tf.variable_scope('Concat') as scope:
@@ -135,8 +135,10 @@ def train(args):
 
     # Get restored vars name in checkpoint
     def name_in_checkpoint(var):
-        if "shigeNet_v1" in var.op.name:
-            return var.op.name.replace("shigeNet_v1/", "")
+        if "shigeNet_v2/orig" in var.op.name:
+            return var.op.name.replace("shigeNet_v2/orig/", "")
+        if "shigeNet_v2/crop" in var.op.name:
+            return var.op.name.replace("shigeNet_v2/crop/", "")
 
     # Get vars restored
     variables_to_restore = slim.get_variables_to_restore()
@@ -163,7 +165,14 @@ def train(args):
     dataset = TwoInputDataset(train_c=args.train_c, train_o=args.train_o, test_c=args.test_c, test_o=args.test_o,
                               num_classes=num_classes_s, image_size=image_size)
 
-    with tf.Session() as sess:
+    gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.9)
+
+    config = tf.ConfigProto(
+        gpu_options=gpu_options,
+        log_device_placement=False,
+    )
+
+    with tf.Session(config=config) as sess:
         sess.run(tf.global_variables_initializer())
         restorer.restore(sess, model_path)
         print("Model restored from:", model_path)
