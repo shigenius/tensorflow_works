@@ -33,7 +33,7 @@ def is_target_class(xml_path, target_class):
             if obj_name.text == target_class:
                 return True
 
-    return False
+    return Falsew
 
 if __name__ == '__main__':
     # args parser

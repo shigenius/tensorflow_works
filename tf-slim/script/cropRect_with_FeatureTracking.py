@@ -33,8 +33,10 @@ class Motion:
         self.features = None # 特徴点
         self.status = None # 特徴点のステータス
 
-        self.rectsize_w = args.width
-        self.rectsize_h = args.height
+        self.resize_rate = 0.5
+
+        self.rectsize_w = int(args.width * self.resize_rate)
+        self.rectsize_h = int(args.height * self.resize_rate)
 
         # 特徴点の最大数
         self.MAX_FEATURE_NUM = 500
@@ -43,8 +45,12 @@ class Motion:
         self.interval = 1
         self.currennt_interval = self.interval
 
+
+
         # 初期フレームをread
         self.frame = cv2.imread(self.target_files[0])
+        self.orig_size = self.frame.shape
+        self.frame = cv2.resize(self.frame, ((int(self.orig_size[1] * self.resize_rate), int(self.orig_size[0] * self.resize_rate))))
         self.gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
         cv2.imshow("motion", self.frame)
         self.waitkeyControl(0)
@@ -57,7 +63,7 @@ class Motion:
         # main loop
         for i, path in enumerate(self.target_files):
             self.gray_prev = np.copy(self.gray)
-            self.frame = cv2.imread(path)
+            self.frame = cv2.resize(cv2.imread(path), ((int(self.orig_size[1]* self.resize_rate), int(self.orig_size[0]* self.resize_rate))))
             self.gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
 
             screen_w = self.frame.shape[1]
@@ -76,8 +82,8 @@ class Motion:
                 if self.features is not None:
                     # フレームに有効な特徴点を描画
                     for feature in self.features:
-                        rect_x = int(feature[0][0] - self.rectsize_w / 2) # 矩形の始点(ひだりうえ)のx座標
-                        rect_y = int(feature[0][1] - self.rectsize_h / 2)
+                        rect_x = int((feature[0][0] - self.rectsize_w / 2))  # 矩形の始点(ひだりうえ)のx座標
+                        rect_y = int((feature[0][1] - self.rectsize_h / 2))
 
                         # 矩形がscreenからはみ出ている場合にzero-paddingを行う．
                         if (rect_x < 0) or (rect_y < 0) or ((rect_x + self.rectsize_w) > screen_w) or ((rect_y + self.rectsize_h) > screen_h):
@@ -87,11 +93,16 @@ class Motion:
                             crop = bg[self.rectsize_h+rect_y:self.rectsize_h*2+rect_y,
                                       self.rectsize_w+rect_x:self.rectsize_w*2+rect_x]
                         else:
+                            print(self.frame.shape)
+                            print(rect_y, rect_x)
+                            print(self.rectsize_h, self.rectsize_w)
                             crop = self.frame[rect_y:rect_y+self.rectsize_h, rect_x:rect_x+self.rectsize_w]
 
                         print(i + args.startidx, path)
+                        crop = cv2.resize(crop, (int(crop.shape[1] / self.resize_rate),
+                                                 int(crop.shape[0] / self.resize_rate)))  # resize to orig size
                         cv2.imwrite(os.path.join(self.output_path, "image_" + '%04d' % (i+args.startidx) + ".jpg"), crop)
-                        writer.writerow((i+args.startidx, feature[0][0], feature[0][1], self.rectsize_w, self.rectsize_h))
+                        writer.writerow((i+args.startidx, feature[0][0] / self.resize_rate, feature[0][1] / self.resize_rate, self.rectsize_w / self.resize_rate, self.rectsize_h / self.resize_rate))
                         cv2.circle(self.frame, (feature[0][0], feature[0][1]), 4, (15, 241, 255), -1, 8, 0)
                         cv2.rectangle(self.frame, (rect_x, rect_y), (rect_x + self.rectsize_w, rect_y + self.rectsize_h), (255, 0, 0,), 3 , 4)
                 else:
