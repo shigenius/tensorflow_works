@@ -27,7 +27,7 @@ class TwoInputDataset(Dataset):
                 for l in f_:
                     tmp = [0]*num_classes
                     tmp[int(l[1])] = 1
-                    labels.append(tmp) 
+                    labels.append(tmp)
 
                 return image_paths, labels
 
@@ -147,7 +147,7 @@ class TwoInputDataset(Dataset):
 
             imageA = cv2.imread(pathA)
             imageB = cv2.imread(pathB)
-            imageA, imageB = distort([imageA, imageB], flag='train')
+            imageA, imageB = distort([imageA, imageB], flag=mdoe)
 
             imageA = cv2.resize(imageA, (self.image_size, self.image_size))
             imageB = cv2.resize(imageB, (self.image_size, self.image_size))
@@ -210,7 +210,7 @@ class TwoInputDataset(Dataset):
     def getTestData(self):
         # testdataを全部とってくる
         # チェックする
- 
+
         testA_images = []
         testB_images = []
 

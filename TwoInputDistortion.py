@@ -6,6 +6,10 @@ from scipy.ndimage.interpolation import rotate
 
 import tensorflow as tf
 
+def rand(a=0, b=1):
+    # a以上b未満の乱数を返す
+    return np.random.rand()*(b-a) + a
+
 class Distortion():
     def __init__(self, gamma=1.5):
         # create LUT for gamma
@@ -186,15 +190,50 @@ class Distortion():
 
         return dsts
 
-    def distort(self, images=[], flag='train', p=0.5):
+    def HSV_augment(self, npimgs, hue=.1, sat=1.5, val=1.5):
+        dsts = []
+
+        hue = rand(-hue, hue) * 179
+        sat = rand(1, sat) if rand() < .5 else 1 / rand(1, sat)
+        val = rand(1, val) if rand() < .5 else 1 / rand(1, val)
+        for img in npimgs:
+            # HSV空間に変換
+            img_hsv = cv2.cvtColor(img.astype(np.uint8), cv2.COLOR_BGR2HSV)
+            H = img_hsv[:, :, 0].astype(np.float32)
+            S = img_hsv[:, :, 1].astype(np.float32)
+            V = img_hsv[:, :, 2].astype(np.float32)
+
+            # Hue augment
+            H += hue
+            np.clip(H, a_min=0, a_max=179, out=H)
+
+            # Saturation augment
+            S *= sat
+            np.clip(S, a_min=0, a_max=255, out=S)
+
+            # Value augment
+            V *= val
+            np.clip(V, a_min=0, a_max=255, out=V)
+
+            # BGR空間に戻す
+            img_hsv[:, :, 0] = H.astype(np.uint8)
+            img_hsv[:, :, 1] = S.astype(np.uint8)
+            img_hsv[:, :, 2] = V.astype(np.uint8)
+            dst = cv2.cvtColor(img_hsv, cv2.COLOR_HSV2BGR)
+            dsts.append(dst)
+
+        return dsts
+
+
+    def distort(self, images=[], flag='train', p=0.8):
         # augmentation
         if flag == 'train':
-            if np.random.rand() < p:
-                images = self.random_contrast(images)
+            # if np.random.rand() < p:
+            #     images = self.random_contrast(images)
             if np.random.rand() < p:
                 images = self.gaussian_noise(images)
-            if np.random.rand() < p:
-                images = self.random_brightness(images)
+            # if np.random.rand() < p:
+            #     images = self.random_brightness(images)
 
             # if np.random.rand() < p:
             #     images[0] = self.random_noise(images[0], num_noise=50)
@@ -210,6 +249,8 @@ class Distortion():
             if np.random.rand() < p:
                 images = self.shift_parallel_translation(images, r=(-0.1, 0.1))
 
+            if np.random.rand() < p:
+                images = self.HSV_augment(images, hue=.1, sat=1.5, val=1.5)
 
         # filtering
         # images = self.gamma(images, gamma=2.0) # gamma=2 暗部が持ち上がる
