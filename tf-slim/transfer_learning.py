@@ -242,7 +242,8 @@ def shigeNet_v6(cropped_images, original_images, num_classes_s, num_classes_g, k
                                                                      is_training=False, reuse=None)
                 logits_o, end_points_o = archs[extractor_name]['fn'](original_images, num_classes=num_classes_g,
                                                                      is_training=False, reuse=True)
-                feature_c, feature_o = []
+                feature_c = []
+                feature_o = []
                 feature_c[0] = end_points_c['shigeNet_v6/vgg_16/pool1'] # shape=(?, 112, 112, 64)
                 feature_c[1] = end_points_c['shigeNet_v6/vgg_16/pool2'] # shape=(?, 56, 56, 128)
                 feature_c[2] = end_points_c['shigeNet_v6/vgg_16/pool3']  # shape=(?, 28, 28, 256)
