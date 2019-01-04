@@ -274,7 +274,7 @@ def shigeNet_v6(cropped_images, original_images, num_classes_s, num_classes_g, k
                 concated_feature = tf.concat([tf.concat(feature_c, 3), tf.concat(feature_o, 3)], 3)  # (?, x, y, z)
                 # concated_feature = tf.concat([tf.layers.Flatten()(feature_c), tf.layers.Flatten()(feature_o)],
                 #                              1)  # (?, x, y, z)
-                concated_feature = slim.conv2d(concated_feature, 2944, [7, 7], padding=fc_conv_padding, scope='conv_concat')
+                concated_feature = slim.conv2d(concated_feature, 2944, [7, 7], padding='VALID', scope='conv_concat')
                 print(concated_feature)
 
             with tf.variable_scope('Logits'):
