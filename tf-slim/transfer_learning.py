@@ -231,7 +231,8 @@ def shigeNet_v5(cropped_images, original_images, num_classes_s, num_classes_g, k
 
 def shigeNet_v6(cropped_images, original_images, num_classes_s, num_classes_g, keep_prob=1.0, is_training=True,
                 scope='shigeNet_v6', reuse=None, extractor_name='inception_v4'):
-    # extratorのすべてのconv層の出力を用いる
+    # extratorのすべてのconv層の出力を用いる．
+    # それぞれのconv層をresizeしたあとに
     pool_size = 7 # ここは色々ためそう
     end_points = {}
     with tf.variable_scope(scope, 'shigeNet_v6', reuse=reuse) as scope:
@@ -274,8 +275,9 @@ def shigeNet_v6(cropped_images, original_images, num_classes_s, num_classes_g, k
                 concated_feature = tf.concat([tf.concat(feature_c, 3), tf.concat(feature_o, 3)], 3)  # (?, x, y, z)
                 # concated_feature = tf.concat([tf.layers.Flatten()(feature_c), tf.layers.Flatten()(feature_o)],
                 #                              1)  # (?, x, y, z)
-                concated_feature = tf.layers.Flatten()(slim.conv2d(concated_feature, 2944, [7, 7], padding='VALID', scope='conv_concat'))
-                print(concated_feature)
+                # concated_feature = tf.layers.Flatten()(slim.conv2d(concated_feature, 2944, [7, 7], padding='VALID', scope='conv_concat'))
+                concated_feature = tf.layers.Flatten()(slim.max_pool2d(concated_feature, [7, 7], scope='pool_concat'))
+                # print(concated_feature)
 
             with tf.variable_scope('Logits'):
                 with slim.arg_scope([slim.fully_connected],
