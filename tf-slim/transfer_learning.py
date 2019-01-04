@@ -277,7 +277,7 @@ def shigeNet_v6(cropped_images, original_images, num_classes_s, num_classes_g, k
                 #                              1)  # (?, x, y, z)
                 # concated_feature = tf.layers.Flatten()(slim.conv2d(concated_feature, 2944, [7, 7], padding='VALID', scope='conv_concat'))
                 concated_feature = tf.layers.Flatten()(slim.max_pool2d(concated_feature, [7, 7], scope='pool_concat'))
-                # print(concated_feature)
+                print(concated_feature)
 
             with tf.variable_scope('Logits'):
                 with slim.arg_scope([slim.fully_connected],
@@ -441,6 +441,11 @@ def train(args):
                 loss_list = []
                 for i in range(num_test_batch - 1):
                     test_cropped_batch, test_orig_batch, test_labels = dataset.getTestData(args.batch_size, i)
+                    print(test_cropped_batch["path"], test_cropped_batch['batch'].shape)
+                    print(test_orig_batch["path"], test_orig_batch["batch"].shape)
+                    print(test_cropped["batch"])
+                    print(test_orig_batch["batch"])
+                    cv2.imshow("test crop", list(test_cropped_batch["batch"])[0])
                     summary_test, test_accuracy, test_loss = sess.run([merged, accuracy, loss],
                                                                       feed_dict={cropped_images_placeholder: test_cropped_batch['batch'],
                                                                                  original_images_placeholder: test_orig_batch['batch'],
