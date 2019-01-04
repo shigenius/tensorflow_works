@@ -203,9 +203,9 @@ def shigeNet_v5(cropped_images, original_images, num_classes_s, num_classes_g, k
                 tf.summary.image('shigeNet_v5/vgg_16/conv5/conv5_3_o', tf.reshape(tf.transpose(end_points_o['shigeNet_v5/vgg_16/conv5/conv5_3'], perm=[0, 3, 1, 2]), [-1, 14, 14, 1]), 10)
 
             with tf.variable_scope('ext_conv'):
-                feature_c = slim.conv2d(feature_c, 512, [3, 3], scope='conv_1_c')
+                feature_c = slim.repeat(feature_c, 2, slim.conv2d, 512, [3, 3], scope='conv1_c')
                 feature_c = slim.max_pool2d(feature_c, [2, 2], scope='pool_1_c')
-                feature_o = slim.conv2d(feature_o, 512, [3, 3], scope='conv_1_o')
+                feature_o = slim.repeat(feature_o, 2, slim.conv2d, 512, [3, 3], scope='conv1_o')
                 feature_o = slim.max_pool2d(feature_o, [2, 2], scope='pool_1_o')
 
             with tf.variable_scope('Concat') as scope:
@@ -230,10 +230,10 @@ def shigeNet_v5(cropped_images, original_images, num_classes_s, num_classes_g, k
         return end_points
 
 def shigeNet_v6(cropped_images, original_images, num_classes_s, num_classes_g, keep_prob=1.0, is_training=True,
-                scope='shigeNet_v5', reuse=None, extractor_name='inception_v4'):
+                scope='shigeNet_v6', reuse=None, extractor_name='inception_v4'):
     # extratorのすべてのconv層の出力を用いる
     end_points = {}
-    with tf.variable_scope(scope, 'shigeNet_v5', reuse=reuse) as scope:
+    with tf.variable_scope(scope, 'shigeNet_v6', reuse=reuse) as scope:
         with slim.arg_scope([slim.batch_norm, slim.dropout], is_training=is_training):
             # Extract features
             with slim.arg_scope(archs[extractor_name]['arg_scope']()):
@@ -241,15 +241,15 @@ def shigeNet_v6(cropped_images, original_images, num_classes_s, num_classes_g, k
                                                                      is_training=False, reuse=None)
                 logits_o, end_points_o = archs[extractor_name]['fn'](original_images, num_classes=num_classes_g,
                                                                      is_training=False, reuse=True)
-                feature_c = end_points_c['shigeNet_v5/vgg_16/pool5']
-                feature_o = end_points_o['shigeNet_v5/vgg_16_1/pool5']
+                feature_c = end_points_c['shigeNet_v6/vgg_16/pool5']
+                feature_o = end_points_o['shigeNet_v6/vgg_16_1/pool5']
                 # feature map summary
                 # Tensorを[-1,7,7,ch]から[-1,ch,7,7]と順列変換し、[-1]と[ch]をマージしてimage出力
-                tf.summary.image('shigeNet_v5/vgg_16/conv5/conv5_3_c', tf.reshape(
-                    tf.transpose(end_points_c['shigeNet_v5/vgg_16/conv5/conv5_3'], perm=[0, 3, 1, 2]),
+                tf.summary.image('shigeNet_v6/vgg_16/conv5/conv5_3_c', tf.reshape(
+                    tf.transpose(end_points_c['shigeNet_v6/vgg_16/conv5/conv5_3'], perm=[0, 3, 1, 2]),
                     [-1, 14, 14, 1]), 10)
-                tf.summary.image('shigeNet_v5/vgg_16/conv5/conv5_3_o', tf.reshape(
-                    tf.transpose(end_points_o['shigeNet_v5/vgg_16/conv5/conv5_3'], perm=[0, 3, 1, 2]),
+                tf.summary.image('shigeNet_v6/vgg_16/conv5/conv5_3_o', tf.reshape(
+                    tf.transpose(end_points_o['shigeNet_v6/vgg_16/conv5/conv5_3'], perm=[0, 3, 1, 2]),
                     [-1, 14, 14, 1]), 10)
 
             # Concat!
