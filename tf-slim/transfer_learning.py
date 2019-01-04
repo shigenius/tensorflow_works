@@ -416,12 +416,10 @@ def train(args):
                 cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, i)
 
                 # debug
-                print(cropped_batch["path"], cropped_batch['batch'].shape)
-                print(orig_batch["path"], orig_batch["batch"].shape)
-                print(cropped_batch["batch"])
-                print(orig_batch["batch"])
-                cv2.imshow("test crop", list(cropped_batch["batch"])[0])
-                cv2.waitKey(0)
+                print(cropped_batch["path"])
+                print(orig_batch["path"])
+                # cv2.imshow("input crop", list(cropped_batch["batch"])[0])
+                # cv2.waitKey(0)
 
                 sess.run(train_step,
                          feed_dict={cropped_images_placeholder: cropped_batch['batch'],
