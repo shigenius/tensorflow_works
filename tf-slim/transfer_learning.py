@@ -232,6 +232,7 @@ def shigeNet_v5(cropped_images, original_images, num_classes_s, num_classes_g, k
 def shigeNet_v6(cropped_images, original_images, num_classes_s, num_classes_g, keep_prob=1.0, is_training=True,
                 scope='shigeNet_v6', reuse=None, extractor_name='inception_v4'):
     # extratorのすべてのconv層の出力を用いる
+    pool_size = 7 # ここは色々ためそう
     end_points = {}
     with tf.variable_scope(scope, 'shigeNet_v6', reuse=reuse) as scope:
         with slim.arg_scope([slim.batch_norm, slim.dropout], is_training=is_training):
@@ -241,21 +242,38 @@ def shigeNet_v6(cropped_images, original_images, num_classes_s, num_classes_g, k
                                                                      is_training=False, reuse=None)
                 logits_o, end_points_o = archs[extractor_name]['fn'](original_images, num_classes=num_classes_g,
                                                                      is_training=False, reuse=True)
-                feature_c = end_points_c['shigeNet_v6/vgg_16/pool5']
-                feature_o = end_points_o['shigeNet_v6/vgg_16_1/pool5']
-                # feature map summary
-                # Tensorを[-1,7,7,ch]から[-1,ch,7,7]と順列変換し、[-1]と[ch]をマージしてimage出力
-                tf.summary.image('shigeNet_v6/vgg_16/conv5/conv5_3_c', tf.reshape(
-                    tf.transpose(end_points_c['shigeNet_v6/vgg_16/conv5/conv5_3'], perm=[0, 3, 1, 2]),
-                    [-1, 14, 14, 1]), 10)
-                tf.summary.image('shigeNet_v6/vgg_16/conv5/conv5_3_o', tf.reshape(
-                    tf.transpose(end_points_o['shigeNet_v6/vgg_16/conv5/conv5_3'], perm=[0, 3, 1, 2]),
-                    [-1, 14, 14, 1]), 10)
+                feature_c[0] = end_points_c['shigeNet_v1/vgg_16/pool1'] # shape=(?, 112, 112, 64)
+                feature_c[1] = end_points_c['shigeNet_v1/vgg_16/pool2'] # shape=(?, 56, 56, 128)
+                feature_c[2] = end_points_c['shigeNet_v1/vgg_16/pool3']  # shape=(?, 28, 28, 256)
+                feature_c[3] = end_points_c['shigeNet_v1/vgg_16/pool4']  # shape=(?, 14, 14, 512)
+                feature_c[4] = end_points_c['shigeNet_v1/vgg_16/pool5']  # shape=(?, 7, 7, 512)
+
+                feature_o[0] = end_points_o['shigeNet_v1/vgg_16/pool1']  # shape=(?, 112, 112, 64)
+                feature_o[1] = end_points_o['shigeNet_v1/vgg_16/pool2']  # shape=(?, 56, 56, 128)
+                feature_o[2] = end_points_o['shigeNet_v1/vgg_16/pool3']  # shape=(?, 28, 28, 256)
+                feature_o[3] = end_points_o['shigeNet_v1/vgg_16/pool4']  # shape=(?, 14, 14, 512)
+                feature_o[4] = end_points_o['shigeNet_v1/vgg_16/pool5']  # shape=(?, 7, 7, 512)
+
+                # サイズを揃える
+                feature_c[0] = tf.image.resize_images(feature_c[0], (pool_size, pool_size)) # ここpoolで代用してもいいかも
+                feature_c[1] = tf.image.resize_images(feature_c[1], (pool_size, pool_size))
+                feature_c[2] = tf.image.resize_images(feature_c[2], (pool_size, pool_size))
+                feature_c[3] = tf.image.resize_images(feature_c[3], (pool_size, pool_size))
+                feature_c[4] = tf.image.resize_images(feature_c[4], (pool_size, pool_size))
+
+                feature_o[0] = tf.image.resize_images(feature_o[0], (pool_size, pool_size))
+                feature_o[1] = tf.image.resize_images(feature_o[1], (pool_size, pool_size))
+                feature_o[2] = tf.image.resize_images(feature_o[2], (pool_size, pool_size))
+                feature_o[3] = tf.image.resize_images(feature_o[3], (pool_size, pool_size))
+                feature_o[4] = tf.image.resize_images(feature_o[4], (pool_size, pool_size))
 
             # Concat!
             with tf.variable_scope('Concat') as scope:
-                concated_feature = tf.concat([tf.layers.Flatten()(feature_c), tf.layers.Flatten()(feature_o)],
-                                             1)  # (?, x, y, z)
+                concated_feature = tf.concat([tf.concat(feature_c, 3), tf.concat(feature_o, 3)])  # (?, x, y, z)
+                # concated_feature = tf.concat([tf.layers.Flatten()(feature_c), tf.layers.Flatten()(feature_o)],
+                #                              1)  # (?, x, y, z)
+                # concated_feature = slim.conv2d(concated_feature, 4096, [7, 7], padding=fc_conv_padding, scope='fc6')
+                print(concated_feature)
 
             with tf.variable_scope('Logits'):
                 with slim.arg_scope([slim.fully_connected],
