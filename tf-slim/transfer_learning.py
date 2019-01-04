@@ -13,6 +13,8 @@ from tensorflow.contrib.layers.python.layers.layers import batch_norm
 from nets.inception_v4 import inception_v4, inception_v4_arg_scope
 from nets.vgg import vgg_16, vgg_arg_scope
 
+import cs2
+
 archs = {
     'inception_v4': {'fn': inception_v4, 'arg_scope': inception_v4_arg_scope, 'extract_point': 'PreLogitsFlatten'},
     # 'vgg_16': {'fn': vgg_16, 'arg_scope': vgg_arg_scope, 'extract_point': 'shigeNet_v1/vgg_16/fc7'}# shape=(?, 14, 14, 512) dtype=float32
@@ -420,7 +422,7 @@ def train(args):
                 print(orig_batch["batch"])
                 cv2.imshow("test crop", list(cropped_batch["batch"])[0])
                 cv2.waitKey(0)
-                
+
                 sess.run(train_step,
                          feed_dict={cropped_images_placeholder: cropped_batch['batch'],
                                     original_images_placeholder: orig_batch['batch'],
