@@ -441,11 +441,15 @@ def train(args):
                 loss_list = []
                 for i in range(num_test_batch - 1):
                     test_cropped_batch, test_orig_batch, test_labels = dataset.getTestData(args.batch_size, i)
+
+                    # debug
                     print(test_cropped_batch["path"], test_cropped_batch['batch'].shape)
                     print(test_orig_batch["path"], test_orig_batch["batch"].shape)
                     print(test_cropped["batch"])
                     print(test_orig_batch["batch"])
                     cv2.imshow("test crop", list(test_cropped_batch["batch"])[0])
+                    cv2.waitKey(0)
+
                     summary_test, test_accuracy, test_loss = sess.run([merged, accuracy, loss],
                                                                       feed_dict={cropped_images_placeholder: test_cropped_batch['batch'],
                                                                                  original_images_placeholder: test_orig_batch['batch'],
