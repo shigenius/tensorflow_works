@@ -250,11 +250,11 @@ def shigeNet_v6(cropped_images, original_images, num_classes_s, num_classes_g, k
                 feature_c.append(end_points_c['shigeNet_v6/vgg_16/pool4'])  # shape=(?, 14, 14, 512)
                 feature_c.append(end_points_c['shigeNet_v6/vgg_16/pool5'])  # shape=(?, 7, 7, 512)
 
-                feature_o.append(end_points_o['shigeNet_v6/vgg_16/pool1'])  # shape=(?, 112, 112, 64)
-                feature_o.append(end_points_o['shigeNet_v6/vgg_16/pool2'])  # shape=(?, 56, 56, 128)
-                feature_o.append(end_points_o['shigeNet_v6/vgg_16/pool3'])  # shape=(?, 28, 28, 256)
-                feature_o.append(end_points_o['shigeNet_v6/vgg_16/pool4'])  # shape=(?, 14, 14, 512)
-                feature_o.append(end_points_o['shigeNet_v6/vgg_16/pool5'])  # shape=(?, 7, 7, 512)
+                feature_o.append(end_points_o['shigeNet_v6/vgg_16_1/pool1'])  # shape=(?, 112, 112, 64)
+                feature_o.append(end_points_o['shigeNet_v6/vgg_16_1/pool2'])  # shape=(?, 56, 56, 128)
+                feature_o.append(end_points_o['shigeNet_v6/vgg_16_1/pool3'])  # shape=(?, 28, 28, 256)
+                feature_o.append(end_points_o['shigeNet_v6/vgg_16_1/pool4'])  # shape=(?, 14, 14, 512)
+                feature_o.append(end_points_o['shigeNet_v6/vgg_16_1/pool5'])  # shape=(?, 7, 7, 512)
 
                 # サイズを揃える
                 feature_c[0] = tf.image.resize_images(feature_c[0], (pool_size, pool_size)) # ここpoolで代用してもいいかも
