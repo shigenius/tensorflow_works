@@ -126,8 +126,10 @@ class TwoInputDataset():
 
             # imageA, imageB = self.distortion.distort(images=[imageA, imageB], flag=mode, p=1.0)
 
-            imageA = cv2.resize(padding(imageA), (self.image_size, self.image_size))
-            imageB = cv2.resize(padding(imageB), (self.image_size, self.image_size))
+            #imageA = cv2.resize(padding(imageA), (self.image_size, self.image_size))
+            imageA = cv2.resize(imageA, (self.image_size, self.image_size))
+            #imageB = cv2.resize(padding(imageB), (self.image_size, self.image_size))
+            imageB = cv2.resize(imageB, (self.image_size, self.image_size))
 
             # batchA.append(imageA.astype(np.float32)/255.0)
             # batchB.append(imageB.astype(np.float32)/255.0)
