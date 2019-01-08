@@ -301,8 +301,9 @@ def shigeNet_v6(cropped_images, original_images, num_classes_s, num_classes_g, k
 
         return end_points
 
-def calc_loss(output, supervisor_labels_placeholder):
-  cross_entropy = -tf.reduce_sum(supervisor_labels_placeholder * tf.log(output))
+def calc_loss(output, supervisor_t):
+  # cross_entropy = -tf.reduce_sum(supervisor_t * tf.log(output))
+  cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=output, labels=supervisor_t))
   return cross_entropy
 
 def training(loss):
@@ -335,23 +336,23 @@ def train(args):
     # Define placeholders
     with tf.name_scope('input'):
         with tf.name_scope('cropped_images'):
-            cropped_images_placeholder = tf.placeholder(dtype="float32", shape=(None, image_size,  image_size,  3))
+            x_c = tf.placeholder(dtype="float32", shape=(None, image_size,  image_size,  3))
         with tf.name_scope('original_images'):
-            original_images_placeholder = tf.placeholder(dtype="float32", shape=(None, image_size, image_size, 3))
+            x_o = tf.placeholder(dtype="float32", shape=(None, image_size, image_size, 3))
         with tf.name_scope('labels'):
-            labels_placeholder = tf.placeholder(dtype="float32", shape=(None, num_classes_s))
+            t = tf.placeholder(dtype="float32", shape=(None, num_classes_s))
         keep_prob = tf.placeholder(dtype="float32")
         is_training = tf.placeholder(dtype="bool")  # train flag
 
         # メモreshapeはずしてみる
-        tf.summary.image('cropped_images', tf.reshape(cropped_images_placeholder, [-1, image_size, image_size, 3]), max_outputs=args.batch_size)
-        tf.summary.image('original_images', tf.reshape(original_images_placeholder, [-1, image_size, image_size, 3]), max_outputs=args.batch_size)
+        tf.summary.image('cropped_images', tf.reshape(x_c, [-1, image_size, image_size, 3]), max_outputs=args.batch_size)
+        tf.summary.image('original_images', tf.reshape(x_o, [-1, image_size, image_size, 3]), max_outputs=args.batch_size)
 
     # Build the graph
-    end_points = model(cropped_images=cropped_images_placeholder, original_images=original_images_placeholder, extractor_name=extractor_name, num_classes_s=num_classes_s, num_classes_g=num_classes_g, is_training=is_training, keep_prob=keep_prob)
+    y = model(cropped_images=x_c, original_images=x_o, extractor_name=extractor_name, num_classes_s=num_classes_s, num_classes_g=num_classes_g, is_training=is_training, keep_prob=keep_prob)
     # logits = tf.squeeze(end_points["Logits"], [1, 2])
     # logits = end_points["Logits"]
-    predictions = end_points["Predictions"]
+    y_pred = y["Predictions"]
 
     # Get restored vars name in checkpoint
     #def name_in_checkpoint(var):
@@ -374,8 +375,8 @@ def train(args):
 
     # Train ops
     with tf.name_scope('loss'):
-        # loss = tf.losses.softmax_cross_entropy(labels_placeholder, logits)
-        loss = calc_loss(predictions, labels_placeholder)
+        # loss = tf.losses.softmax_cross_entropy(t, logits)
+        loss = calc_loss(y_pred, t)
         tf.summary.scalar("loss", loss)
 
     with tf.name_scope('train') as scope:
@@ -385,7 +386,7 @@ def train(args):
         train_step = training(loss)
 
     with tf.name_scope('accuracy'):
-        correct_prediction = tf.equal(tf.argmax(predictions, 1), tf.argmax(labels_placeholder, 1))
+        correct_prediction = tf.equal(tf.argmax(predictions, 1), tf.argmax(t, 1))
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
         tf.summary.scalar("accuracy", accuracy)
 
@@ -424,28 +425,20 @@ def train(args):
 
             # Train proc
             for i in range(num_batch-1):  # i : batch index
-                # print('step%g, batch%g' % (step, i))
                 cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, i)
-
-                # debug
-                # print(cropped_batch["path"])
-                # print(orig_batch["path"])
-                # cv2.imshow("input crop", list(cropped_batch["batch"])[0])
-                # cv2.waitKey(0)
-
                 sess.run(train_step,
-                         feed_dict={cropped_images_placeholder: cropped_batch['batch'],
-                                    original_images_placeholder: orig_batch['batch'],
-                                    labels_placeholder: labels,
+                         feed_dict={x_c: cropped_batch['batch'],
+                                    x_o: orig_batch['batch'],
+                                    t: labels,
                                     keep_prob: args.dropout_prob,
                                     is_training: True})
 
             # Final batch proc: get summary and train_trace
             cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, num_batch-1)
             summary, train_accuracy, train_loss, _ = sess.run([merged, accuracy, loss, train_step],
-                                                              feed_dict={cropped_images_placeholder: cropped_batch['batch'],
-                                                                         original_images_placeholder: orig_batch['batch'],
-                                                                         labels_placeholder: labels,
+                                                              feed_dict={x_c: cropped_batch['batch'],
+                                                                         x_o: orig_batch['batch'],
+                                                                         t: labels,
                                                                          keep_prob: args.dropout_prob,
                                                                          is_training: True},
                                                               options=run_options,
@@ -472,9 +465,9 @@ def train(args):
                     # cv2.waitKey(0)
 
                     summary_test, test_accuracy, test_loss = sess.run([merged, accuracy, loss],
-                                                                      feed_dict={cropped_images_placeholder: test_cropped_batch['batch'],
-                                                                                 original_images_placeholder: test_orig_batch['batch'],
-                                                                                 labels_placeholder: test_labels,
+                                                                      feed_dict={x_c: test_cropped_batch['batch'],
+                                                                                 x_o: test_orig_batch['batch'],
+                                                                                 t: test_labels,
                                                                                  keep_prob: 1.0,
                                                                                  is_training: False})
                     acc_list.append(test_accuracy)
