@@ -12,14 +12,15 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from tensorflow.contrib.layers.python.layers.layers import batch_norm
 from nets.inception_v4 import inception_v4, inception_v4_arg_scope
 from nets.vgg import vgg_16, vgg_arg_scope
-from nets.resnet_v2 import resnet_v2_152, resnet_v2_arg_scope
+from nets.resnet_v2 import resnet_v2_152, resnet_arg_scope
 import cv2
 import time
 
 archs = {
     'inception_v4': {'fn': inception_v4, 'arg_scope': inception_v4_arg_scope, 'extract_point': 'PreLogitsFlatten'},
     # 'vgg_16': {'fn': vgg_16, 'arg_scope': vgg_arg_scope, 'extract_point': 'shigeNet_v1/vgg_16/fc7'}# shape=(?, 14, 14, 512) dtype=float32
-'vgg_16': {'fn': vgg_16, 'arg_scope': vgg_arg_scope, 'extract_point': "shigeNet_v1/vgg_16/pool5"}# shape=(?, 14, 14, 512) dtyp    e=float32
+'vgg_16': {'fn': vgg_16, 'arg_scope': vgg_arg_scope, 'extract_point': "shigeNet_v1/vgg_16/pool5"}, # shape=(?, 14, 14, 512) dtyp    e=float32
+'resnet_v2' : {'fn': resnet_v2_152, 'arg_scope': resnet_arg_scope}
 }
 # shigeNet_v1/vgg_16/fc7
 # 'shigeNet_v1/vgg_16/conv5/conv5_3' # shape=(?, 14, 14, 512) dtype=float32
@@ -312,12 +313,12 @@ def shigeNet_v7(cropped_images, original_images, num_classes_s, num_classes_g, k
             with slim.arg_scope(archs[extractor_name]['arg_scope']()):
                 logits_c, end_points_c = resnet_v2_152(cropped_images, num_classes=num_classes_g, is_training=False, reuse=None)
                 logits_o, end_points_o = resnet_v2_152(original_images, num_classes=num_classes_g, is_training=False, reuse=True)
-                feature_c = end_points_c['shigeNet_v7/vgg_16/pool5']
-                feature_o = end_points_o['shigeNet_v7/vgg_16_1/pool5']
+                feature_c = end_points_c['shigeNet_v7/resnet_v2_152/block4']
+                feature_o = end_points_o['shigeNet_v7/resnet_v2_152/block4'] # (?, 7, 7, 2048)
                 # feature map summary
                 # Tensorを[-1,7,7,ch]から[-1,ch,7,7]と順列変換し、[-1]と[ch]をマージしてimage出力
-                tf.summary.image('shigeNet_v7/vgg_16/conv5/conv5_3_c', tf.reshape(tf.transpose(end_points_c['shigeNet_v7/vgg_16/conv5/conv5_3'], perm=[0, 3, 1, 2]), [-1, 14, 14, 1]), 10)
-                tf.summary.image('shigeNet_v7/vgg_16/conv5/conv5_3_o', tf.reshape(tf.transpose(end_points_o['shigeNet_v7/vgg_16/conv5/conv5_3'], perm=[0, 3, 1, 2]), [-1, 14, 14, 1]), 10)
+                # tf.summary.image('shigeNet_v7/vgg_16/conv5/conv5_3_c', tf.reshape(tf.transpose(end_points_c['shigeNet_v7/vgg_16/conv5/conv5_3'], perm=[0, 3, 1, 2]), [-1, 14, 14, 1]), 10)
+                # tf.summary.image('shigeNet_v7/vgg_16/conv5/conv5_3_o', tf.reshape(tf.transpose(end_points_o['shigeNet_v7/vgg_16/conv5/conv5_3'], perm=[0, 3, 1, 2]), [-1, 14, 14, 1]), 10)
 
             # Concat!
             with tf.variable_scope('Concat') as scope:
@@ -407,12 +408,14 @@ def train(args):
     def name_in_checkpoint(var):
         if arch_name in var.op.name:
             return var.op.name.replace(arch_name+"/", "")
-        if arch_name in var.op.name:
-            return var.op.name.replace(arch_name+"/", "")
+
     # Get vars restored
     variables_to_restore = slim.get_variables_to_restore()
+    # print(variables_to_restore)
     # dict of {name in checkpoint: var.op.name}
     variables_to_restore = {name_in_checkpoint(var): var for var in variables_to_restore if extractor_name in var.op.name}
+    #print(variables_to_restore)
+    #print([key for key in variables_to_restore.keys() if key == None])
     restorer = tf.train.Saver(variables_to_restore)
     saver = tf.train.Saver(max_to_keep=None)# save all vars
 
