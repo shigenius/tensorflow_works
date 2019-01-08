@@ -318,7 +318,7 @@ def train(args):
     image_size = archs[extractor_name]['fn'].default_image_size
     num_classes_s = args.num_classes_s
     num_classes_g = args.num_classes_g
-    val_freq = 2# Nstep毎にvalidate
+    val_freq = 1# Nstep毎にvalidate
     store_freq = 10
 
     arch_name = "shigeNet_v6"
@@ -420,6 +420,7 @@ def train(args):
         merged = tf.summary.merge_all()
 
         num_batch = int(len(dataset.train_path_c) / args.batch_size)
+        train_start_time = time.time()
 
         # Train cycle
         for step in range(args.max_steps):
@@ -444,6 +445,12 @@ def train(args):
                 train_acc_l.append(train_acc)
                 train_loss_l.append(train_loss)
                 print("step%03d" % step, i, "of", num_batch, "train acc:",  train_acc, ", train loss:", train_loss, "elappsed time:", elapsed_time)
+                train_summary_writer.add_summary(tf.Summary(value=[
+                    tf.Summary.Value(tag="train/acc_by_1iter", simple_value=train_acc)
+                ]), time.time() - train_start_time)
+                train_summary_writer.add_summary(tf.Summary(value=[
+                    tf.Summary.Value(tag="train/loss_by_1iter", simple_value=train_loss)
+                ]), time.time() - train_start_time)
 
             # Final batch proc: get summary and train_trace
             cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, num_batch-1)
