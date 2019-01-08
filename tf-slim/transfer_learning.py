@@ -302,7 +302,7 @@ def shigeNet_v6(cropped_images, original_images, num_classes_s, num_classes_g, k
         return end_points
 
 def calc_loss(output, supervisor_t):
-  # cross_entropy = -tf.reduce_sum(supervisor_t * tf.log(output))
+  # cross_entropy = -tf.reduce_sum(supervisor_t * tf.log(y_pred))
   cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=output, labels=supervisor_t))
   return cross_entropy
 
@@ -351,7 +351,7 @@ def train(args):
     # Build the graph
     y = model(cropped_images=x_c, original_images=x_o, extractor_name=extractor_name, num_classes_s=num_classes_s, num_classes_g=num_classes_g, is_training=is_training, keep_prob=keep_prob)
     # logits = tf.squeeze(end_points["Logits"], [1, 2])
-    # logits = end_points["Logits"]
+    y_logit = y["Logits"]
     y_pred = y["Predictions"]
 
     # Get restored vars name in checkpoint
@@ -376,7 +376,7 @@ def train(args):
     # Train ops
     with tf.name_scope('loss'):
         # loss = tf.losses.softmax_cross_entropy(t, logits)
-        loss = calc_loss(y_pred, t)
+        loss = calc_loss(y_logit, t)
         tf.summary.scalar("loss", loss)
 
     with tf.name_scope('train') as scope:
@@ -423,19 +423,23 @@ def train(args):
         for step in range(args.max_steps):
             dataset.shuffle()
 
+            train_acc_l = []
+            train_loss_l = []
             # Train proc
             for i in range(num_batch-1):  # i : batch index
                 cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, i)
-                sess.run(train_step,
-                         feed_dict={x_c: cropped_batch['batch'],
-                                    x_o: orig_batch['batch'],
-                                    t: labels,
-                                    keep_prob: args.dropout_prob,
-                                    is_training: True})
+                train_acc, train_loss = sess.run([accuracy, loss, train_step],
+                                         feed_dict={x_c: cropped_batch['batch'],
+                                                    x_o: orig_batch['batch'],
+                                                    t: labels,
+                                                    keep_prob: args.dropout_prob,
+                                                    is_training: True})
+                train_acc_l.append(train_acc)
+                train_loss_l.append(train_loss)
 
             # Final batch proc: get summary and train_trace
             cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, num_batch-1)
-            summary, train_accuracy, train_loss, _ = sess.run([merged, accuracy, loss, train_step],
+            summary, train_acc, train_loss, _ = sess.run([merged, accuracy, loss, train_step],
                                                               feed_dict={x_c: cropped_batch['batch'],
                                                                          x_o: orig_batch['batch'],
                                                                          t: labels,
@@ -443,10 +447,15 @@ def train(args):
                                                                          is_training: True},
                                                               options=run_options,
                                                               run_metadata=run_metadata)
+            train_acc_l.append(train_acc)
+            train_loss_l.append(train_loss)
+            mean_train_accuracy = sum(train_acc_l) / len(train_acc_l)
+            mean_train_loss = sum(train_loss_l) / len(train_loss_l)
+
             # Write summary
             train_summary_writer.add_run_metadata(run_metadata, 'step%03d' % step)
             train_summary_writer.add_summary(summary, step)
-            print('step %d: training accuracy %g,\t loss %g' % (step, train_accuracy, train_loss))
+            print('step %d: training accuracy %g,\t loss %g' % (step, mean_train_accuracy, mean_train_loss))
 
             # Validation proc
             if step % val_fre == 0:
@@ -455,15 +464,6 @@ def train(args):
                 loss_list = []
                 for i in range(num_test_batch - 1):
                     test_cropped_batch, test_orig_batch, test_labels = dataset.getTestData(args.batch_size, i)
-
-                    # debug
-                    # print(test_cropped_batch["path"], test_cropped_batch['batch'].shape)
-                    # print(test_orig_batch["path"], test_orig_batch["batch"].shape)
-                    # print(test_cropped["batch"])
-                    # print(test_orig_batch["batch"])
-                    # cv2.imshow("test crop", list(test_cropped_batch["batch"])[0])
-                    # cv2.waitKey(0)
-
                     summary_test, test_accuracy, test_loss = sess.run([merged, accuracy, loss],
                                                                       feed_dict={x_c: test_cropped_batch['batch'],
                                                                                  x_o: test_orig_batch['batch'],
