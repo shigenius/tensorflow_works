@@ -12,7 +12,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from tensorflow.contrib.layers.python.layers.layers import batch_norm
 from nets.inception_v4 import inception_v4, inception_v4_arg_scope
 from nets.vgg import vgg_16, vgg_arg_scope
-
+from nets.resnet_v2 import resnet_v2_152, resnet_v2_arg_scope
 import cv2
 import time
 
@@ -302,6 +302,45 @@ def shigeNet_v6(cropped_images, original_images, num_classes_s, num_classes_g, k
 
         return end_points
 
+
+def shigeNet_v7(cropped_images, original_images, num_classes_s, num_classes_g, keep_prob=1.0, is_training=True, scope='shigeNet_v7', reuse=None, extractor_name='inception_v4'):
+    # v1ベースにextractorをresnet_v2_152に
+    end_points = {}
+    with tf.variable_scope(scope, 'shigeNet_v7', reuse=reuse) as scope:
+        with slim.arg_scope([slim.batch_norm, slim.dropout], is_training=is_training):
+            # Extract features
+            with slim.arg_scope(archs[extractor_name]['arg_scope']()):
+                logits_c, end_points_c = resnet_v2_152(cropped_images, num_classes=num_classes_g, is_training=False, reuse=None)
+                logits_o, end_points_o = resnet_v2_152(original_images, num_classes=num_classes_g, is_training=False, reuse=True)
+                feature_c = end_points_c['shigeNet_v7/vgg_16/pool5']
+                feature_o = end_points_o['shigeNet_v7/vgg_16_1/pool5']
+                # feature map summary
+                # Tensorを[-1,7,7,ch]から[-1,ch,7,7]と順列変換し、[-1]と[ch]をマージしてimage出力
+                tf.summary.image('shigeNet_v7/vgg_16/conv5/conv5_3_c', tf.reshape(tf.transpose(end_points_c['shigeNet_v7/vgg_16/conv5/conv5_3'], perm=[0, 3, 1, 2]), [-1, 14, 14, 1]), 10)
+                tf.summary.image('shigeNet_v7/vgg_16/conv5/conv5_3_o', tf.reshape(tf.transpose(end_points_o['shigeNet_v7/vgg_16/conv5/conv5_3'], perm=[0, 3, 1, 2]), [-1, 14, 14, 1]), 10)
+
+            # Concat!
+            with tf.variable_scope('Concat') as scope:
+                concated_feature = tf.concat([tf.layers.Flatten()(feature_c), tf.layers.Flatten()(feature_o)], 1)  # (?, x, y, z)
+
+            with tf.variable_scope('Logits'):
+                with slim.arg_scope([slim.fully_connected],
+                                    activation_fn=tf.nn.relu,
+                                    weights_initializer=tf.truncated_normal_initializer(0.0, 0.01),
+                                    weights_regularizer=slim.l2_regularizer(0.0005)):
+                    net = slim.fully_connected(concated_feature, 1000, scope='fc1')
+                    net = slim.dropout(net, keep_prob, scope='dropout1')
+                    net = slim.fully_connected(net, 256, scope='fc2')
+                    net = slim.dropout(net, keep_prob, scope='dropout2')
+                    net = slim.fully_connected(net, num_classes_s, activation_fn=None, scope='fc3')
+
+                    end_points['Logits'] = net
+                    # squeeze = tf.squeeze(net, [1, 2]) # 次元1,2の要素数が1であるならばその次元を減らす
+                    # end_points['Predictions'] = tf.nn.softmax(squeeze, name='Predictions')
+                    end_points['Predictions'] = tf.nn.softmax(net, name='Predictions')
+
+        return end_points
+
 def calc_loss(output, supervisor_t):
   # cross_entropy = -tf.reduce_sum(supervisor_t * tf.log(y_pred))
   cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=output, labels=supervisor_t)) # with_logitsは内部でソフトマックスも計算してくれる
@@ -321,7 +360,7 @@ def train(args):
     val_freq = 1# Nstep毎にvalidate
     store_freq = 10
 
-    arch_name = "shigeNet_v6"
+    arch_name = "shigeNet_v7"
     if arch_name == "shigeNet_v1":
         model = shigeNet_v1
     elif arch_name == "shigeNet_v2":
@@ -334,6 +373,8 @@ def train(args):
         model = shigeNet_v5
     elif arch_name == "shigeNet_v6":
         model = shigeNet_v6
+    elif arch_name == "shigeNet_v7":
+        model = shigeNet_v7
 
     # Define placeholders
     with tf.name_scope('input'):
