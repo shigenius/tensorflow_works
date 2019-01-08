@@ -427,6 +427,8 @@ def train(args):
 
             train_acc_l = []
             train_loss_l = []
+            step_start_time = time.time()
+
             # Train proc
             for i in range(num_batch-1):  # i : batch index
                 cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, i)
@@ -458,7 +460,7 @@ def train(args):
             train_loss_l.append(train_loss)
             mean_train_accuracy = sum(train_acc_l) / len(train_acc_l)
             mean_train_loss = sum(train_loss_l) / len(train_loss_l)
-            print('step %d: training accuracy %g,\t loss %g' % (step, mean_train_accuracy, mean_train_loss))
+            print('step %d: training accuracy %g,\t loss %g' % (step, mean_train_accuracy, mean_train_loss), "elapsed time:", step_start_time - time.time())
 
             # Write summary
             train_summary_writer.add_run_metadata(run_metadata, 'step%03d' % step)
