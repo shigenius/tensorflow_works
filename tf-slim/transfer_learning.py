@@ -428,7 +428,7 @@ def train(args):
             # Train proc
             for i in range(num_batch-1):  # i : batch index
                 cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, i)
-                train_acc, train_loss = sess.run([accuracy, loss, train_step],
+                train_acc, train_loss, _ = sess.run([accuracy, loss, train_step],
                                          feed_dict={x_c: cropped_batch['batch'],
                                                     x_o: orig_batch['batch'],
                                                     t: labels,
