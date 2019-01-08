@@ -303,7 +303,7 @@ def shigeNet_v6(cropped_images, original_images, num_classes_s, num_classes_g, k
 
 def calc_loss(output, supervisor_t):
   # cross_entropy = -tf.reduce_sum(supervisor_t * tf.log(y_pred))
-  cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=output, labels=supervisor_t))
+  cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=output, labels=supervisor_t)) # with_logitsは内部でソフトマックスも計算してくれる
   return cross_entropy
 
 def training(loss):
@@ -317,7 +317,8 @@ def train(args):
     image_size = archs[extractor_name]['fn'].default_image_size
     num_classes_s = args.num_classes_s
     num_classes_g = args.num_classes_g
-    val_fre = 2# Nstep毎にvalidate
+    val_freq = 2# Nstep毎にvalidate
+    store_freq = 10
 
     arch_name = "shigeNet_v6"
     if arch_name == "shigeNet_v1":
@@ -436,7 +437,7 @@ def train(args):
                                                     is_training: True})
                 train_acc_l.append(train_acc)
                 train_loss_l.append(train_loss)
-                print("step%03d" % step,"train acc:",  train_acc, ", train loss:", train_loss)
+                print("step%03d" % step, i, "of", numbatch, "train acc:",  train_acc, ", train loss:", train_loss)
 
             # Final batch proc: get summary and train_trace
             cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, num_batch-1)
@@ -459,11 +460,11 @@ def train(args):
             print('step %d: training accuracy %g,\t loss %g' % (step, mean_train_accuracy, mean_train_loss))
 
             # Validation proc
-            if step % val_fre == 0:
+            if step % val_freq == 0:
                 num_test_batch = int(len(dataset.test_path_c) / args.batch_size)
-                acc_list = []
-                loss_list = []
-                for i in range(num_test_batch - 1):
+                test_acc_l = []
+                test_loss_l = []
+                for i in range(num_test_batch):
                     test_cropped_batch, test_orig_batch, test_labels = dataset.getTestData(args.batch_size, i)
                     summary_test, test_accuracy, test_loss = sess.run([merged, accuracy, loss],
                                                                       feed_dict={x_c: test_cropped_batch['batch'],
@@ -471,12 +472,13 @@ def train(args):
                                                                                  t: test_labels,
                                                                                  keep_prob: 1.0,
                                                                                  is_training: False})
-                    acc_list.append(test_accuracy)
-                    loss_list.append(test_loss)
+                    test_acc_list.append(test_accuracy)
+                    test_loss_list.append(test_loss)
+                    print("Valid step%03d" % step, i, "of", num_test_batch, "acc:", test_accuracy, ", loss:", test_loss)
 
                 print("test acc_list", acc_list)
-                mean_acc = sum(acc_list) / len(acc_list)
-                mean_loss = sum(loss_list) / len(loss_list)
+                mean_test_acc = sum(test_acc_l) / len(test_acc_l)
+                mean_test_loss = sum(test_loss_l) / len(test_loss_l)
 
 
                 # Write valid summary
@@ -488,7 +490,9 @@ def train(args):
                     tf.Summary.Value(tag="Valid/loss", simple_value=mean_loss)
                 ]), step)
 
-                print('step %d: test mean accuracy %g,\t mean loss %g' % (step, mean_acc, mean_loss))
+                print('step %d: test mean accuracy %g,\t mean loss %g' % (step, mean_test_acc, mean_test_loss))
+
+            if step % store_freq == 0:
                 # Save checkpoint model
                 saver.save(sess, args.save_path, global_step=step)
 
