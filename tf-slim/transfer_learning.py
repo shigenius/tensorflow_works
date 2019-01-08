@@ -437,7 +437,7 @@ def train(args):
                                                     is_training: True})
                 train_acc_l.append(train_acc)
                 train_loss_l.append(train_loss)
-                print("step%03d" % step, i, "of", numbatch, "train acc:",  train_acc, ", train loss:", train_loss)
+                print("step%03d" % step, i, "of", num_batch, "train acc:",  train_acc, ", train loss:", train_loss)
 
             # Final batch proc: get summary and train_trace
             cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, num_batch-1)
