@@ -106,7 +106,7 @@ def shigeNet_v2(cropped_images, original_images, num_classes_s, num_classes_g, k
 
 def shigeNet_v3(cropped_images, original_images, num_classes_s, num_classes_g, keep_prob=1.0, is_training=True, scope='shigeNet_v3', reuse=None, extractor_name='vgg_16'):
     # vgg16のfreezeを解く．vggもトレーニングする．
-    # 背景画像のsoftmax後をconcatする
+    # softmax後をconcatする
     end_points = {}
     with tf.variable_scope(scope, 'shigeNet_v3', reuse=reuse) as scope:
         with slim.arg_scope([slim.batch_norm, slim.dropout], is_training=is_training):
@@ -260,6 +260,8 @@ def shigeNet_v6(cropped_images, original_images, num_classes_s, num_classes_g, k
                 feature_o.append(end_points_o['shigeNet_v6/vgg_16_1/pool5'])  # shape=(?, 7, 7, 512)
 
                 # サイズを揃える
+                # slim.repeat(feature_c, 2, slim.max_pool2d, 512, [3, 3], scope='conv1_c')
+                # slim.max_pool2d(feature_c, [2, 2], scope='pool_1_c')
                 feature_c[0] = tf.image.resize_images(feature_c[0], (pool_size, pool_size)) # ここpoolで代用してもいいかも
                 feature_c[1] = tf.image.resize_images(feature_c[1], (pool_size, pool_size))
                 feature_c[2] = tf.image.resize_images(feature_c[2], (pool_size, pool_size))
@@ -279,7 +281,7 @@ def shigeNet_v6(cropped_images, original_images, num_classes_s, num_classes_g, k
                 #                              1)  # (?, x, y, z)
                 # concated_feature = tf.layers.Flatten()(slim.conv2d(concated_feature, 2944, [7, 7], padding='VALID', scope='conv_concat'))
                 concated_feature = tf.layers.Flatten()(slim.max_pool2d(concated_feature, [7, 7], scope='pool_concat'))
-                print(concated_feature)
+                # print(concated_feature)
 
             with tf.variable_scope('Logits'):
                 with slim.arg_scope([slim.fully_connected],
@@ -299,6 +301,14 @@ def shigeNet_v6(cropped_images, original_images, num_classes_s, num_classes_g, k
 
         return end_points
 
+def loss(output, supervisor_labels_placeholder):
+  cross_entropy = -tf.reduce_sum(supervisor_labels_placeholder * tf.log(output))
+  return cross_entropy
+
+def training(loss):
+  train_step = tf.train.GradientDescentOptimizer(0.01).minimize(loss)
+  return train_step
+
 def train(args):
     extractor_name = args.extractor
 
@@ -306,7 +316,7 @@ def train(args):
     image_size = archs[extractor_name]['fn'].default_image_size
     num_classes_s = args.num_classes_s
     num_classes_g = args.num_classes_g
-    val_fre = 1# Nstep毎にvalidate
+    val_fre = 2# Nstep毎にvalidate
 
     arch_name = "shigeNet_v6"
     if arch_name == "shigeNet_v1":
@@ -340,7 +350,7 @@ def train(args):
     # Build the graph
     end_points = model(cropped_images=cropped_images_placeholder, original_images=original_images_placeholder, extractor_name=extractor_name, num_classes_s=num_classes_s, num_classes_g=num_classes_g, is_training=is_training, keep_prob=keep_prob)
     # logits = tf.squeeze(end_points["Logits"], [1, 2])
-    logits = end_points["Logits"]
+    # logits = end_points["Logits"]
     predictions = end_points["Predictions"]
 
     # Get restored vars name in checkpoint
@@ -364,13 +374,15 @@ def train(args):
 
     # Train ops
     with tf.name_scope('loss'):
-        loss = tf.losses.softmax_cross_entropy(labels_placeholder, logits)
+        # loss = tf.losses.softmax_cross_entropy(labels_placeholder, logits)
+        loss = loss(predictions, supervisor_labels_placeholder)
         tf.summary.scalar("loss", loss)
 
     with tf.name_scope('train') as scope:
-        update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
-        with tf.control_dependencies(update_ops):
-            train_step = slim.optimize_loss(loss, tf.train.get_or_create_global_step(), learning_rate=args.learning_rate, optimizer='Adam')
+        # update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
+        # with tf.control_dependencies(update_ops):
+        #     train_step = slim.optimize_loss(loss, tf.train.get_or_create_global_step(), learning_rate=args.learning_rate, optimizer='Adam')
+        train_step = training(loss)
 
     with tf.name_scope('accuracy'):
         correct_prediction = tf.equal(tf.argmax(predictions, 1), tf.argmax(labels_placeholder, 1))
