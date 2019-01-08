@@ -492,7 +492,7 @@ def train(args):
                     test_loss_l.append(test_loss)
                     print("Valid step%03d" % step, i, "of", num_test_batch, "acc:", test_accuracy, ", loss:", test_loss)
 
-                print("test acc_list", acc_list)
+                print("test acc_list", test_acc_l)
                 mean_test_acc = sum(test_acc_l) / len(test_acc_l)
                 mean_test_loss = sum(test_loss_l) / len(test_loss_l)
 
@@ -500,10 +500,10 @@ def train(args):
                 # Write valid summary
                 # test_summary_writer.add_summary(summary_test, step)
                 test_summary_writer.add_summary(tf.Summary(value=[
-                    tf.Summary.Value(tag="valid/accuracy", simple_value=mean_acc)
+                    tf.Summary.Value(tag="valid/accuracy", simple_value=mean_test_acc)
                 ]), step)
                 test_summary_writer.add_summary(tf.Summary(value=[
-                    tf.Summary.Value(tag="valid/loss", simple_value=mean_loss)
+                    tf.Summary.Value(tag="valid/loss", simple_value=mean_test_loss)
                 ]), step)
 
                 print('step %d: test mean accuracy %g,\t mean loss %g' % (step, mean_test_acc, mean_test_loss))
