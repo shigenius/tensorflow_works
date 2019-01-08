@@ -301,7 +301,7 @@ def shigeNet_v6(cropped_images, original_images, num_classes_s, num_classes_g, k
 
         return end_points
 
-def loss(output, supervisor_labels_placeholder):
+def calc_loss(output, supervisor_labels_placeholder):
   cross_entropy = -tf.reduce_sum(supervisor_labels_placeholder * tf.log(output))
   return cross_entropy
 
@@ -375,7 +375,7 @@ def train(args):
     # Train ops
     with tf.name_scope('loss'):
         # loss = tf.losses.softmax_cross_entropy(labels_placeholder, logits)
-        loss = loss(predictions, supervisor_labels_placeholder)
+        loss = calc_loss(predictions, labels_placeholder)
         tf.summary.scalar("loss", loss)
 
     with tf.name_scope('train') as scope:
@@ -480,6 +480,7 @@ def train(args):
                     acc_list.append(test_accuracy)
                     loss_list.append(test_loss)
 
+                print("test acc_list", acc_list)
                 mean_acc = sum(acc_list) / len(acc_list)
                 mean_loss = sum(loss_list) / len(loss_list)
 
