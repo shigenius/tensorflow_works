@@ -14,6 +14,7 @@ from nets.inception_v4 import inception_v4, inception_v4_arg_scope
 from nets.vgg import vgg_16, vgg_arg_scope
 
 import cv2
+import time
 
 archs = {
     'inception_v4': {'fn': inception_v4, 'arg_scope': inception_v4_arg_scope, 'extract_point': 'PreLogitsFlatten'},
@@ -345,9 +346,9 @@ def train(args):
         keep_prob = tf.placeholder(dtype="float32")
         is_training = tf.placeholder(dtype="bool")  # train flag
 
-        # メモreshapeはずしてみる
-        tf.summary.image('cropped_images', tf.reshape(x_c, [-1, image_size, image_size, 3]), max_outputs=args.batch_size)
-        tf.summary.image('original_images', tf.reshape(x_o, [-1, image_size, image_size, 3]), max_outputs=args.batch_size)
+        # # メモreshapeはずしてみる
+        # tf.summary.image('cropped_images', tf.reshape(x_c, [-1, image_size, image_size, 3]), max_outputs=args.batch_size)
+        # tf.summary.image('original_images', tf.reshape(x_o, [-1, image_size, image_size, 3]), max_outputs=args.batch_size)
 
     # Build the graph
     y = model(cropped_images=x_c, original_images=x_o, extractor_name=extractor_name, num_classes_s=num_classes_s, num_classes_g=num_classes_g, is_training=is_training, keep_prob=keep_prob)
@@ -429,35 +430,48 @@ def train(args):
             # Train proc
             for i in range(num_batch-1):  # i : batch index
                 cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, i)
+                start_time = time.time()
                 train_acc, train_loss, _ = sess.run([accuracy, loss, train_step],
                                          feed_dict={x_c: cropped_batch['batch'],
                                                     x_o: orig_batch['batch'],
                                                     t: labels,
                                                     keep_prob: args.dropout_prob,
                                                     is_training: True})
+                elapsed_time = time.time() - start_time
+
                 train_acc_l.append(train_acc)
                 train_loss_l.append(train_loss)
-                print("step%03d" % step, i, "of", num_batch, "train acc:",  train_acc, ", train loss:", train_loss)
+                print("step%03d" % step, i, "of", num_batch, "train acc:",  train_acc, ", train loss:", train_loss, "elappsed time:", elapsed_time)
 
             # Final batch proc: get summary and train_trace
             cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, num_batch-1)
-            summary, train_acc, train_loss, _ = sess.run([merged, accuracy, loss, train_step],
-                                                              feed_dict={x_c: cropped_batch['batch'],
-                                                                         x_o: orig_batch['batch'],
-                                                                         t: labels,
-                                                                         keep_prob: args.dropout_prob,
-                                                                         is_training: True},
-                                                              options=run_options,
-                                                              run_metadata=run_metadata)
+            summary = sess.run(merged,
+                              feed_dict={x_c: cropped_batch['batch'],
+                                         x_o: orig_batch['batch'],
+                                         t: labels,
+                                         keep_prob: args.dropout_prob,
+                                         is_training: True},
+                              options=run_options,
+                              run_metadata=run_metadata)
+
             train_acc_l.append(train_acc)
             train_loss_l.append(train_loss)
             mean_train_accuracy = sum(train_acc_l) / len(train_acc_l)
             mean_train_loss = sum(train_loss_l) / len(train_loss_l)
+            print('step %d: training accuracy %g,\t loss %g' % (step, mean_train_accuracy, mean_train_loss))
 
             # Write summary
             train_summary_writer.add_run_metadata(run_metadata, 'step%03d' % step)
+            # train_summary_writer.add_summary(summary, step)
             train_summary_writer.add_summary(summary, step)
-            print('step %d: training accuracy %g,\t loss %g' % (step, mean_train_accuracy, mean_train_loss))
+            train_summary_writer.add_summary(tf.Summary(value=[
+                tf.Summary.Value(tag="train/mean_accuracy", simple_value=mean_train_accuracy)
+            ]), step)
+            train_summary_writer.add_summary(tf.Summary(value=[
+                tf.Summary.Value(tag="train/mean_loss", simple_value=mean_train_loss)
+            ]), step)
+
+
 
             # Validation proc
             if step % val_freq == 0:
@@ -484,10 +498,10 @@ def train(args):
                 # Write valid summary
                 # test_summary_writer.add_summary(summary_test, step)
                 test_summary_writer.add_summary(tf.Summary(value=[
-                    tf.Summary.Value(tag="Valid/accuracy", simple_value=mean_acc)
+                    tf.Summary.Value(tag="valid/accuracy", simple_value=mean_acc)
                 ]), step)
                 test_summary_writer.add_summary(tf.Summary(value=[
-                    tf.Summary.Value(tag="Valid/loss", simple_value=mean_loss)
+                    tf.Summary.Value(tag="valid/loss", simple_value=mean_loss)
                 ]), step)
 
                 print('step %d: test mean accuracy %g,\t mean loss %g' % (step, mean_test_acc, mean_test_loss))
@@ -510,7 +524,7 @@ if __name__ == '__main__':
     parser.add_argument('--num_classes_s', '-ns', type=int, default=6)
     parser.add_argument('--num_classes_g', '-ng', type=int, default=9)
     parser.add_argument('--learning_rate', '-lr', type=float, default=1e-4)
-    parser.add_argument('--dropout_prob', '-d', type=float, default=0.8)
+    parser.add_argument('--dropout_prob', '-d', type=float, default=0.5)
 
     parser.add_argument('--model_path', '-model', default='/Users/shigetomi/Downloads/vgg_16.ckpt', help='FullPath of inception-v4 model(ckpt)')
     parser.add_argument('--save_path', '-save', default='/Users/shigetomi/workspace/tensorflow_works/model/transl.ckpt', help='FullPath of saving model')
