@@ -420,7 +420,7 @@ def train(args):
         merged = tf.summary.merge_all()
 
         num_batch = int(len(dataset.train_path_c) / args.batch_size)
-        train_start_time = time.time()
+        sum_iter = 0
 
         # Train cycle
         for step in range(args.max_steps):
@@ -447,10 +447,11 @@ def train(args):
                 print("step%03d" % step, i, "of", num_batch, "train acc:",  train_acc, ", train loss:", train_loss, "elappsed time:", elapsed_time)
                 train_summary_writer.add_summary(tf.Summary(value=[
                     tf.Summary.Value(tag="train/acc_by_1iter", simple_value=train_acc)
-                ]), time.time() - train_start_time)
+                ]), sum_iter)
                 train_summary_writer.add_summary(tf.Summary(value=[
                     tf.Summary.Value(tag="train/loss_by_1iter", simple_value=train_loss)
-                ]), time.time() - train_start_time)
+                ]), sum_iter)
+                sum_iter += 1
 
             # Final batch proc: get summary and train_trace
             cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, num_batch-1)
