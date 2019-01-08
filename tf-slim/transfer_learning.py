@@ -386,7 +386,7 @@ def train(args):
         train_step = training(loss)
 
     with tf.name_scope('accuracy'):
-        correct_prediction = tf.equal(tf.argmax(predictions, 1), tf.argmax(t, 1))
+        correct_prediction = tf.equal(tf.argmax(y_pred, 1), tf.argmax(t, 1))
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
         tf.summary.scalar("accuracy", accuracy)
 
