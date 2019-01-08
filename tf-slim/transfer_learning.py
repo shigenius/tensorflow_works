@@ -472,8 +472,8 @@ def train(args):
                                                                                  t: test_labels,
                                                                                  keep_prob: 1.0,
                                                                                  is_training: False})
-                    test_acc_list.append(test_accuracy)
-                    test_loss_list.append(test_loss)
+                    test_acc_l.append(test_accuracy)
+                    test_loss_l.append(test_loss)
                     print("Valid step%03d" % step, i, "of", num_test_batch, "acc:", test_accuracy, ", loss:", test_loss)
 
                 print("test acc_list", acc_list)
