@@ -399,9 +399,9 @@ def shigeNet_v8(cropped_images, original_images, num_classes_s, num_classes_g, k
         with slim.arg_scope([slim.batch_norm, slim.dropout], is_training=is_training):
             # Extract features
             with slim.arg_scope(archs[extractor_name]['arg_scope']()):
-                logits_c, end_points_c = resnet_v2_50(cropped_images, num_classes=num_classes_g, is_training=False,
+                logits_c, end_points_c = resnet_v2_50(cropped_images, num_classes=num_classes_g, is_training=True,
                                                       reuse=None)
-                logits_o, end_points_o = resnet_v2_50(original_images, num_classes=num_classes_g, is_training=False,
+                logits_o, end_points_o = resnet_v2_50(original_images, num_classes=num_classes_g, is_training=True,
                                                       reuse=True)
                 feature_c = end_points_c['shigeNet_v8/resnet_v2_50/block4']
                 feature_o = end_points_o['shigeNet_v8/resnet_v2_50/block4']  # (?, 7, 7, 2048)

@@ -191,7 +191,7 @@ def train(args):
 
             # Final batch proc: get summary and train_trace
             cropped_batch, orig_batch, labels = dataset.getTrainBatch(args.batch_size, num_batch-1)
-            summary = sess.run(merged,
+            summary, train_acc, train_loss, _ = sess.run([merged, accuracy, loss, train_step],
                               feed_dict={x_c: cropped_batch['batch'],
                                          x_o: orig_batch['batch'],
                                          t: labels,
@@ -202,6 +202,8 @@ def train(args):
 
             train_acc_l.append(train_acc)
             train_loss_l.append(train_loss)
+            print("step%03d" % step, i, "of", num_batch, "train acc:", train_acc, ", train loss:", train_loss,
+                  "elappsed time:", elapsed_time)
             mean_train_accuracy = sum(train_acc_l) / len(train_acc_l)
             mean_train_loss = sum(train_loss_l) / len(train_loss_l)
             print('step %d: training accuracy %g,\t loss %g' % (step, mean_train_accuracy, mean_train_loss), "elapsed time:", time.time() - step_start_time)
