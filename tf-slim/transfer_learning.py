@@ -220,33 +220,33 @@ def train(args):
             # Validation proc
             if step % val_freq == 0:
 
-                #Grad-CAM
-                # if i % 100 == 0:
-                prob_np = sess.run(y_pred, feed_dict={x_c: cropped_batch['batch'],
-                                                    x_o: orig_batch['batch'],
-                                                    t: labels,
-                                                    keep_prob: args.dropout_prob,
-                                                    is_training: True})
-                print('prob_np:', prob_np)
-                net_np, y_c_np, gb_grad_value_c, target_conv_layer_value_c, target_conv_layer_grad_value_c,  gb_grad_value_o, target_conv_layer_value_o, target_conv_layer_grad_value_o = sess.run(
-                    [y_logit, y_c, gb_grad_c, target_conv_layer_c, target_conv_layer_grad_c, gb_grad_o, target_conv_layer_o, target_conv_layer_grad_o],
-                    feed_dict={x_c: cropped_batch['batch'],
-                               x_o: orig_batch['batch'],
-                               t: labels,
-                               keep_prob: args.dropout_prob,
-                               is_training: True})
-
-                for i in range(args.batch_size):
-                    # print('See visualization of below category')
-                    # utils.print_prob(batch_label[i], './synset.txt')
-                    utils.print_prob(prob_np[i], './synset.txt')
-                    # print('gb_grad_value[i]:', gb_grad_value[i])
-                    # print('gb_grad_value[i] shape:', gb_grad_value[i].shape)
-                    utils.visualize(cropped_batch['batch'][i], target_conv_layer_value_c[i], target_conv_layer_grad_value_c[i],
-                                    gb_grad_value_c[i])
-                    utils.visualize(orig_batch['batch'][i], target_conv_layer_value_o[i],
-                                    target_conv_layer_grad_value_o[i],
-                                    gb_grad_value_o[i])
+                # #Grad-CAM
+                # # if i % 100 == 0:
+                # prob_np = sess.run(y_pred, feed_dict={x_c: cropped_batch['batch'],
+                #                                     x_o: orig_batch['batch'],
+                #                                     t: labels,
+                #                                     keep_prob: args.dropout_prob,
+                #                                     is_training: True})
+                # print('prob_np:', prob_np)
+                # net_np, y_c_np, gb_grad_value_c, target_conv_layer_value_c, target_conv_layer_grad_value_c,  gb_grad_value_o, target_conv_layer_value_o, target_conv_layer_grad_value_o = sess.run(
+                #     [y_logit, y_c, gb_grad_c, target_conv_layer_c, target_conv_layer_grad_c, gb_grad_o, target_conv_layer_o, target_conv_layer_grad_o],
+                #     feed_dict={x_c: cropped_batch['batch'],
+                #                x_o: orig_batch['batch'],
+                #                t: labels,
+                #                keep_prob: args.dropout_prob,
+                #                is_training: True})
+                #
+                # for i in range(args.batch_size):
+                #     # print('See visualization of below category')
+                #     # utils.print_prob(batch_label[i], './synset.txt')
+                #     utils.print_prob(prob_np[i], './synset.txt')
+                #     # print('gb_grad_value[i]:', gb_grad_value[i])
+                #     # print('gb_grad_value[i] shape:', gb_grad_value[i].shape)
+                #     utils.visualize(cropped_batch['batch'][i], target_conv_layer_value_c[i], target_conv_layer_grad_value_c[i],
+                #                     gb_grad_value_c[i])
+                #     utils.visualize(orig_batch['batch'][i], target_conv_layer_value_o[i],
+                #                     target_conv_layer_grad_value_o[i],
+                #                     gb_grad_value_o[i])
 
                 num_test_batch = int(len(dataset.test_path_c) / args.batch_size)
                 test_acc_l = []
