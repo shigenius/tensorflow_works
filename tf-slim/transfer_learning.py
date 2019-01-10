@@ -19,7 +19,7 @@ import cv2
 import time
 
 def calc_loss(pred, supervisor_t):
-  cross_entropy = -tf.reduce_sum(supervisor_t * tf.log(y_pred))
+  cross_entropy = -tf.reduce_sum(supervisor_t * tf.log(pred))
   # cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=output, labels=supervisor_t)) # with_logitsは内部でソフトマックスも計算してくれる
   return cross_entropy
 
