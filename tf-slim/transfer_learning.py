@@ -37,7 +37,7 @@ def train(args):
     val_freq = 1# Nstep毎にvalidate
     store_freq = 10
 
-    arch_name = "shigeNet_v8"
+    arch_name = "shigeNet_v1"
     if arch_name == "shigeNet_v1":
         model = shigeNet_v1
     elif arch_name == "shigeNet_v2":
@@ -115,16 +115,16 @@ def train(args):
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
         tf.summary.scalar("accuracy", accuracy)
 
-    # GradCAM
-    y_c = tf.reduce_sum(tf.multiply(y_logit, t), axis=1)
-
-    target_conv_layer_c = y["feature_c"]
-    target_conv_layer_grad_c = tf.gradients(y_c, target_conv_layer_c)[0]
-    gb_grad_c = tf.gradients(loss, x_c)[0]
-
-    target_conv_layer_o = y["feature_o"]
-    target_conv_layer_grad_o = tf.gradients(y_c, target_conv_layer_o)[0]
-    gb_grad_o = tf.gradients(loss, x_o)[0]
+    # # GradCAM
+    # y_c = tf.reduce_sum(tf.multiply(y_logit, t), axis=1)
+    #
+    # target_conv_layer_c = y["feature_c"]
+    # target_conv_layer_grad_c = tf.gradients(y_c, target_conv_layer_c)[0]
+    # gb_grad_c = tf.gradients(loss, x_c)[0]
+    #
+    # target_conv_layer_o = y["feature_o"]
+    # target_conv_layer_grad_o = tf.gradients(y_c, target_conv_layer_o)[0]
+    # gb_grad_o = tf.gradients(loss, x_o)[0]
 
 
     dataset = TwoInputDataset(train_c=args.train_c, train_o=args.train_o, test_c=args.test_c, test_o=args.test_o,
