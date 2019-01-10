@@ -18,9 +18,9 @@ import utils
 import cv2
 import time
 
-def calc_loss(output, supervisor_t):
-  # cross_entropy = -tf.reduce_sum(supervisor_t * tf.log(y_pred))
-  cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=output, labels=supervisor_t)) # with_logitsは内部でソフトマックスも計算してくれる
+def calc_loss(pred, supervisor_t):
+  cross_entropy = -tf.reduce_sum(supervisor_t * tf.log(y_pred))
+  # cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=output, labels=supervisor_t)) # with_logitsは内部でソフトマックスも計算してくれる
   return cross_entropy
 
 def training(loss):
@@ -100,7 +100,8 @@ def train(args):
     # Train ops
     with tf.name_scope('loss'):
         # loss = tf.losses.softmax_cross_entropy(t, logits)
-        loss = calc_loss(y_logit, t)
+        # loss = calc_loss(y_logit, t)
+        loss = calc_loss(y_pred, t)
         tf.summary.scalar("loss", loss)
 
     with tf.name_scope('train') as scope:
