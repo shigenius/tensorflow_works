@@ -6,6 +6,7 @@ import random
 import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from TwoInputDistortion import Distortion
+import utils
 
 class TwoInputDataset():
     """
@@ -120,16 +121,19 @@ class TwoInputDataset():
             # imageA = cv2.imread(pathA)
             # imageB = cv2.imread(pathB)
 
-            # cv2.imread()はBGR
-            imageA = np.array(Image.open(pathA)) / 255
-            imageB = np.array(Image.open(pathB)) / 255
-
-            # imageA, imageB = self.distortion.distort(images=[imageA, imageB], flag=mode, p=1.0)
-
-            #imageA = cv2.resize(padding(imageA), (self.image_size, self.image_size))
-            imageA = cv2.resize(imageA, (self.image_size, self.image_size))
-            #imageB = cv2.resize(padding(imageB), (self.image_size, self.image_size))
-            imageB = cv2.resize(imageB, (self.image_size, self.image_size))
+            # # cv2.imread()はBGR
+            # imageA = np.array(Image.open(pathA)) / 255
+            # imageB = np.array(Image.open(pathB)) / 255
+            #
+            #
+            # # imageA, imageB = self.distortion.distort(images=[imageA, imageB], flag=mode, p=1.0)
+            #
+            # #imageA = cv2.resize(padding(imageA), (self.image_size, self.image_size))
+            # imageA = cv2.resize(imageA, (self.image_size, self.image_size))
+            # #imageB = cv2.resize(padding(imageB), (self.image_size, self.image_size))
+            # imageB = cv2.resize(imageB, (self.image_size, self.image_size))
+            imageA = utils.load_image(pathA, normalize=True)
+            imageB = utils.load_image(pathB, normalize=True)
 
             # batchA.append(imageA.astype(np.float32)/255.0)
             # batchB.append(imageB.astype(np.float32)/255.0)

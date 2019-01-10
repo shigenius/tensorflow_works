@@ -1,0 +1,9 @@
+0 corp_brown
+1 corp_l
+2 corp_r
+3 engi1_l
+4 engi1_r
+5 izumikawa_l
+6 izumikawa_r
+7 kawakami_bench
+8 kawakami_kitsuenjo
