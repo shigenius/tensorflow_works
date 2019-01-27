@@ -8,7 +8,7 @@ import numpy as np
 import time
 
 from PIL import Image
-import csv
+csvimport
 from pathlib import Path
 import math
 

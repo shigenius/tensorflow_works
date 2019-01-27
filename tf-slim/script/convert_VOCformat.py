@@ -52,6 +52,15 @@ def convert_xml_format(imgpath, fname, objname, bb_xmin, bb_xmax, bb_ymin, bb_ym
     filename.appendChild(dom.createTextNode(fname))
     annotation.appendChild(filename)
 
+    sourcefile = dom.createElement('sourcefile')
+    sourcefile.appendChild(dom.createTextNode(imgpath))
+    annotation.appendChild(sourcefile)
+
+    videoname = os.path.split(os.path.dirname(imgpath))[1]
+    sourcevideo = dom.createElement('sourcevideo')
+    sourcevideo.appendChild(dom.createTextNode(videoname))
+    annotation.appendChild(sourcevideo)
+
     size = dom.createElement('size')
     annotation.appendChild(size)
 
